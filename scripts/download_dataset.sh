@@ -9,7 +9,8 @@ EX_DIR="data/volleyball"
 # Check if zip file already exists
 if [ -f "$DEST_DIR" ]; then
   echo -e "\n⚠️  Dataset already exists at $DEST_DIR"
-  read -p "Do you want to re-download it? (y/n): " answer
+  echo -n "Do you want to re-download it? (y/n): "
+  read answer
   if [[ "$answer" != "y" && "$answer" != "Y" ]]; then
     echo -e "\n⏩ Skipping download."
   else
