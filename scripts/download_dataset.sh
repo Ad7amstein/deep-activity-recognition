@@ -1,10 +1,10 @@
 #!/bin/bash
+echo -e "\nDownloading Dataset in Progress..."
 
-# Replace with your actual folder ID (not the full URL)
-FOLDER_ID="1HMmuAuZ9zuGS8Va19ytXJtlfgQbILyu9"
+DATASET_LINK="https://www.kaggle.com/api/v1/datasets/download/ahmedmohamed365/volleyball"
+DEST_DIR="data/volleyball.zip"
 
-# Optional: Set download directory
-DEST_DIR="data/"
+curl -L --create-dirs -o "$DEST_DIR"\
+  "$DATASET_LINK"
 
-# Download entire folder
-gdown --folder https://drive.google.com/drive/folders/$FOLDER_ID -O "$DEST_DIR"
+echo -e "\n✅Downloading Dataset Completed Successfully"
