@@ -1,2 +1,5 @@
-# Project Setup
+# Project Setup Dependencies
 setuptools
+
+# Other/General Dependencies
+pyyaml
