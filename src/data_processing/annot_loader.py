@@ -1,5 +1,6 @@
 import os
 import cv2 as cv
+from typing import Tuple
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
 
@@ -12,7 +13,7 @@ class AnnotationLoader:
         if self.verbose:
             print("\n[INFO] Initializing Annotation Loader Object...")
 
-    def vis_clip(self, annot_file: str, clip_path: str, frame_fmt: str = "jpg"):
+    def vis_clip(self, annot_file: str, clip_path: str, frame_fmt: str = "jpg") -> None:
         if self.verbose:
             print(f"[INFO] Visualizing clip {clip_path} with annotations...")
         if not isinstance(annot_file, str):
@@ -53,7 +54,7 @@ class AnnotationLoader:
 
         cv.destroyAllWindows()
 
-    def load_tracking_annot(self, annot_file: str):
+    def load_tracking_annot(self, annot_file: str) -> Tuple[dict]:
         if self.verbose:
             print(f"[INFO] Loading tracking annotation from file {annot_file}")
         if not isinstance(annot_file, str):
