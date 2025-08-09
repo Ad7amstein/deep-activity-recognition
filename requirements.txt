@@ -1,5 +1,8 @@
 # Project Setup Dependencies
 setuptools
 
+# Data Preprocessing Dependencies
+opencv-contrib-python
+
 # Other/General Dependencies
 pyyaml
