@@ -99,6 +99,23 @@ class AnnotationLoader:
                 f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
             )
 
+    def load_video_annot(self, annot_file: str) -> dict:
+        if self.verbose:
+            print(f"[INFO] Loading Video Annotations from {annot_file}")
+        clip_category_dct = {}
+        AnnotationLoader.check_file(annot_file)
+
+        with open(annot_file, mode="r", encoding="utf-8") as file:
+            lines = file.readlines()
+            for _, line in enumerate(
+                tqdm(lines, desc="Parsing annotation lines", disable=not self.verbose)
+            ):
+                clip_id, category = line.split()[:2]
+                clip_id = int(clip_id.split(".")[0])
+                clip_category_dct[clip_id] = category
+
+        return clip_category_dct
+
     def __repr__(self) -> str:
         return f"{__class__.__name__}()"
 
