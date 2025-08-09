@@ -1,4 +1,5 @@
 import os
+import cv2 as cv
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
 
@@ -10,6 +11,47 @@ class AnnotationLoader:
         self.verbose = verbose
         if self.verbose:
             print("\n[INFO] Initializing Annotation Loader Object...")
+
+    def vis_clip(self, annot_file: str, clip_path: str, frame_fmt: str = "jpg"):
+        if self.verbose:
+            print(f"[INFO] Visualizing clip {clip_path} with annotations...")
+        if not isinstance(annot_file, str):
+            raise TypeError(
+                f"annot_file must be a string, got {type(annot_file).__name__}"
+            )
+        if not isinstance(clip_path, str):
+            raise TypeError(f"clip must be a string, got {type(clip_path).__name__}")
+
+        if not os.path.isfile(annot_file):
+            raise ValueError(
+                f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
+            )
+        if not os.path.isdir(clip_path):
+            raise ValueError(f"{clip_path} does not exist or is not a directory.")
+
+        _, frame_boxes_dict = self.load_tracking_annot(annot_file)
+
+        for frame_id, boxes_info in frame_boxes_dict.items():
+            img_path = os.path.join(clip_path, f"{frame_id}.{frame_fmt}")
+            img = cv.imread(img_path)
+            clip_name = "/".join(clip_path.split("\\")[-2:])
+
+            for box_info in boxes_info:
+                cv.rectangle(img, box_info.box[:2], box_info.box[2:], (0, 0, 255), 2)
+                cv.putText(
+                    img,
+                    box_info.category,
+                    box_info.box[:2],
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (0, 255, 0),
+                    2,
+                )
+
+            cv.imshow(f"Tracking Annotation for clip {clip_name}", img)
+            cv.waitKey(200)
+
+        cv.destroyAllWindows()
 
     def load_tracking_annot(self, annot_file: str):
         if self.verbose:
@@ -66,16 +108,7 @@ def main():
         CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"], test_clip
     )
 
-    player_boxes_dct, frame_boxes_dct = annot_loader.load_tracking_annot(annot_file)
-
-    print(annot_loader)
-
-    print(f"\nFirst 5 Players:\n{list(player_boxes_dct.items())[:5]}")
-    print(f"\nFirst 5 Frames:\n{list(frame_boxes_dct.items())[:5]}")
-
-    print(f"Number of Players: {len(player_boxes_dct)}")
-    print(f"Number of Original Frames: {len(player_boxes_dct[0])}")
-    print(f"Number of Selected Frames: {len(frame_boxes_dct)}")
+    annot_loader.vis_clip(annot_file, clip_dir)
 
 
 if __name__ == "__main__":
