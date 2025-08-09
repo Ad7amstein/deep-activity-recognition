@@ -55,14 +55,18 @@ class BoxInfo:
         return self._line
 
     @line.setter
-    def line(self, value):
+    def line(self, value: str) -> None:
         """
         Sets the value of the line attribute after validating its format.
         Args:
             value (str): A string expected to contain exactly 10 whitespace-separated values.
         Raises:
+            TypeError: If the input is not of a string type.
             ValueError: If the input string does not contain exactly 10 values.
         """
+
+        if not isinstance(value, str):
+            raise TypeError("Line must be of type string (str).")
 
         if len(value.strip().split()) != 10:
             raise ValueError("Line must contain 10 values.")
@@ -75,9 +79,7 @@ class BoxInfo:
 
 def main():
     """Entry Point for the Program."""
-    print(
-        f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module. Nothing to do ^_____^!"
-    )
+    print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
     obj = BoxInfo("0 1002 436 1077 570 3586 0 1 0 digging ")
     print(obj)
 
