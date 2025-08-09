@@ -11,7 +11,7 @@ class BoxInfo:
     Represents bounding box and player information parsed from a single line of data.
     """
 
-    def __init__(self, line: str, verbose=False) -> None:
+    def __init__(self, line: str, verbose: bool = False) -> None:
         """
         Initializes the class by parsing a line of box information.
         Args:

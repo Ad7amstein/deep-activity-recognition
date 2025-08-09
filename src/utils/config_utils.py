@@ -6,7 +6,7 @@ import os
 import yaml
 
 
-def load_config(config_path: str = "config/config.yaml", verbose=False):
+def load_config(config_path: str = "config/config.yaml", verbose: bool = False):
     """
     Loads configuration settings from a YAML file.
     Args:
