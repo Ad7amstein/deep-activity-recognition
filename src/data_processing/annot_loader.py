@@ -1,10 +1,16 @@
 import os
+from typing import Dict, List, NamedTuple
 import cv2 as cv
-from typing import Tuple
+from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
 
 CONFIG = load_config()
+
+
+class TrackingData(NamedTuple):
+    player_boxes: Dict[int, List[BoxInfo]]
+    frame_boxes: Dict[int, List[BoxInfo]]
 
 
 class AnnotationLoader:
@@ -16,17 +22,9 @@ class AnnotationLoader:
     def vis_clip(self, annot_file: str, clip_path: str, frame_fmt: str = "jpg") -> None:
         if self.verbose:
             print(f"[INFO] Visualizing clip {clip_path} with annotations...")
-        if not isinstance(annot_file, str):
-            raise TypeError(
-                f"annot_file must be a string, got {type(annot_file).__name__}"
-            )
+        AnnotationLoader.check_file(annot_file)
         if not isinstance(clip_path, str):
             raise TypeError(f"clip must be a string, got {type(clip_path).__name__}")
-
-        if not os.path.isfile(annot_file):
-            raise ValueError(
-                f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
-            )
         if not os.path.isdir(clip_path):
             raise ValueError(f"{clip_path} does not exist or is not a directory.")
 
@@ -54,23 +52,19 @@ class AnnotationLoader:
 
         cv.destroyAllWindows()
 
-    def load_tracking_annot(self, annot_file: str) -> Tuple[dict]:
+    def load_tracking_annot(self, annot_file: str) -> TrackingData:
         if self.verbose:
             print(f"[INFO] Loading tracking annotation from file {annot_file}")
-        if not isinstance(annot_file, str):
-            raise TypeError(
-                f"annot_file must be a string, got {type(annot_file).__name__}"
-            )
-        if not os.path.isfile(annot_file):
-            raise ValueError(
-                f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
-            )
+        AnnotationLoader.check_file(annot_file)
 
         with open(annot_file, mode="r", encoding="utf-8") as file:
+            lines = file.readlines()
             player_boxes_dct = {player_id: [] for player_id in range(12)}
             frame_boxes_dct = {}
 
-            for i, line in enumerate(file.readlines()):
+            for i, line in enumerate(
+                tqdm(lines, desc="Parsing annotation lines", disable=not self.verbose)
+            ):
                 box_info = BoxInfo(line)
                 if box_info.player_id < 12:
                     player_boxes_dct[box_info.player_id].append(box_info)
@@ -79,14 +73,31 @@ class AnnotationLoader:
                         f"[WARNING] Skipping line {i}. Player ID ({box_info.player_id}) > 11."
                     )
 
-            for boxes_info in player_boxes_dct.values():
+            for boxes_info in tqdm(
+                player_boxes_dct.values(),
+                desc="Parsing Player Boxes",
+                disable=not self.verbose,
+            ):
                 boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
                     if box_info.frame_id not in frame_boxes_dct:
                         frame_boxes_dct[box_info.frame_id] = []
                     frame_boxes_dct[box_info.frame_id].append(box_info)
 
-            return player_boxes_dct, frame_boxes_dct
+            return TrackingData(
+                player_boxes=player_boxes_dct, frame_boxes=frame_boxes_dct
+            )
+
+    @staticmethod
+    def check_file(annot_file: str) -> None:
+        if not isinstance(annot_file, str):
+            raise TypeError(
+                f"annot_file must be a string, got {type(annot_file).__name__}"
+            )
+        if not os.path.isfile(annot_file):
+            raise ValueError(
+                f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
+            )
 
     def __repr__(self) -> str:
         return f"{__class__.__name__}()"
