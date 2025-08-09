@@ -11,7 +11,7 @@ class BoxInfo:
     Represents bounding box and player information parsed from a single line of data.
     """
 
-    def __init__(self, line: str) -> None:
+    def __init__(self, line: str, verbose=False) -> None:
         """
         Initializes the class by parsing a line of box information.
         Args:
@@ -27,7 +27,9 @@ class BoxInfo:
             generated (int): Indicator if the box was generated.
         """
 
-        print(f"\n[INFO] Initializing {__class__.__name__} Class...")
+        self.verbose = verbose
+        if self.verbose:
+            print(f"\n[INFO] Initializing {__class__.__name__} Class...")
         self.line = line
         all_info = (self.line.strip()).split()
         self.category = all_info.pop()
@@ -80,7 +82,7 @@ class BoxInfo:
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
-    obj = BoxInfo("0 1002 436 1077 570 3586 0 1 0 digging ")
+    obj = BoxInfo("0 1002 436 1077 570 3586 0 1 0 digging ", verbose=True)
     print(obj)
 
 

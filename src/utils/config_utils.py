@@ -6,7 +6,7 @@ import os
 import yaml
 
 
-def load_config(config_path: str = "config/config.yaml"):
+def load_config(config_path: str = "config/config.yaml", verbose=False):
     """
     Loads configuration settings from a YAML file.
     Args:
@@ -18,7 +18,8 @@ def load_config(config_path: str = "config/config.yaml"):
         ValueError: If there is an error parsing the YAML file.
     """
 
-    print(f"\n[INFO] Loading Configurations from {config_path}...")
+    if verbose:
+        print(f"\n[INFO] Loading Configurations from {config_path}...")
     try:
         with open(config_path, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
@@ -32,7 +33,7 @@ def load_config(config_path: str = "config/config.yaml"):
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
-    config = load_config()
+    config = load_config(verbose=True)
     print(f"Config Type: {type(config)}")
     print(f"Config Items:\n{config.items()}")
 
