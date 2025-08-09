@@ -1,0 +1,4 @@
+PATH:
+  data_root: data
+  track_annot: volleyball_tracking_annotation
+  videos: videos_sample
