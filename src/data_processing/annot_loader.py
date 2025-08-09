@@ -122,7 +122,7 @@ class AnnotationLoader:
 
 def main():
     """Entry Point for the Program."""
-    print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
+    print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.\n")
 
     annot_loader = AnnotationLoader(verbose=True)
 

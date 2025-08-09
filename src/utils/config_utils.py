@@ -33,7 +33,7 @@ def load_config(config_path: str = "config/config.yaml", verbose: bool = False):
 
 def main():
     """Entry Point for the Program."""
-    print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
+    print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.\n")
     config = load_config(verbose=True)
     print(f"Config Type: {type(config)}")
     print(f"Config Items:\n{config.items()}")
