@@ -2,6 +2,7 @@
 Utilities for loading and handling configuration files.
 """
 
+import os
 import yaml
 
 
@@ -29,12 +30,11 @@ def load_config(config_path: str = "config/config.yaml"):
 
 
 def main():
-    """
-    This function serves as an entry point for the script.
-    Prints a welcome message indicating that there is no action required in this script.
-    """
-
-    print("Welcome from config_utils.py. Nothing to Do ^_____^")
+    """Entry Point for the Program."""
+    print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
+    config = load_config()
+    print(f"Config Type: {type(config)}")
+    print(f"Config Items:\n{config.items()}")
 
 
 if __name__ == "__main__":
