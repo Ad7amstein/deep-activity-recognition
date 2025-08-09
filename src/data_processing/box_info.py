@@ -16,6 +16,7 @@ class BoxInfo:
         Initializes the class by parsing a line of box information.
         Args:
             line (str): A string containing box information, expected to be space-separated values.
+            verbose (bool): If True, prints logging information. Defaults to False.
         Attributes:
             line (str): The original input line.
             category (str): The category label extracted from the line.

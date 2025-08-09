@@ -11,6 +11,7 @@ def load_config(config_path: str = "config/config.yaml", verbose: bool = False):
     Loads configuration settings from a YAML file.
     Args:
         config_path (str): Path to the YAML configuration file. Defaults to "config/config.yaml".
+        verbose (bool): If True, prints logging information. Defaults to False.
     Returns:
         dict: Configuration parameters loaded from the YAML file.
     Raises:
