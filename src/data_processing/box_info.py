@@ -82,7 +82,7 @@ class BoxInfo:
 
 def main():
     """Entry Point for the Program."""
-    print(f"Welcome from `{os.path.basename(__file__).split(".")[0]}` Module.\n")
+    print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.\n")
     obj = BoxInfo("0 1002 436 1077 570 3586 0 1 0 digging ", verbose=True)
     print(obj)
 
