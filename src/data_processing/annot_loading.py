@@ -16,7 +16,7 @@ class TrackingData(NamedTuple):
 
 class ClipAnnotation(TypedDict):
     category: str
-    frame_boxes_dct: Dict[int, List[BoxInfo]]
+    tracking_annot_dct: TrackingData
 
 
 VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
@@ -262,11 +262,12 @@ def main():
     annot_loader.vis_clip(annot_file, clip_dir)
     volleyballdata = annot_loader.load_volleyball_dataset(
         os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"]),
-        os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"])
+        os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"]),
     )
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
     data = annot_loader.load_pkl_version(verbose=True)
     print(data)
+
 
 if __name__ == "__main__":
     main()
