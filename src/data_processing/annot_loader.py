@@ -81,7 +81,12 @@ class AnnotationLoader:
             frame_boxes_dct = {}
 
             for i, line in enumerate(
-                tqdm(lines, desc="Parsing annotation lines", disable=not verbose)
+                tqdm(
+                    lines,
+                    desc="Parsing annotation lines",
+                    disable=not verbose,
+                    unit="line",
+                )
             ):
                 box_info = BoxInfo(line)
                 if box_info.player_id < 12:
@@ -95,6 +100,7 @@ class AnnotationLoader:
                 player_boxes_dct.values(),
                 desc="Parsing Player Boxes",
                 disable=not verbose,
+                unit="player",
             ):
                 boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
@@ -132,7 +138,12 @@ class AnnotationLoader:
         with open(video_annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
             for _, line in enumerate(
-                tqdm(lines, desc="Parsing annotation lines", disable=not verbose)
+                tqdm(
+                    lines,
+                    desc="Parsing annotation lines",
+                    disable=not verbose,
+                    unit="clip",
+                )
             ):
                 clip_id, category = line.split()[:2]
                 clip_id = int(clip_id.split(".")[0])
@@ -159,7 +170,10 @@ class AnnotationLoader:
             print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
         video_annot_dct = {}
         for video_dir in tqdm(
-            os.listdir(videos_root), desc="Processing Videos", disable=not verbose
+            os.listdir(videos_root),
+            desc="Processing Videos",
+            disable=not verbose,
+            unit="video",
         ):
             video_path = os.path.join(videos_root, video_dir)
             if not os.path.isdir(video_path):
