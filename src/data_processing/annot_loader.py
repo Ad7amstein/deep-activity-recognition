@@ -190,7 +190,7 @@ class AnnotationLoader:
 
         return video_annot_dct
 
-    def save_pkl_version(self, verbose: Optional[bool] = None):
+    def save_pkl_version(self, verbose: Optional[bool] = None) -> None:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print("[INFO] Saving Pickle Volleyball Dataset Version...")
@@ -216,6 +216,22 @@ class AnnotationLoader:
 
         with open(save_path, mode="wb") as file:
             pickle.dump(volleyball_data, file)
+
+    def load_pkl_version(self, verbose: Optional[bool] = None) -> None:
+        verbose = self.verbose if verbose is None else verbose
+        data_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
+        if verbose:
+            print(f"[INFO] Loading Data from pickle file: {data_path}")
+
+        try:
+            with open(data_path, "rb") as file:
+                loaded_data = pickle.load(file)
+            print("Data loaded successfully:")
+            print(loaded_data)
+        except FileNotFoundError as exc:
+            raise FileNotFoundError(
+                f"[ERROR]: The file '{data_path}' was not found."
+            ) from exc
 
     def __repr__(self) -> str:
         return f"{__class__.__name__}(verbose=False)"
