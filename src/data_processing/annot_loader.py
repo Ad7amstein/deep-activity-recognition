@@ -144,7 +144,9 @@ class AnnotationLoader:
                 )
                 clip_category_dct[clip_id] = {
                     "category": category,
-                    "tracking_annot_dct": self.load_tracking_annot(cur_clip_annot_file),
+                    "tracking_annot_dct": self.load_tracking_annot(
+                        cur_clip_annot_file, verbose=False
+                    ),
                 }
 
         return clip_category_dct
