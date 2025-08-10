@@ -138,9 +138,12 @@ class AnnotationLoader:
     ) -> VolleyballData:
         video_annot_dct = {}
         for video_dir in os.listdir(videos_root):
-            if not os.path.isdir(video_dir):
-                continue
             video_path = os.path.join(videos_root, video_dir)
+            if not os.path.isdir(video_path):
+                print(
+                    f"[WARNING] {video_path} doesn't exist or it not a directory. Skipping..."
+                )
+                continue
             video_annot_file = os.path.join(video_path, "annotations.txt")
             video_id = int(video_dir)
             video_annot_dct[video_id] = self.load_video_annot(
