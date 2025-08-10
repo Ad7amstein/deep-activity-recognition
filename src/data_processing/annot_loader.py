@@ -138,6 +138,8 @@ class AnnotationLoader:
     ) -> VolleyballData:
         video_annot_dct = {}
         for video_dir in os.listdir(videos_root):
+            if not os.path.isdir(video_dir):
+                continue
             video_path = os.path.join(videos_root, video_dir)
             video_annot_file = os.path.join(video_path, "annotations.txt")
             video_id = int(video_dir)
