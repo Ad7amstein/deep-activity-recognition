@@ -1,7 +1,7 @@
 import os
+import pickle
 from typing import Dict, List, NamedTuple, TypedDict, Optional
 import cv2 as cv
-import pickle
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
