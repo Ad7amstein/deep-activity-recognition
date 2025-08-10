@@ -217,7 +217,7 @@ class AnnotationLoader:
         with open(save_path, mode="wb") as file:
             pickle.dump(volleyball_data, file)
 
-    def load_pkl_version(self, verbose: Optional[bool] = None) -> None:
+    def load_pkl_version(self, verbose: Optional[bool] = None) -> VolleyballData:
         verbose = self.verbose if verbose is None else verbose
         data_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
         if verbose:
@@ -226,8 +226,7 @@ class AnnotationLoader:
         try:
             with open(data_path, "rb") as file:
                 loaded_data = pickle.load(file)
-            print("Data loaded successfully:")
-            print(loaded_data)
+                return loaded_data
         except FileNotFoundError as exc:
             raise FileNotFoundError(
                 f"[ERROR]: The file '{data_path}' was not found."
