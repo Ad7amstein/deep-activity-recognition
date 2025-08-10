@@ -248,7 +248,7 @@ def main():
 
     annot_loader = AnnotationLoader(verbose=True)
 
-    test_clip = r"7\38025"
+    test_clip = r"7/38025"
     annot_file = os.path.join(
         CONFIG["PATH"]["data_root"],
         CONFIG["PATH"]["track_annot"],
@@ -260,7 +260,13 @@ def main():
     )
 
     annot_loader.vis_clip(annot_file, clip_dir)
-
+    volleyballdata = annot_loader.load_volleyball_dataset(
+        os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"]),
+        os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"])
+    )
+    annot_loader.save_pkl_version(volleyballdata, verbose=True)
+    data = annot_loader.load_pkl_version(verbose=True)
+    print(data)
 
 if __name__ == "__main__":
     main()
