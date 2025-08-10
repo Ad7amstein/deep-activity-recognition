@@ -1,6 +1,7 @@
 import os
 from typing import Dict, List, NamedTuple, TypedDict, Optional
 import cv2 as cv
+import pickle
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
@@ -188,6 +189,33 @@ class AnnotationLoader:
             )
 
         return video_annot_dct
+
+    def save_pkl_version(self, verbose: Optional[bool] = None):
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            print("[INFO] Saving Pickle Volleyball Dataset Version...")
+        videos_root = os.path.join(
+            CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"]
+        )
+        tracking_annot_root = os.path.join(
+            CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"]
+        )
+        save_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
+
+        volleyball_data = self.load_volleyball_dataset(videos_root, tracking_annot_root)
+
+        if os.path.exists(save_path):
+            print(
+                " ".join(
+                    [
+                        f"[WARNING] The save path '{save_path}' already exists",
+                        "and will be overwritten with the new dataset pickle file.",
+                    ]
+                )
+            )
+
+        with open(save_path, mode="wb") as file:
+            pickle.dump(volleyball_data, file)
 
     def __repr__(self) -> str:
         return f"{__class__.__name__}(verbose=False)"
