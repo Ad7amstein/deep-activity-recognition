@@ -1,3 +1,8 @@
+"""
+Loads, processes, and visualizes volleyball activity recognition annotations for
+deep learning tasks.
+"""
+
 import os
 import pickle
 from typing import Dict, List, NamedTuple, TypedDict, Optional
@@ -10,11 +15,27 @@ CONFIG = load_config()
 
 
 class TrackingData(NamedTuple):
+    """
+    TrackingData stores bounding box information for players and frames.
+    Attributes:
+        player_boxes (Dict[int, List[BoxInfo]]): A mapping from player IDs to
+            lists of BoxInfo objects representing bounding boxes associated with each player.
+        frame_boxes (Dict[int, List[BoxInfo]]): A mapping from frame indices to
+            lists of BoxInfo objects representing bounding boxes detected in each frame.
+    """
+
     player_boxes: Dict[int, List[BoxInfo]]
     frame_boxes: Dict[int, List[BoxInfo]]
 
 
 class ClipAnnotation(TypedDict):
+    """
+    A TypedDict representing the annotation for a video clip.
+    Attributes:
+        category (str): The category label for the clip.
+        tracking_annot_dct (TrackingData): The tracking annotation data associated with the clip.
+    """
+
     category: str
     tracking_annot_dct: TrackingData
 
@@ -23,7 +44,18 @@ VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
 
 
 class AnnotationLoader:
+    """
+    Handles loading, processing, and visualization of volleyball annotation data.
+    Provides methods to load, validate, visualize, and save dataset annotations.
+    """
+
     def __init__(self, verbose: bool = False) -> None:
+        """
+        Initializes the Annotation Loader object.
+        Args:
+            verbose (bool, optional): If True, enables verbose output. Defaults to False.
+        """
+
         self.verbose = verbose
         if self.verbose:
             print("\n[INFO] Initializing Annotation Loader Object...")
@@ -35,14 +67,21 @@ class AnnotationLoader:
         frame_fmt: str = "jpg",
         verbose: Optional[bool] = None,
     ) -> None:
+        """
+        Visualizes annotated bounding boxes for each frame in a video clip.
+        Args:
+            annot_file (str): Path to the annotation file containing tracking data.
+            clip_path (str): Directory path containing the video frames as images.
+            frame_fmt (str, optional): Image file format/extension for frames (default is "jpg").
+            verbose (Optional[bool], optional): If True, prints information during visualization.
+                If None, uses the instance's verbosity setting.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Visualizing clip {clip_path} with annotations...")
         AnnotationLoader.check_file(annot_file)
-        if not isinstance(clip_path, str):
-            raise TypeError(f"clip must be a string, got {type(clip_path).__name__}")
-        if not os.path.isdir(clip_path):
-            raise ValueError(f"{clip_path} does not exist or is not a directory.")
+        AnnotationLoader.check_dir(clip_path)
 
         _, frame_boxes_dict = self.load_tracking_annot(annot_file)
 
@@ -71,6 +110,19 @@ class AnnotationLoader:
     def load_tracking_annot(
         self, annot_file: str, verbose: Optional[bool] = None
     ) -> TrackingData:
+        """
+        Loads tracking annotation data from a specified file and organizes it by player and frame.
+        Args:
+            annot_file (str): Path to the annotation file to be loaded.
+            verbose (Optional[bool], optional): If True, prints progress and information messages.
+                If None, uses the instance's default verbosity setting.
+        Returns:
+            TrackingData: An object containing player-wise and frame-wise tracking box information.
+        Raises:
+            FileNotFoundError: If the specified annotation file does not exist.
+            ValueError: If the annotation file contains invalid or malformed lines.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Loading tracking annotation from file {annot_file}")
@@ -114,15 +166,38 @@ class AnnotationLoader:
             )
 
     @staticmethod
-    def check_file(annot_file: str) -> None:
-        if not isinstance(annot_file, str):
+    def check_dir(dir_path: str) -> None:
+        """
+        Checks if the provided path is a valid directory.
+        Args:
+            dir_path (str): The path to the directory to check.
+        Raises:
+            TypeError: If `dir_path` is not a string.
+            ValueError: If `dir_path` does not exist or is not a directory.
+        """
+
+        if not isinstance(dir_path, str):
             raise TypeError(
-                f"annot_file must be a string, got {type(annot_file).__name__}"
+                f"directory must be a string, got {type(dir_path).__name__}"
             )
-        if not os.path.isfile(annot_file):
-            raise ValueError(
-                f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
-            )
+        if not os.path.isdir(dir_path):
+            raise ValueError(f"{dir_path} does not exist or is not a directory.")
+
+    @staticmethod
+    def check_file(file_path: str) -> None:
+        """
+        Validates that the provided file_path path is a string and points to an existing file.
+        Args:
+            file_path (str): Path to the file.
+        Raises:
+            TypeError: If `file_path` is not a string.
+            ValueError: If `file_path` does not exist or is not a file.
+        """
+
+        if not isinstance(file_path, str):
+            raise TypeError(f"file must be a string, got {type(file_path).__name__}")
+        if not os.path.isfile(file_path):
+            raise ValueError(f"{file_path} does not exist or is not a file.")
 
     def load_video_annot(
         self,
@@ -130,11 +205,27 @@ class AnnotationLoader:
         tracking_annot_root: str,
         verbose: Optional[bool] = None,
     ) -> dict:
+        """
+        Loads video annotation data and corresponding tracking annotations.
+        Args:
+            video_annot_file (str): Path to the video annotation file.
+            tracking_annot_root (str): Root directory for tracking annotation files.
+            verbose (Optional[bool]): If True, prints progress info.
+        Returns:
+            dict: Mapping from clip ID to its category and tracking annotation.
+        Raises:
+            FileNotFoundError: If the video annotation file or
+                tracking annotation directory does not exist.
+            ValueError: If the annotation file format is invalid or a required field is missing.
+
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Loading Video Annotations from {video_annot_file}")
         clip_category_dct = {}
         AnnotationLoader.check_file(video_annot_file)
+        AnnotationLoader.check_dir(tracking_annot_root)
 
         with open(video_annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -166,9 +257,22 @@ class AnnotationLoader:
     def load_volleyball_dataset(
         self, videos_root: str, tracking_annot_root: str, verbose: Optional[bool] = None
     ) -> VolleyballData:
+        """
+        Loads volleyball dataset annotations for all videos in the given root directory.
+        Aggregates annotations and tracking data by video ID.
+        Args:
+            videos_root (str): Root directory with video subdirectories.
+            tracking_annot_root (str): Root directory for tracking annotations.
+            verbose (Optional[bool]): If True, prints progress info.
+        Returns:
+            VolleyballData: Mapping of video IDs to annotation data.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
+        AnnotationLoader.check_dir(videos_root)
+        AnnotationLoader.check_dir(tracking_annot_root)
         video_annot_dct = {}
         for video_dir in tqdm(
             os.listdir(videos_root),
@@ -193,6 +297,17 @@ class AnnotationLoader:
     def save_pkl_version(
         self, data: Optional[VolleyballData] = None, verbose: Optional[bool] = None
     ) -> None:
+        """
+        Saves the Volleyball dataset as a pickle file.
+        Args:
+            data (Optional[VolleyballData]): The VolleyballData object to be saved.
+                If None, the dataset is loaded automatically.
+            verbose (Optional[bool]): If True, prints informational messages during
+                the save process. If None, uses the instance's verbose attribute.
+        Returns:
+            None
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print("[INFO] Saving Pickle Volleyball Dataset Version...")
@@ -224,8 +339,20 @@ class AnnotationLoader:
             pickle.dump(volleyball_data, file)
 
     def load_pkl_version(self, verbose: Optional[bool] = None) -> VolleyballData:
+        """
+        Loads the volleyball dataset from a pickle file.
+        Args:
+            verbose (Optional[bool]): If True, prints information about the loading process.
+                If None, uses the instance's verbosity setting.
+        Returns:
+            VolleyballData: The loaded volleyball dataset object.
+        Raises:
+            FileNotFoundError: If the pickle file does not exist at the specified path.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         data_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
+        AnnotationLoader.check_file(data_path)
         if verbose:
             print(f"[INFO] Loading Data from pickle file: {data_path}")
 
