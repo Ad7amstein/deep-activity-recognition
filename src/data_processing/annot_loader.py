@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, NamedTuple
+from typing import Dict, List, NamedTuple, TypedDict
 import cv2 as cv
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
@@ -11,6 +11,14 @@ CONFIG = load_config()
 class TrackingData(NamedTuple):
     player_boxes: Dict[int, List[BoxInfo]]
     frame_boxes: Dict[int, List[BoxInfo]]
+
+
+class ClipAnnotation(TypedDict):
+    category: str
+    frame_boxes_dct: Dict[int, List[BoxInfo]]
+
+
+VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
 
 
 class AnnotationLoader:
@@ -99,25 +107,48 @@ class AnnotationLoader:
                 f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
             )
 
-    def load_video_annot(self, annot_file: str) -> dict:
+    def load_video_annot(self, video_annot_file: str, tracking_annot_root: str) -> dict:
         if self.verbose:
-            print(f"[INFO] Loading Video Annotations from {annot_file}")
+            print(f"[INFO] Loading Video Annotations from {video_annot_file}")
         clip_category_dct = {}
-        AnnotationLoader.check_file(annot_file)
+        AnnotationLoader.check_file(video_annot_file)
 
-        with open(annot_file, mode="r", encoding="utf-8") as file:
+        with open(video_annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
             for _, line in enumerate(
                 tqdm(lines, desc="Parsing annotation lines", disable=not self.verbose)
             ):
                 clip_id, category = line.split()[:2]
                 clip_id = int(clip_id.split(".")[0])
-                clip_category_dct[clip_id] = category
+                cur_clip_annot_file = os.path.join(
+                    tracking_annot_root,
+                    os.path.basename(os.path.dirname(video_annot_file)),
+                    str(clip_id),
+                    f"{clip_id}.txt",
+                )
+                clip_category_dct[clip_id] = {
+                    "category": category,
+                    "frame_boxes_dct": self.load_tracking_annot(cur_clip_annot_file),
+                }
 
         return clip_category_dct
 
+    def load_volleyball_dataset(
+        self, videos_root: str, tracking_annot_root: str
+    ) -> VolleyballData:
+        video_annot_dct = {}
+        for video_dir in os.listdir(videos_root):
+            video_path = os.path.join(videos_root, video_dir)
+            video_annot_file = os.path.join(video_path, "annotations.txt")
+            video_id = int(video_dir)
+            video_annot_dct[video_id] = self.load_video_annot(
+                video_annot_file, tracking_annot_root
+            )
+
+        return video_annot_dct
+
     def __repr__(self) -> str:
-        return f"{__class__.__name__}()"
+        return f"{__class__.__name__}(verbose=False)"
 
 
 def main():
