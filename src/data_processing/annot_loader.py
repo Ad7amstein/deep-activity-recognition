@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, NamedTuple, TypedDict
+from typing import Dict, List, NamedTuple, TypedDict, Optional
 import cv2 as cv
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
@@ -27,8 +27,15 @@ class AnnotationLoader:
         if self.verbose:
             print("\n[INFO] Initializing Annotation Loader Object...")
 
-    def vis_clip(self, annot_file: str, clip_path: str, frame_fmt: str = "jpg") -> None:
-        if self.verbose:
+    def vis_clip(
+        self,
+        annot_file: str,
+        clip_path: str,
+        frame_fmt: str = "jpg",
+        verbose: Optional[bool] = None,
+    ) -> None:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
             print(f"[INFO] Visualizing clip {clip_path} with annotations...")
         AnnotationLoader.check_file(annot_file)
         if not isinstance(clip_path, str):
@@ -60,8 +67,11 @@ class AnnotationLoader:
 
         cv.destroyAllWindows()
 
-    def load_tracking_annot(self, annot_file: str) -> TrackingData:
-        if self.verbose:
+    def load_tracking_annot(
+        self, annot_file: str, verbose: Optional[bool] = None
+    ) -> TrackingData:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
             print(f"[INFO] Loading tracking annotation from file {annot_file}")
         AnnotationLoader.check_file(annot_file)
 
@@ -71,7 +81,7 @@ class AnnotationLoader:
             frame_boxes_dct = {}
 
             for i, line in enumerate(
-                tqdm(lines, desc="Parsing annotation lines", disable=not self.verbose)
+                tqdm(lines, desc="Parsing annotation lines", disable=not verbose)
             ):
                 box_info = BoxInfo(line)
                 if box_info.player_id < 12:
@@ -84,7 +94,7 @@ class AnnotationLoader:
             for boxes_info in tqdm(
                 player_boxes_dct.values(),
                 desc="Parsing Player Boxes",
-                disable=not self.verbose,
+                disable=not verbose,
             ):
                 boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
@@ -107,8 +117,14 @@ class AnnotationLoader:
                 f"{annot_file} does not exist or is not a file. It should be a text (.txt) file."
             )
 
-    def load_video_annot(self, video_annot_file: str, tracking_annot_root: str) -> dict:
-        if self.verbose:
+    def load_video_annot(
+        self,
+        video_annot_file: str,
+        tracking_annot_root: str,
+        verbose: Optional[bool] = None,
+    ) -> dict:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
             print(f"[INFO] Loading Video Annotations from {video_annot_file}")
         clip_category_dct = {}
         AnnotationLoader.check_file(video_annot_file)
@@ -116,7 +132,7 @@ class AnnotationLoader:
         with open(video_annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
             for _, line in enumerate(
-                tqdm(lines, desc="Parsing annotation lines", disable=not self.verbose)
+                tqdm(lines, desc="Parsing annotation lines", disable=not verbose)
             ):
                 clip_id, category = line.split()[:2]
                 clip_id = int(clip_id.split(".")[0])
@@ -134,10 +150,15 @@ class AnnotationLoader:
         return clip_category_dct
 
     def load_volleyball_dataset(
-        self, videos_root: str, tracking_annot_root: str
+        self, videos_root: str, tracking_annot_root: str, verbose: Optional[bool] = None
     ) -> VolleyballData:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
         video_annot_dct = {}
-        for video_dir in os.listdir(videos_root):
+        for video_dir in tqdm(
+            os.listdir(videos_root), desc="Processing Videos", disable=not verbose
+        ):
             video_path = os.path.join(videos_root, video_dir)
             if not os.path.isdir(video_path):
                 print(
@@ -147,7 +168,7 @@ class AnnotationLoader:
             video_annot_file = os.path.join(video_path, "annotations.txt")
             video_id = int(video_dir)
             video_annot_dct[video_id] = self.load_video_annot(
-                video_annot_file, tracking_annot_root
+                video_annot_file, tracking_annot_root, verbose=False
             )
 
         return video_annot_dct
