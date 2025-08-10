@@ -190,7 +190,9 @@ class AnnotationLoader:
 
         return video_annot_dct
 
-    def save_pkl_version(self, verbose: Optional[bool] = None) -> None:
+    def save_pkl_version(
+        self, data: Optional[VolleyballData] = None, verbose: Optional[bool] = None
+    ) -> None:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print("[INFO] Saving Pickle Volleyball Dataset Version...")
@@ -202,7 +204,11 @@ class AnnotationLoader:
         )
         save_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
 
-        volleyball_data = self.load_volleyball_dataset(videos_root, tracking_annot_root)
+        volleyball_data = (
+            data
+            if data is not None
+            else self.load_volleyball_dataset(videos_root, tracking_annot_root)
+        )
 
         if os.path.exists(save_path):
             print(
