@@ -1,4 +1,4 @@
 PATH:
-  data_root: data
-  track_annot: volleyball_tracking_annotation
-  videos: videos_sample
+  data_root: data/volleyball
+  track_annot: volleyball_tracking_annotation/volleyball_tracking_annotation
+  videos: volleyball_/videos
