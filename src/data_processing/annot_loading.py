@@ -5,42 +5,14 @@ deep learning tasks.
 
 import os
 import pickle
-from typing import Dict, List, NamedTuple, TypedDict, Optional
+from typing import Optional
 import cv2 as cv
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
+from pydantic_models.data_repr import TrackingData, VolleyballData
 
 CONFIG = load_config()
-
-
-class TrackingData(NamedTuple):
-    """
-    TrackingData stores bounding box information for players and frames.
-    Attributes:
-        player_boxes (Dict[int, List[BoxInfo]]): A mapping from player IDs to
-            lists of BoxInfo objects representing bounding boxes associated with each player.
-        frame_boxes (Dict[int, List[BoxInfo]]): A mapping from frame indices to
-            lists of BoxInfo objects representing bounding boxes detected in each frame.
-    """
-
-    player_boxes: Dict[int, List[BoxInfo]]
-    frame_boxes: Dict[int, List[BoxInfo]]
-
-
-class ClipAnnotation(TypedDict):
-    """
-    A TypedDict representing the annotation for a video clip.
-    Attributes:
-        category (str): The category label for the clip.
-        tracking_annot_dct (TrackingData): The tracking annotation data associated with the clip.
-    """
-
-    category: str
-    tracking_annot_dct: TrackingData
-
-
-VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
 
 
 class AnnotationLoader:
