@@ -155,11 +155,16 @@ class AnnotationLoader:
                 disable=not verbose,
                 unit="player",
             ):
+                boxes_info = sorted(boxes_info, key=lambda box_info: box_info.frame_id)
                 boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
                     if box_info.frame_id not in frame_boxes_dct:
                         frame_boxes_dct[box_info.frame_id] = []
                     frame_boxes_dct[box_info.frame_id].append(box_info)
+
+            frame_boxes_dct = dict(
+                sorted(frame_boxes_dct.items(), key=lambda item: item[0])
+            )
 
             return TrackingData(
                 player_boxes=player_boxes_dct, frame_boxes=frame_boxes_dct
@@ -252,6 +257,10 @@ class AnnotationLoader:
                     ),
                 }
 
+        clip_category_dct = dict(
+            sorted(clip_category_dct.items(), key=lambda item: item[0])
+        )
+
         return clip_category_dct
 
     def load_volleyball_dataset(
@@ -291,6 +300,10 @@ class AnnotationLoader:
             video_annot_dct[video_id] = self.load_video_annot(
                 video_annot_file, tracking_annot_root, verbose=False
             )
+
+        video_annot_dct = dict(
+            sorted(video_annot_dct.items(), key=lambda item: item[0])
+        )
 
         return video_annot_dct
 
