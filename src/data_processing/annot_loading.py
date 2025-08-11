@@ -344,7 +344,7 @@ def main():
         os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"]),
     )
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
-    data = annot_loader.load_pkl_version(verbose=True)
+    data = annot_loader.load_pkl_version()
     print(data)
 
 
