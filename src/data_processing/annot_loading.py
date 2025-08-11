@@ -5,42 +5,15 @@ deep learning tasks.
 
 import os
 import pickle
-from typing import Dict, List, NamedTuple, TypedDict, Optional
+from typing import Optional
 import cv2 as cv
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import load_config
+from utils.path_utils import check_path
+from pydantic_models.data_repr import TrackingData, VolleyballData
 
 CONFIG = load_config()
-
-
-class TrackingData(NamedTuple):
-    """
-    TrackingData stores bounding box information for players and frames.
-    Attributes:
-        player_boxes (Dict[int, List[BoxInfo]]): A mapping from player IDs to
-            lists of BoxInfo objects representing bounding boxes associated with each player.
-        frame_boxes (Dict[int, List[BoxInfo]]): A mapping from frame indices to
-            lists of BoxInfo objects representing bounding boxes detected in each frame.
-    """
-
-    player_boxes: Dict[int, List[BoxInfo]]
-    frame_boxes: Dict[int, List[BoxInfo]]
-
-
-class ClipAnnotation(TypedDict):
-    """
-    A TypedDict representing the annotation for a video clip.
-    Attributes:
-        category (str): The category label for the clip.
-        tracking_annot_dct (TrackingData): The tracking annotation data associated with the clip.
-    """
-
-    category: str
-    tracking_annot_dct: TrackingData
-
-
-VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
 
 
 class AnnotationLoader:
@@ -80,8 +53,8 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Visualizing clip {clip_path} with annotations...")
-        AnnotationLoader.check_file(annot_file)
-        AnnotationLoader.check_dir(clip_path)
+        check_path(annot_file, path_type="file")
+        check_path(clip_path, path_type="dir")
 
         _, frame_boxes_dict = self.load_tracking_annot(annot_file)
 
@@ -126,7 +99,7 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Loading tracking annotation from file {annot_file}")
-        AnnotationLoader.check_file(annot_file)
+        check_path(annot_file, path_type="file")
 
         with open(annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -155,49 +128,20 @@ class AnnotationLoader:
                 disable=not verbose,
                 unit="player",
             ):
+                boxes_info = sorted(boxes_info, key=lambda box_info: box_info.frame_id)
                 boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
                     if box_info.frame_id not in frame_boxes_dct:
                         frame_boxes_dct[box_info.frame_id] = []
                     frame_boxes_dct[box_info.frame_id].append(box_info)
 
+            frame_boxes_dct = dict(
+                sorted(frame_boxes_dct.items(), key=lambda item: item[0])
+            )
+
             return TrackingData(
                 player_boxes=player_boxes_dct, frame_boxes=frame_boxes_dct
             )
-
-    @staticmethod
-    def check_dir(dir_path: str) -> None:
-        """
-        Checks if the provided path is a valid directory.
-        Args:
-            dir_path (str): The path to the directory to check.
-        Raises:
-            TypeError: If `dir_path` is not a string.
-            ValueError: If `dir_path` does not exist or is not a directory.
-        """
-
-        if not isinstance(dir_path, str):
-            raise TypeError(
-                f"directory must be a string, got {type(dir_path).__name__}"
-            )
-        if not os.path.isdir(dir_path):
-            raise ValueError(f"{dir_path} does not exist or is not a directory.")
-
-    @staticmethod
-    def check_file(file_path: str) -> None:
-        """
-        Validates that the provided file_path path is a string and points to an existing file.
-        Args:
-            file_path (str): Path to the file.
-        Raises:
-            TypeError: If `file_path` is not a string.
-            ValueError: If `file_path` does not exist or is not a file.
-        """
-
-        if not isinstance(file_path, str):
-            raise TypeError(f"file must be a string, got {type(file_path).__name__}")
-        if not os.path.isfile(file_path):
-            raise ValueError(f"{file_path} does not exist or is not a file.")
 
     def load_video_annot(
         self,
@@ -224,8 +168,8 @@ class AnnotationLoader:
         if verbose:
             print(f"[INFO] Loading Video Annotations from {video_annot_file}")
         clip_category_dct = {}
-        AnnotationLoader.check_file(video_annot_file)
-        AnnotationLoader.check_dir(tracking_annot_root)
+        check_path(video_annot_file, "file")
+        check_path(tracking_annot_root, "dir")
 
         with open(video_annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -252,6 +196,10 @@ class AnnotationLoader:
                     ),
                 }
 
+        clip_category_dct = dict(
+            sorted(clip_category_dct.items(), key=lambda item: item[0])
+        )
+
         return clip_category_dct
 
     def load_volleyball_dataset(
@@ -271,8 +219,8 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
-        AnnotationLoader.check_dir(videos_root)
-        AnnotationLoader.check_dir(tracking_annot_root)
+        check_path(videos_root, "dir")
+        check_path(tracking_annot_root, "dir")
         video_annot_dct = {}
         for video_dir in tqdm(
             os.listdir(videos_root),
@@ -291,6 +239,10 @@ class AnnotationLoader:
             video_annot_dct[video_id] = self.load_video_annot(
                 video_annot_file, tracking_annot_root, verbose=False
             )
+
+        video_annot_dct = dict(
+            sorted(video_annot_dct.items(), key=lambda item: item[0])
+        )
 
         return video_annot_dct
 
@@ -352,7 +304,7 @@ class AnnotationLoader:
 
         verbose = self.verbose if verbose is None else verbose
         data_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
-        AnnotationLoader.check_file(data_path)
+        check_path(data_path, "file")
         if verbose:
             print(f"[INFO] Loading Data from pickle file: {data_path}")
 
@@ -392,7 +344,7 @@ def main():
         os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"]),
     )
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
-    data = annot_loader.load_pkl_version(verbose=True)
+    data = annot_loader.load_pkl_version()
     print(data)
 
 
