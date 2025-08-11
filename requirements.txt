@@ -6,4 +6,8 @@ opencv-contrib-python
 
 # Other/General Dependencies
 pyyaml
-pickle
+
+# Modeling
+--index-url https://download.pytorch.org/whl/cu129
+torch
+torchvision
