@@ -53,8 +53,8 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Visualizing clip {clip_path} with annotations...")
-        AnnotationLoader.check_file(annot_file)
-        AnnotationLoader.check_dir(clip_path)
+        check_path(annot_file, path_type="file")
+        check_path(clip_path, path_type="dir")
 
         _, frame_boxes_dict = self.load_tracking_annot(annot_file)
 
@@ -99,7 +99,7 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print(f"[INFO] Loading tracking annotation from file {annot_file}")
-        AnnotationLoader.check_file(annot_file)
+        check_path(annot_file, path_type="file")
 
         with open(annot_file, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
