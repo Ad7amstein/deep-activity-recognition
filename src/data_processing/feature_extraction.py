@@ -1,8 +1,12 @@
 import os
-from typing import Optional
+from typing import Optional, Callable
+import cv2 as cv
+import numpy as np
 import torch
 from torch import nn
+from tqdm import tqdm
 from torchvision import transforms, models
+from pydantic_models.data_repr import VolleyballData
 
 
 class FeatureExtractor:
@@ -13,7 +17,7 @@ class FeatureExtractor:
 
     def prepare_model(
         self,
-        model: nn.Module,
+        model: Callable[..., nn.Module],
         img_level: bool = False,
         last_layer: int = -1,
         verbose: Optional[bool] = None,
@@ -51,6 +55,46 @@ class FeatureExtractor:
         self.model.eval()
 
         return self.model, self.transform
+
+    def extract_features(
+        self,
+        videos_root: str,
+        output_file: str,
+        volleyball_data: VolleyballData,
+        img_level: bool = False,
+        verbose: Optional[bool] = None,
+    ):
+        verbose = self.verbose if not verbose else verbose
+        if verbose:
+            print("[INFO] Extracting Features from Volleyball Dataset...")
+        for video_id, video_annot_dct in tqdm(
+            volleyball_data.items(),
+            desc="Processing Videos",
+            disable=not verbose,
+            unit="video",
+        ):
+            video_path = os.path.join(videos_root, str(video_id))
+            for clip_id, clip_annot_dct in video_annot_dct.items():
+                clip_path = os.path.join(video_path, str(clip_id))
+                for frame_id, boxes_info in clip_annot_dct["tracking_annot_dct"][
+                    1
+                ].items():
+                    img_path = os.path.join(clip_path, f"{frame_id}.jpg")
+                    img_rgb = cv.cvtColor(cv.imread(img_path), cv.COLOR_BGR2RGB)
+                    preprocessed_imgs = []
+
+                    if img_level:
+                        preprocessed_imgs.append(self.transform(img_rgb)) # type: ignore
+                    else:
+                        for box_info in boxes_info:
+                            x1, y1, x2, y2 = box_info.box
+                            cropped_img = img_rgb[x1:x2, y1:y2]
+                            preprocessed_imgs.append(
+                                self.transform(cropped_img).unsqueeze(0) # type: ignore
+                            )
+                    preprocessed_imgs = torch.cat(preprocessed_imgs)
+                    extracted_fetures = self.model(preprocessed_imgs) # type: ignore
+                    np.save(output_file, extracted_fetures.numpy())
 
 
 def main():
