@@ -50,7 +50,7 @@ class FeatureExtractor:
             )
 
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.model = nn.Sequential(*(list(model.children()[:last_layer])))
+        self.model = nn.Sequential(*(list(model.children())[:last_layer]))
         self.model.to(device)
         self.model.eval()
 
@@ -84,24 +84,22 @@ class FeatureExtractor:
                     preprocessed_imgs = []
 
                     if img_level:
-                        preprocessed_imgs.append(self.transform(img_rgb)) # type: ignore
+                        preprocessed_imgs.append(self.transform(img_rgb))  # type: ignore
                     else:
                         for box_info in boxes_info:
                             x1, y1, x2, y2 = box_info.box
                             cropped_img = img_rgb[x1:x2, y1:y2]
                             preprocessed_imgs.append(
-                                self.transform(cropped_img).unsqueeze(0) # type: ignore
+                                self.transform(cropped_img).unsqueeze(0)  # type: ignore
                             )
                     preprocessed_imgs = torch.cat(preprocessed_imgs)
-                    extracted_fetures = self.model(preprocessed_imgs) # type: ignore
+                    extracted_fetures = self.model(preprocessed_imgs)  # type: ignore
                     np.save(output_file, extracted_fetures.numpy())
 
 
 def main():
     """Entry Point for the Program."""
-    print(
-        f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module. Nothing to do ^_____^!"
-    )
+    print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
     feature_extractor = FeatureExtractor()
     model, preprocessor = feature_extractor.prepare_model(
         model=models.resnet50(pretrained=True)
