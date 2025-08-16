@@ -7,8 +7,8 @@ from torch.utils.data import Dataset
 from torchvision import transforms
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
-from enums import activity_label_category_dct
-from data_processing import AnnotationLoader
+from enums import activity_category_label_dct
+from data_processing.annot_loading import AnnotationLoader
 
 app_settings = get_settings()
 
@@ -35,7 +35,7 @@ class B1CustomDataset(Dataset):
             ]
         )
         self.volleyball_data = volleyball_data
-        self.activity_label_category_dct = activity_label_category_dct
+        self.activity_category_label_dct = activity_category_label_dct
         self.dataset = self.load_img_paths_lables()
 
     def load_img_paths_lables(self) -> List[Tuple[str, int]]:
@@ -59,7 +59,7 @@ class B1CustomDataset(Dataset):
                 for img_file in os.listdir(clip_path):
                     img_path = os.path.join(clip_path, img_file)
                     img_paths.append(
-                        (img_path, self.activity_label_category_dct[clip_category])
+                        (img_path, self.activity_category_label_dct[clip_category])
                     )
 
         return img_paths
