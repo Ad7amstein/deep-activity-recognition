@@ -17,6 +17,8 @@ class Settings(BaseSettings):
     PATH_DATA_ROOT: str = Field(...)
     PATH_TRACK_ANNOT_ROOT: str = Field(...)
     PATH_VIDEOS_ROOT: str = Field(...)
+    NUM_ACTIVITY_LABELS: int = Field(...)
+    NUM_ACTION_LABELS: int = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
