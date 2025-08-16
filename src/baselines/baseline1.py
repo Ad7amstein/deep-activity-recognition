@@ -9,7 +9,7 @@ from torchvision import transforms
 from torchvision.models import resnet50
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
-from enums import activity_category_label_dct
+from enums import activity_category2label_dct
 from data_processing.annot_loading import AnnotationLoader
 
 app_settings = get_settings()
@@ -37,7 +37,7 @@ class B1CustomDataset(Dataset):
             ]
         )
         self.volleyball_data = volleyball_data
-        self.activity_category_label_dct = activity_category_label_dct
+        self.activity_category_label_dct = activity_category2label_dct
         self.dataset = self.load_img_paths_lables(verbose=self.verbose)
 
     def load_img_paths_lables(
@@ -136,7 +136,7 @@ def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
 
-    volleyball_data = AnnotationLoader().load_volleyball_dataset()
+    volleyball_data = AnnotationLoader(verbose=True).load_pkl_version()
     b1_dataset = B1CustomDataset(volleyball_data=volleyball_data)
     print(b1_dataset[0])
 
