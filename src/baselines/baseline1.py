@@ -4,7 +4,9 @@ import cv2 as cv
 from tqdm import tqdm
 import torch
 from torch.utils.data import Dataset
+from torch import nn
 from torchvision import transforms
+from torchvision.models import resnet50
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
 from enums import activity_category_label_dct
@@ -109,6 +111,25 @@ class B1CustomDataset(Dataset):
         """
 
         return len(self.dataset)
+
+
+class B1Moedl(nn.Module):
+    def __init__(self, extract_features: bool = False, verbose: bool = False) -> None:
+        super().__init__()
+        self.verbose = verbose
+        if self.verbose:
+            print("[INFO] Initializing Baseline-1 Model...")
+        self.model_classifier = resnet50(pretrained=True)
+        self.extract_features = extract_features
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    def forward(self, x):
+        if self.extract_features:
+            model_feature_extractor = nn.Sequential(*(list(self.model_classifier.children())[:-1]))
+            model_feature_extractor.to(self.device)
+            model_feature_extractor.eval()
+            return model_feature_extractor(x)
+        return self.model_classifier(x)
 
 
 def main():
