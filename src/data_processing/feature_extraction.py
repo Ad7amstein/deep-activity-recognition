@@ -6,11 +6,15 @@ import torch
 from torch import nn
 from tqdm import tqdm
 from torchvision import transforms, models
-from pydantic_models.data_repr import VolleyballData, TrackingData, ClipAnnotation
+from pydantic_models import (  # pylint: disable=[W0611]
+    VolleyballData,
+    TrackingData,
+    ClipAnnotation,
+)
 from data_processing.annot_loading import AnnotationLoader
-from utils.config_utils import load_config
+from utils.config_utils import get_settings
 
-CONFIG = load_config()
+app_settings = get_settings()
 
 
 class FeatureExtractor:
@@ -30,29 +34,30 @@ class FeatureExtractor:
         verbose = self.verbose if not verbose else verbose
         if verbose:
             print("[INFO] Preparing Model and Preprocessor...")
-        if img_level:
-            self.transform = transforms.Compose(
-                [
-                    transforms.ToPILImage(),
-                    transforms.Resize((256, 256)),
-                    transforms.CenterCrop((224, 224)),
-                    transforms.ToTensor(),
-                    transforms.Normalize(
-                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                    ),
-                ]
-            )
-        else:
-            self.transform = transforms.Compose(
-                [
-                    transforms.ToPILImage(),
-                    transforms.Resize((256, 256)),
-                    transforms.ToTensor(),
-                    transforms.Normalize(
-                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
-                    ),
-                ]
-            )
+        if self.transform is None:
+            if img_level:
+                self.transform = transforms.Compose(
+                    [
+                        transforms.ToPILImage(),
+                        transforms.Resize((256, 256)),
+                        transforms.CenterCrop((224, 224)),
+                        transforms.ToTensor(),
+                        transforms.Normalize(
+                            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                        ),
+                    ]
+                )
+            else:
+                self.transform = transforms.Compose(
+                    [
+                        transforms.ToPILImage(),
+                        transforms.Resize((256, 256)),
+                        transforms.ToTensor(),
+                        transforms.Normalize(
+                            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                        ),
+                    ]
+                )
 
         self.model = nn.Sequential(*(list(model.children())[:last_layer]))
         self.model.to(self.device)
@@ -90,7 +95,7 @@ class FeatureExtractor:
                         1
                     ].items():
                         img_path = os.path.join(clip_path, f"{frame_id}.jpg")
-                        img_rgb = cv.cvtColor(cv.imread(img_path), cv.COLOR_BGR2RGB)
+                        img_rgb = cv.cvtColor(cv.imread(img_path), cv.COLOR_BGR2RGB)  # type: ignore # pylint: disable=[E1101]
                         preprocessed_imgs = []
 
                         if img_level:
@@ -123,7 +128,9 @@ def main():
     feature_extractor = FeatureExtractor()
     _, _ = feature_extractor.prepare_model(model=models.resnet50(pretrained=True))
     annot_loader = AnnotationLoader(verbose=True)
-    videos_root = os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"])
+    videos_root = os.path.join(
+        app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT
+    )
     feature_extractor.extract_features(
         videos_root,
         "out.npy",
