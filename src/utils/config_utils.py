@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     CLONING: Optional[str] = Field(None)
     # .yaml
     PATH_DATA_ROOT: str = Field(...)
-    PATH_VIDEOS_ROOT: str = Field(...)
+    PATH_TRACK_ANNOT_ROOT: str = Field(...)
     PATH_VIDEOS_ROOT: str = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
