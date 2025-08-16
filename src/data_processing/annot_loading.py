@@ -11,7 +11,7 @@ from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
-from pydantic_models.data_repr import TrackingData, VolleyballData
+from pydantic_models import TrackingData, VolleyballData
 
 app_settings = get_settings()
 
