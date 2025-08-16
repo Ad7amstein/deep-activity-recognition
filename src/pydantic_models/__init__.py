@@ -1,1 +1,1 @@
-from pydantic_models.data_repr import VolleyballData, TrackingData, ClipAnnotation
+from pydantic_models.data_repr import TrackingData, ClipAnnotation, VolleyballData
