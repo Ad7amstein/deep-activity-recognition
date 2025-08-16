@@ -202,21 +202,23 @@ class AnnotationLoader:
 
         return clip_category_dct
 
-    def load_volleyball_dataset(
-        self, videos_root: str, tracking_annot_root: str, verbose: Optional[bool] = None
-    ) -> VolleyballData:
+    def load_volleyball_dataset(self, verbose: Optional[bool] = None) -> VolleyballData:
         """
         Loads volleyball dataset annotations for all videos in the given root directory.
         Aggregates annotations and tracking data by video ID.
         Args:
-            videos_root (str): Root directory with video subdirectories.
-            tracking_annot_root (str): Root directory for tracking annotations.
             verbose (Optional[bool]): If True, prints progress info.
         Returns:
             VolleyballData: Mapping of video IDs to annotation data.
         """
 
         verbose = self.verbose if verbose is None else verbose
+        videos_root = os.path.join(
+            app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT
+        )
+        tracking_annot_root = os.path.join(
+            app_settings.PATH_DATA_ROOT, app_settings.PATH_TRACK_ANNOT_ROOT
+        )
         if verbose:
             print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
         check_path(videos_root, "dir")
@@ -263,19 +265,9 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print("[INFO] Saving Pickle Volleyball Dataset Version...")
-        videos_root = os.path.join(
-            app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT
-        )
-        tracking_annot_root = os.path.join(
-            app_settings.PATH_DATA_ROOT, app_settings.PATH_TRACK_ANNOT_ROOT
-        )
         save_path = os.path.join(app_settings.PATH_DATA_ROOT, "volleyball_dataset.pkl")
 
-        volleyball_data = (
-            data
-            if data is not None
-            else self.load_volleyball_dataset(videos_root, tracking_annot_root)
-        )
+        volleyball_data = data if data is not None else self.load_volleyball_dataset()
 
         if os.path.exists(save_path):
             print(
@@ -339,10 +331,7 @@ def main():
     )
 
     annot_loader.vis_clip(annot_file, clip_dir)
-    volleyballdata = annot_loader.load_volleyball_dataset(
-        os.path.join(app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT),
-        os.path.join(app_settings.PATH_DATA_ROOT, app_settings.PATH_TRACK_ANNOT_ROOT),
-    )
+    volleyballdata = annot_loader.load_volleyball_dataset()
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
     data = annot_loader.load_pkl_version()
     print(data)
