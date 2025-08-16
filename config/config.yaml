@@ -1,4 +1,3 @@
-PATH:
-  data_root: data/volleyball
-  track_annot: volleyball_tracking_annotation/volleyball_tracking_annotation
-  videos: volleyball_/videos
+PATH_DATA_ROOT: data/volleyball
+PATH_VIDEOS_ROOT: volleyball_tracking_annotation/volleyball_tracking_annotation
+PATH_VIDEOS_ROOT: volleyball_/videos
