@@ -1,13 +1,16 @@
 # Project Setup Dependencies
-setuptools
+setuptools==80.9.0
 
 # Data Preprocessing Dependencies
-opencv-contrib-python
+opencv-contrib-python==4.12.0.88
 
 # Other/General Dependencies
-pyyaml
+PyYAML==6.0.2
+pydantic==2.11.7
+pydantic-settings==2.10.1
+tqdm==4.67.1
 
 # Modeling
 --index-url https://download.pytorch.org/whl/cu129
-torch
-torchvision
+torch==2.8.0+cu129
+torchvision==0.23.0+cu129
