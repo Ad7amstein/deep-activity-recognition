@@ -14,3 +14,4 @@ tqdm==4.67.1
 --index-url https://download.pytorch.org/whl/cu129
 torch==2.8.0+cu129
 torchvision==0.23.0+cu129
+torchmetrics==1.8.1
