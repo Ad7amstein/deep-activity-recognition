@@ -1,6 +1,6 @@
 from enums.activity import ActivityEnum
 
-activity_label_category_dct = {
+activity_category_label_dct = {
     ActivityEnum.RIGHT_SET_CATEGORY.value: ActivityEnum.RIGHT_SET_LABEL.value,
     ActivityEnum.RIGHT_PASS_CATEGORY.value: ActivityEnum.RIGHT_PASS_LABEL.value,
     ActivityEnum.RIGHT_WINPOINT_CATEGORY.value: ActivityEnum.RIGHT_WINPOINT_LABEL.value,
