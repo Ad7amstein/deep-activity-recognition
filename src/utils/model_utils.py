@@ -71,11 +71,10 @@ def train_step(
         unit="batch",
     ):
         x, y = x.to(device), y.to(device)
-        y = y.type(torch.float)
 
         y_logits = model(x).squeeze(dim=1)
-        y_pred_probs = torch.softmax(y_logits, dim=0)
-        y_pred_labels = torch.round(y_pred_probs)
+        y_pred_probs = torch.softmax(y_logits, dim=1)
+        y_pred_labels = torch.round(torch.max(y_pred_probs, dim=0).values)
 
         loss = loss_fn(y_logits, y)
         train_loss += loss.item()
@@ -201,17 +200,17 @@ def train(
     f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
 
     results = {
-        ModelResults.TRAIN_LOSS: [],
-        ModelResults.TRAIN_ACCURACY: [],
-        ModelResults.TEST_LOSS: [],
-        ModelResults.TEST_ACCURACY: [],
-        ModelResults.TEST_PRECISION: [],
-        ModelResults.TEST_RECALL: [],
-        ModelResults.TEST_F1_SCORE: [],
+        ModelResults.TRAIN_LOSS.value: [],
+        ModelResults.TRAIN_ACCURACY.value: [],
+        ModelResults.TEST_LOSS.value: [],
+        ModelResults.TEST_ACCURACY.value: [],
+        ModelResults.TEST_PRECISION.value: [],
+        ModelResults.TEST_RECALL.value: [],
+        ModelResults.TEST_F1_SCORE.value: [],
     }
 
     for epoch in tqdm(
-        range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch"
+        range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch", position=0
     ):
         train_loss, train_acc = train_step(
             model=model,
@@ -248,13 +247,13 @@ def train(
                 )
             )
 
-        results[ModelResults.TRAIN_LOSS].append(train_loss)
-        results[ModelResults.TRAIN_ACCURACY].append(train_acc)
-        results[ModelResults.TEST_ACCURACY].append(test_loss)
-        results[ModelResults.TEST_ACCURACY].append(test_acc)
-        results[ModelResults.TEST_PRECISION].append(test_precision)
-        results[ModelResults.TEST_RECALL].append(test_recall)
-        results[ModelResults.TEST_F1_SCORE].append(test_f1_score)
+        results[ModelResults.TRAIN_LOSS.value].append(train_loss)
+        results[ModelResults.TRAIN_ACCURACY.value].append(train_acc)
+        results[ModelResults.TEST_ACCURACY.value].append(test_loss)
+        results[ModelResults.TEST_ACCURACY.value].append(test_acc)
+        results[ModelResults.TEST_PRECISION.value].append(test_precision)
+        results[ModelResults.TEST_RECALL.value].append(test_recall)
+        results[ModelResults.TEST_F1_SCORE.value].append(test_f1_score)
 
         checkpoint = {
             "epoch": epoch + 1,
@@ -351,11 +350,11 @@ def test(
     )
 
     results = {
-        ModelResults.TEST_LOSS: test_loss,
-        ModelResults.TEST_ACCURACY: test_acc,
-        ModelResults.TEST_PRECISION: test_precision,
-        ModelResults.TEST_RECALL: test_recall,
-        ModelResults.TEST_F1_SCORE: test_f1_score,
+        ModelResults.TEST_LOSS.value: test_loss,
+        ModelResults.TEST_ACCURACY.value: test_acc,
+        ModelResults.TEST_PRECISION.value: test_precision,
+        ModelResults.TEST_RECALL.value: test_recall,
+        ModelResults.TEST_F1_SCORE.value: test_f1_score,
     }
 
     if verbose:
