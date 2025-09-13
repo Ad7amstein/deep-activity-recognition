@@ -1,8 +1,31 @@
+"""Enumeration of activity categories and labels for classification."""
+
 import os
 from enum import Enum
 
 
 class ActivityEnum(Enum):
+    """Enumeration of activity categories and their corresponding labels.
+
+    Attributes:
+        RIGHT_SET_CATEGORY (str): String key for right-side set activity.
+        RIGHT_SPIKE_CATEGORY (str): String key for right-side spike activity.
+        RIGHT_PASS_CATEGORY (str): String key for right-side pass activity.
+        RIGHT_WINPOINT_CATEGORY (str): String key for right-side win point activity.
+        LEFT_SET_CATEGORY (str): String key for left-side set activity.
+        LEFT_SPIKE_CATEGORY (str): String key for left-side spike activity.
+        LEFT_PASS_CATEGORY (str): String key for left-side pass activity.
+        LEFT_WINPOINT_CATEGORY (str): String key for left-side win point activity.
+        RIGHT_SET_LABEL (int): Numeric label for right-side set activity.
+        RIGHT_SPIKE_LABEL (int): Numeric label for right-side spike activity.
+        RIGHT_PASS_LABEL (int): Numeric label for right-side pass activity.
+        RIGHT_WINPOINT_LABEL (int): Numeric label for right-side win point activity.
+        LEFT_SET_LABEL (int): Numeric label for left-side set activity.
+        LEFT_SPIKE_LABEL (int): Numeric label for left-side spike activity.
+        LEFT_PASS_LABEL (int): Numeric label for left-side pass activity.
+        LEFT_WINPOINT_LABEL (int): Numeric label for left-side win point activity.
+    """
+
     RIGHT_SET_CATEGORY = "r_set"
     RIGHT_SPIKE_CATEGORY = "r_spike"
     RIGHT_PASS_CATEGORY = "r-pass"
