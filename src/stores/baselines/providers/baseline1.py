@@ -48,7 +48,9 @@ class B1CustomDataset(Dataset):
         self.verbose = verbose
         self.mode = mode
         if self.verbose:
-            print(f"[INFO] Initializing Baseline 1 Custom Dataset (mode={self.mode})...")
+            print(
+                f"[INFO] Initializing Baseline 1 Custom Dataset (mode={self.mode})..."
+            )
 
         self.transform = transforms.Compose(
             [
@@ -96,8 +98,6 @@ class B1CustomDataset(Dataset):
             self.volleyball_data.items(),
             desc="Loading Dataset",
             unit="video",
-            disable=not verbose,
-            position=0
         ):
             if (
                 self.mode == ModelMode.TRAIN and video_id not in app_settings.TRAIN_IDS
@@ -112,12 +112,12 @@ class B1CustomDataset(Dataset):
                 app_settings.PATH_VIDEOS_ROOT,
                 str(video_id),
             )
+
             for clip_id, clip_annot in tqdm(
                 video_annot.items(),
                 desc=f"Loading V-{video_id} Clips",
                 unit="clip",
                 disable=not verbose,
-                position=1
             ):
                 clip_path = os.path.join(video_path, str(clip_id))
                 clip_category = clip_annot["category"]
@@ -125,10 +125,10 @@ class B1CustomDataset(Dataset):
                 num_files = len(img_files)
                 mid_idx = num_files // 2
                 img_files = img_files[
-                    mid_idx - self.num_right_frames : mid_idx + self.num_left_frames
+                    mid_idx - self.num_right_frames - 1 : mid_idx + self.num_left_frames
                 ]
 
-                for img_file in os.listdir(clip_path):
+                for img_file in img_files:
                     img_path = os.path.join(clip_path, img_file)
                     dataset.append(
                         (img_path, self.activity_category_label_dct[clip_category])
@@ -218,7 +218,6 @@ class B1Model(nn.Module):
             print(f"  - Extract features mode: {self.extract_features}")
             print(f"  - Backbone: ResNet-50 (pretrained)")
 
-
     def prepare_model(
         self, device: torch.device, verbose: Optional[bool] = None
     ) -> nn.Module:
@@ -239,8 +238,9 @@ class B1Model(nn.Module):
         resnet_model.fc = torch.nn.Linear(
             in_features=num_features, out_features=self.num_classes
         )
-        for param in resnet_model.parameters():
-            param.requires_grad = False
+        if B1Enum.FREEZE_BACKBONE.value:
+            for param in resnet_model.parameters():
+                param.requires_grad = False
 
         for param in resnet_model.fc.parameters():
             param.requires_grad = True
