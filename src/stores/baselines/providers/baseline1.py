@@ -8,7 +8,7 @@ import torch
 from torch.utils.data import Dataset
 from torch import nn
 from torchvision import transforms
-from torchvision.models import resnet50
+from torchvision.models import resnet50, ResNet50_Weights
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
 from enums import activity_category2label_dct, B1Enum, ModelMode
@@ -79,6 +79,7 @@ class B1CustomDataset(Dataset):
         Returns:
             List[Tuple[str, int]]: List of tuples containing (image_path, label).
         """
+
         verbose = self.verbose if not verbose else verbose
         if verbose:
             print("[INFO] Loading Image Paths and Labels...")
@@ -140,6 +141,7 @@ class B1CustomDataset(Dataset):
             IndexError: If index is out of range for the dataset.
             RuntimeError: If the image cannot be read.
         """
+
         try:
             img_path, label = self.dataset[index]
         except IndexError as exc:
@@ -162,6 +164,7 @@ class B1CustomDataset(Dataset):
         Returns:
             int: Number of dataset elements.
         """
+
         return len(self.dataset)
 
 
@@ -197,7 +200,9 @@ class B1Model(nn.Module):
         self.model = self.prepare_model(torch.device(self.device))
         self.extract_features = extract_features
 
-    def prepare_model(self, device: torch.device) -> nn.Module:
+    def prepare_model(
+        self, device: torch.device, verbose: Optional[bool] = None
+    ) -> nn.Module:
         """Prepare a ResNet-50 model for classification.
 
         Args:
@@ -206,8 +211,12 @@ class B1Model(nn.Module):
         Returns:
             nn.Module: The modified ResNet-50 model.
         """
-        resnet_model = resnet50(pretrained=True)
-        num_features = resnet50.fc.in_features
+
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            print("[INFO] Preparing Baseline-1 Model...")
+        resnet_model = resnet50(weights=ResNet50_Weights.DEFAULT, progress=verbose)
+        num_features = resnet_model.fc.in_features
         resnet_model.fc = torch.nn.Linear(
             in_features=num_features, out_features=self.num_classes
         )
@@ -241,7 +250,7 @@ def main():
     """Entry point for the program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
 
-    volleyball_data = AnnotationLoader(verbose=True).load_pkl_version()
+    volleyball_data = AnnotationLoader(verbose=True).load_pkl_version(verbose=True)
     b1_dataset = B1CustomDataset(volleyball_data=volleyball_data)
     print(b1_dataset[0])
 
