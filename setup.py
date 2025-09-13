@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="group activity recognition",
+    name="deep-activity-recognition",
     version="1.0.0",
     description="Hierarchical Deep Temporal Models for Group Activity Recognition.",
     author="Ad7amstein",
@@ -20,7 +20,6 @@ setup(
     ],
     python_requires=">=3.10",
     entry_points={
-        "console_scripts": [
-        ],
+        "console_scripts": [],
     },
 )
