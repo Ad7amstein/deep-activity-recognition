@@ -74,7 +74,7 @@ def train_step(
 
         y_logits = model(x).squeeze(dim=1)
         y_pred_probs = torch.softmax(y_logits, dim=1)
-        y_pred_labels = torch.round(torch.max(y_pred_probs, dim=0).values)
+        y_pred_labels = torch.round(torch.max(y_pred_probs, dim=1).values)
 
         loss = loss_fn(y_logits, y)
         train_loss += loss.item()
