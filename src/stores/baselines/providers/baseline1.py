@@ -67,6 +67,14 @@ class B1CustomDataset(Dataset):
         self.activity_category_label_dct = activity_category2label_dct
         self.dataset = self.load_img_paths_lables(verbose=self.verbose)
 
+        if self.verbose:
+            print("[CONFIG] Dataset Configuration:")
+            print(f"  - Mode: {self.mode}")
+            print(f"  - Image shape: {img_shape}")
+            print(f"  - Num right frames: {self.num_right_frames}")
+            print(f"  - Num left frames: {self.num_left_frames}")
+            print(f"  - Dataset size (after init): {len(self.dataset)}")
+
     def load_img_paths_lables(
         self, verbose: Optional[bool] = None
     ) -> List[Tuple[str, int]]:
@@ -201,6 +209,15 @@ class B1Model(nn.Module):
         self.num_classes = num_classes
         self.model = self.prepare_model(torch.device(self.device))
         self.extract_features = extract_features
+
+        if self.verbose:
+            print("[CONFIG] Model Configuration:")
+            print(f"  - Device: {self.device}")
+            print(f"  - Input features shape: {self.in_features}")
+            print(f"  - Number of classes: {self.num_classes}")
+            print(f"  - Extract features mode: {self.extract_features}")
+            print(f"  - Backbone: ResNet-50 (pretrained)")
+
 
     def prepare_model(
         self, device: torch.device, verbose: Optional[bool] = None
