@@ -25,6 +25,8 @@ class MultiStream:
         for stream in self.streams:
             stream.write(message)
 
+        self.flush()
+
     def flush(self):
         """Flush all streams to ensure output is written immediately."""
         for stream in self.streams:

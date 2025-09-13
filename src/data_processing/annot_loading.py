@@ -11,6 +11,7 @@ from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
+from utils.stream_utils import log_stream
 from pydantic_models import TrackingData, VolleyballData
 
 app_settings = get_settings()
@@ -340,4 +341,5 @@ def main():
 
 
 if __name__ == "__main__":
+    log_stream(log_file="annot_loading", prog="data_preprocessing", verbose=True, overwrite=True)
     main()
