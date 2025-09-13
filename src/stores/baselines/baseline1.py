@@ -26,6 +26,7 @@ class B1CustomDataset(Dataset):
         img_shape: Tuple[int, int] = B1Enum.FEATURES_SHAPE.value,
         num_right_frames: int = B1Enum.RIGHT_FRAMES.value,
         num_left_frames: int = B1Enum.LEFT_FRAMES.value,
+        mode: str = "train",
         verbose: bool = False,
     ) -> None:
         """Initialize the dataset with volleyball annotations.
