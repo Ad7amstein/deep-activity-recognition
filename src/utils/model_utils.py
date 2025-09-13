@@ -138,7 +138,6 @@ def test_step(
             unit="batch",
         ):
             x, y = x.to(device), y.to(device)
-            y = y.type(torch.float)
 
             test_pred_logits = model(x).squeeze(dim=1)
             test_pred_labels = torch.round(torch.sigmoid(test_pred_logits))
