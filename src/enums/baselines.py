@@ -18,6 +18,8 @@ class B1Enum(Enum):
     RIGHT_FRAMES = 0
     LEFT_FRAMES = 0
     TRAIN_EPOCHS = 5
+    BATCH_SIZE = 32
+    LR = 0.1
 
 
 def main():
