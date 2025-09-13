@@ -1,10 +1,10 @@
 """Enumeration of model training and evaluation result keys."""
 
 import os
-from enum import StrEnum
+from enum import Enum
 
 
-class ModelResults(StrEnum):
+class ModelResults(Enum):
     """String enumeration of training and evaluation result keys.
 
     Attributes:
@@ -26,7 +26,7 @@ class ModelResults(StrEnum):
     TEST_F1_SCORE = "test_f1_score"
 
 
-class ModelMode(StrEnum):
+class ModelMode(Enum):
     """Enumeration of model execution modes.
 
     Attributes:
