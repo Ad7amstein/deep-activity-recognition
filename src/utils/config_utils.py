@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     PATH_VIDEOS_ROOT: str = Field(...)
     NUM_ACTIVITY_LABELS: int = Field(...)
     NUM_ACTION_LABELS: int = Field(...)
+    EPOCHS: int = Field(...)
+    PATH_MODELS: str = Field(...)
+    PATH_MODELS_CHECKPOINTS: str = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
