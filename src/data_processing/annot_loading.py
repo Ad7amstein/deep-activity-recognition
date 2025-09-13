@@ -25,6 +25,7 @@ class AnnotationLoader:
     def __init__(self, verbose: bool = False) -> None:
         """
         Initializes the Annotation Loader object.
+
         Args:
             verbose (bool, optional): If True, enables verbose output. Defaults to False.
         """
@@ -42,6 +43,7 @@ class AnnotationLoader:
     ) -> None:
         """
         Visualizes annotated bounding boxes for each frame in a video clip.
+
         Args:
             annot_file (str): Path to the annotation file containing tracking data.
             clip_path (str): Directory path containing the video frames as images.
@@ -85,6 +87,7 @@ class AnnotationLoader:
     ) -> TrackingData:
         """
         Loads tracking annotation data from a specified file and organizes it by player and frame.
+
         Args:
             annot_file (str): Path to the annotation file to be loaded.
             verbose (Optional[bool], optional): If True, prints progress and information messages.
@@ -129,7 +132,6 @@ class AnnotationLoader:
                 unit="player",
             ):
                 boxes_info = sorted(boxes_info, key=lambda box_info: box_info.frame_id)
-                boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
                     if box_info.frame_id not in frame_boxes_dct:
                         frame_boxes_dct[box_info.frame_id] = []
