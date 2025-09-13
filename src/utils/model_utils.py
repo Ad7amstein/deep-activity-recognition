@@ -262,7 +262,7 @@ def train(
 
         results[ModelResults.TRAIN_LOSS.value].append(train_loss)
         results[ModelResults.TRAIN_ACCURACY.value].append(train_acc)
-        results[ModelResults.TEST_ACCURACY.value].append(test_loss)
+        results[ModelResults.TEST_LOSS.value].append(test_loss)
         results[ModelResults.TEST_ACCURACY.value].append(test_acc)
         results[ModelResults.TEST_PRECISION.value].append(test_precision)
         results[ModelResults.TEST_RECALL.value].append(test_recall)
