@@ -3,40 +3,61 @@ Utilities for loading and handling configuration files.
 """
 
 import os
-import yaml
+from pathlib import Path
+from typing import Optional
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 
 
-def load_config(config_path: str = "config/config.yaml", verbose: bool = False):
-    """
-    Loads configuration settings from a YAML file.
-    Args:
-        config_path (str): Path to the YAML configuration file. Defaults to "config/config.yaml".
-        verbose (bool): If True, prints logging information. Defaults to False.
-    Returns:
-        dict: Configuration parameters loaded from the YAML file.
-    Raises:
-        FileNotFoundError: If the configuration file does not exist at the specified path.
-        ValueError: If there is an error parsing the YAML file.
-    """
+class Settings(BaseSettings):
+    # .env
+    GH_PAT: Optional[str] = Field(None)
+    CLONING: Optional[str] = Field(None)
+    # .yaml
+    PATH_DATA_ROOT: str = Field(...)
+    PATH_TRACK_ANNOT_ROOT: str = Field(...)
+    PATH_VIDEOS_ROOT: str = Field(...)
+    NUM_ACTIVITY_LABELS: int = Field(...)
+    NUM_ACTION_LABELS: int = Field(...)
 
-    if verbose:
-        print(f"\n[INFO] Loading Configurations from {config_path}...")
-    try:
-        with open(config_path, "r", encoding="utf-8") as f:
-            config = yaml.safe_load(f)
-        return config
-    except FileNotFoundError as exc:
-        raise FileNotFoundError(f"Configuration file not found: {config_path}") from exc
-    except yaml.YAMLError as e:
-        raise ValueError(f"Error parsing YAML file: {e}") from e
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls,
+        init_settings,
+        env_settings,
+        dotenv_settings,
+        file_secret_settings,
+    ):
+        return (
+            init_settings,  # kwargs passed directly to Settings()
+            env_settings,  # Environment variables
+            dotenv_settings,  # .env file
+            YamlConfigSettingsSource(
+                settings_cls,
+                yaml_file=Path("config/config.yaml"),
+                yaml_file_encoding="utf-8",
+            ),  # YAML file
+            file_secret_settings,  # Secrets from files
+        )
+
+
+def get_settings():
+    return Settings()  # type: ignore
 
 
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.\n")
-    config = load_config(verbose=True)
-    print(f"Config Type: {type(config)}")
-    print(f"Config Items:\n{config.items()}")
+    # Usage
+
+    settings = get_settings()
+
+    print(settings.PATH_DATA_ROOT)  # From config.yaml
+    print(settings.PATH_VIDEOS_ROOT)  # From config.yaml
+    print(settings.GH_PAT)  # From .env
 
 
 if __name__ == "__main__":
