@@ -1,7 +1,9 @@
 """Training and evaluation utilities for PyTorch models."""
 
 import os
+import time
 from typing import Dict, Any
+from matplotlib import pyplot as plt
 from tqdm import tqdm
 import torch
 from torch import nn
@@ -31,7 +33,7 @@ def print_train_time(start: float, end: float, device: torch.device) -> float:
     """
 
     total_time = end - start
-    print(f"Train time on {device}: {total_time:.3f} seconds")
+    print(f"Total Train time on {device}: {total_time:.3f} seconds")
     return total_time
 
 
@@ -61,10 +63,11 @@ def train_step(
 
     model.to(device)
     acc_fn.to(device)
+    acc_fn.reset()
     model.train()
     train_loss, train_acc = 0, 0
 
-    for _, (x, y) in tqdm(
+    for batch_idx, (x, y) in tqdm(
         enumerate(data_loader),
         desc="Train Batches",
         disable=not verbose,
@@ -74,20 +77,31 @@ def train_step(
 
         y_logits = model(x).squeeze(dim=1)
         y_pred_probs = torch.softmax(y_logits, dim=1)
-        y_pred_labels = torch.round(torch.max(y_pred_probs, dim=1).values)
+        y_pred_labels = torch.argmax(y_pred_probs, dim=1)
 
         loss = loss_fn(y_logits, y)
         train_loss += loss.item()
 
-        acc = acc_fn(y_pred_labels, y)
-        train_acc += acc.item()
+        acc_fn.update(y_pred_labels, y)
+        train_acc = acc_fn.compute().item() * 100
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
+        if verbose and batch_idx % 100 == 0:
+            print(
+                "".join(
+                    [
+                        f"\t[BATCH {batch_idx}/{len(data_loader)}] ",
+                        f"Loss: {loss.item():.4f} | Acc: {train_acc:.2f}%",
+                    ]
+                )
+            )
+
     train_loss /= len(data_loader)
-    train_acc /= len(data_loader)
+    train_acc = acc_fn.compute().item()
+
     return train_loss, train_acc
 
 
@@ -145,20 +159,17 @@ def test_step(
             loss = loss_fn(test_pred_logits, y)
             test_loss += loss.item()
 
-            test_acc += acc_fn(test_pred_labels, y).item()
+            acc_fn.update(test_pred_labels, y)
 
-            precision = precision_fn(test_pred_labels, y)
-            test_precision += precision.item()
-            recall = recall_fn(test_pred_labels, y)
-            test_recall += recall.item()
-            f1_score = f1_score_fn(test_pred_labels, y)
-            test_f1_score += f1_score.item()
+            precision_fn.update(test_pred_labels, y)
+            recall_fn.update(test_pred_labels, y)
+            f1_score_fn.update(test_pred_labels, y)
 
         test_loss /= len(data_loader)
-        test_acc /= len(data_loader)
-        test_precision /= len(data_loader)
-        test_recall /= len(data_loader)
-        test_f1_score /= len(data_loader)
+        test_acc = acc_fn.compute().item()
+        test_precision = precision_fn.compute().item()
+        test_recall = recall_fn.compute().item()
+        test_f1_score = f1_score_fn.compute().item()
     return test_loss, test_acc, test_precision, test_recall, test_f1_score
 
 
@@ -194,7 +205,7 @@ def train(
     """
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
-    precision_fn=MulticlassPrecision(num_classes=num_classes)
+    precision_fn = MulticlassPrecision(num_classes=num_classes)
     recall_fn = MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS)
     f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
 
@@ -208,9 +219,12 @@ def train(
         ModelResults.TEST_F1_SCORE.value: [],
     }
 
+    total_start = time.time()
     for epoch in tqdm(
-        range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch", position=0
+        range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch"
     ):
+        if verbose:
+            print(f"[INFO] Epoch {epoch+1}/{epochs}")
         train_loss, train_acc = train_step(
             model=model,
             data_loader=train_dataloader,
@@ -218,7 +232,7 @@ def train(
             acc_fn=acc_fn,
             optimizer=optimizer,
             device=device,
-            verbose=False,
+            verbose=True,
         )
 
         test_loss, test_acc, test_precision, test_recall, test_f1_score = test_step(
@@ -230,7 +244,7 @@ def train(
             precision_fn=precision_fn,
             recall_fn=recall_fn,
             f1_score_fn=f1_score_fn,
-            verbose=False,
+            verbose=True,
         )
 
         if verbose:
@@ -262,19 +276,70 @@ def train(
         }
 
         save_checkpoint(
-            save_path=app_settings.PATH_MODELS_CHECKPOINTS,
+            save_path=os.path.join(
+                app_settings.PATH_MODELS, app_settings.PATH_MODELS_CHECKPOINTS
+            ),
             file_name=model.__class__.__name__,
             checkpoint=checkpoint,
             verbose=True,
         )
 
+    total_end = time.time()
+    if verbose:
+        _ = print_train_time(total_start, total_end, device)
+
     save_checkpoint(
-        save_path=app_settings.PATH_MODELS_CHECKPOINTS,
+        save_path=os.path.join(
+            app_settings.PATH_MODELS, app_settings.PATH_MODELS_CHECKPOINTS
+        ),
         file_name=model.__class__.__name__,
         checkpoint=checkpoint,
     )
 
+    plot_results(
+        results=results,
+        save_path=os.path.join(app_settings.PATH_ASSETS, app_settings.PATH_METRICS),
+    )
+
     return results
+
+
+def plot_results(results: dict, save_path: str):
+    os.makedirs(save_path, exist_ok=True)
+
+    for name, vals in results.items():
+        if not isinstance(vals, (list, tuple)) or len(vals) == 0:
+            continue
+
+        cleaned = []
+        for v in vals:
+            try:
+                cleaned.append(float(v))
+            except Exception:
+                continue
+        if len(cleaned) == 0:
+            continue
+
+        lower_name = name.lower()
+        if any(k in lower_name for k in ("accuracy", "precision", "recall", "f1")):
+            plot_vals = [v * 100 for v in cleaned]
+            ylabel = "Percentage (%)"
+        elif "loss" in lower_name:
+            plot_vals = cleaned
+            ylabel = "Loss"
+        else:
+            plot_vals = cleaned
+            ylabel = "Value"
+
+        fig, ax = plt.subplots()
+        ax.plot(range(1, len(plot_vals) + 1), plot_vals, marker="o")
+        ax.set_title(name)
+        ax.set_xlabel("Epoch")
+        ax.set_ylabel(ylabel)
+        ax.grid(True)
+
+        fig.savefig(os.path.join(save_path, f"{name}_plot.png"), dpi=300)
+        plt.close(fig)
 
 
 def save_checkpoint(
@@ -290,10 +355,11 @@ def save_checkpoint(
         verbose (bool, optional): If True, prints confirmation message. Defaults to False.
     """
 
-    full_save_path = os.path.join(
-        save_path, f"{file_name}_epoch_{checkpoint['epoch'] + 1}.pth"
+    os.makedirs(save_path, exist_ok=True)
+    torch.save(
+        checkpoint,
+        os.path.join(save_path, f"{file_name}_epoch_{checkpoint['epoch'] + 1}.pth"),
     )
-    torch.save(checkpoint, full_save_path)
     if verbose:
         print(f"Checkpoint saved for epoch {checkpoint['epoch'] + 1}\n")
 
