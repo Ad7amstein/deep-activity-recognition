@@ -174,12 +174,7 @@ def train(
     device: torch.device = (
         torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     ),
-    acc_fn: nn.Module = MulticlassAccuracy(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS
-    ),
-    precision_fn=MulticlassPrecision(num_classes=app_settings.NUM_ACTIVITY_LABELS),
-    recall_fn=MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS),
-    f1_score_fn=MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS),
+    num_classes=app_settings.NUM_ACTIVITY_LABELS,
     verbose: bool = False,
 ):
     """Runs the full training loop with evaluation and checkpointing.
@@ -193,10 +188,6 @@ def train(
         epochs (int, optional): Number of training epochs. Defaults to app_settings.EPOCHS.
         device (torch.device, optional): Device for training.
             Defaults to CUDA if available, else CPU.
-        acc_fn (nn.Module, optional): Accuracy metric function.
-        precision_fn (nn.Module, optional): Precision metric function.
-        recall_fn (nn.Module, optional): Recall metric function.
-        f1_score_fn (nn.Module, optional): F1-score metric function.
         verbose (bool, optional): If True, prints progress. Defaults to False.
 
     Returns:
@@ -204,14 +195,19 @@ def train(
         recall, F1-score) for all epochs.
     """
 
+    acc_fn = MulticlassAccuracy(num_classes=num_classes)
+    precision_fn=MulticlassPrecision(num_classes=num_classes)
+    recall_fn = MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+    f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+
     results = {
-        ModelResults.TRAIN_LOSS.value: [],
-        ModelResults.TRAIN_ACCURACY.value: [],
-        ModelResults.TEST_LOSS.value: [],
-        ModelResults.TEST_ACCURACY.value: [],
-        ModelResults.TEST_PRECISION.value: [],
-        ModelResults.TEST_RECALL.value: [],
-        ModelResults.TEST_F1_SCORE.value: [],
+        ModelResults.TRAIN_LOSS: [],
+        ModelResults.TRAIN_ACCURACY: [],
+        ModelResults.TEST_LOSS: [],
+        ModelResults.TEST_ACCURACY: [],
+        ModelResults.TEST_PRECISION: [],
+        ModelResults.TEST_RECALL: [],
+        ModelResults.TEST_F1_SCORE: [],
     }
 
     for epoch in tqdm(
@@ -252,13 +248,13 @@ def train(
                 )
             )
 
-        results[ModelResults.TRAIN_LOSS.value].append(train_loss)
-        results[ModelResults.TRAIN_ACCURACY.value].append(train_acc)
-        results[ModelResults.TEST_ACCURACY.value].append(test_loss)
-        results[ModelResults.TEST_ACCURACY.value].append(test_acc)
-        results[ModelResults.TEST_PRECISION.value].append(test_precision)
-        results[ModelResults.TEST_RECALL.value].append(test_recall)
-        results[ModelResults.TEST_F1_SCORE.value].append(test_f1_score)
+        results[ModelResults.TRAIN_LOSS].append(train_loss)
+        results[ModelResults.TRAIN_ACCURACY].append(train_acc)
+        results[ModelResults.TEST_ACCURACY].append(test_loss)
+        results[ModelResults.TEST_ACCURACY].append(test_acc)
+        results[ModelResults.TEST_PRECISION].append(test_precision)
+        results[ModelResults.TEST_RECALL].append(test_recall)
+        results[ModelResults.TEST_F1_SCORE].append(test_f1_score)
 
         checkpoint = {
             "epoch": epoch + 1,
@@ -297,11 +293,11 @@ def save_checkpoint(
     """
 
     full_save_path = os.path.join(
-        save_path, f"{file_name}_epoch_{checkpoint["epoch"] + 1}.pth"
+        save_path, f"{file_name}_epoch_{checkpoint['epoch'] + 1}.pth"
     )
     torch.save(checkpoint, full_save_path)
     if verbose:
-        print(f"Checkpoint saved for epoch {checkpoint["epoch"] + 1}\n")
+        print(f"Checkpoint saved for epoch {checkpoint['epoch'] + 1}\n")
 
 
 def test(
@@ -355,11 +351,11 @@ def test(
     )
 
     results = {
-        ModelResults.TEST_LOSS.value: test_loss,
-        ModelResults.TEST_ACCURACY.value: test_acc,
-        ModelResults.TEST_PRECISION.value: test_precision,
-        ModelResults.TEST_RECALL.value: test_recall,
-        ModelResults.TEST_F1_SCORE.value: test_f1_score,
+        ModelResults.TEST_LOSS: test_loss,
+        ModelResults.TEST_ACCURACY: test_acc,
+        ModelResults.TEST_PRECISION: test_precision,
+        ModelResults.TEST_RECALL: test_recall,
+        ModelResults.TEST_F1_SCORE: test_f1_score,
     }
 
     if verbose:
