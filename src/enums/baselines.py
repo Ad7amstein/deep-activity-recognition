@@ -15,11 +15,12 @@ class B1Enum(Enum):
     """
 
     FEATURES_SHAPE = (224, 224)
-    RIGHT_FRAMES = 0
-    LEFT_FRAMES = 0
-    TRAIN_EPOCHS = 5
-    BATCH_SIZE = 32
+    RIGHT_FRAMES = 5
+    LEFT_FRAMES = 4
+    TRAIN_EPOCHS = 3
+    BATCH_SIZE = 64
     LR = 0.1
+    FREEZE_BACKBONE = False
 
 
 def main():
