@@ -11,7 +11,7 @@ from torchvision import transforms
 from torchvision.models import resnet50
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
-from enums import activity_category2label_dct, B1Enum
+from enums import activity_category2label_dct, B1Enum, ModelMode
 from data_processing.annot_loading import AnnotationLoader
 
 app_settings = get_settings()
@@ -26,7 +26,7 @@ class B1CustomDataset(Dataset):
         img_shape: Tuple[int, int] = B1Enum.FEATURES_SHAPE.value,
         num_right_frames: int = B1Enum.RIGHT_FRAMES.value,
         num_left_frames: int = B1Enum.LEFT_FRAMES.value,
-        mode: str = "train",
+        mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
         """Initialize the dataset with volleyball annotations.
@@ -48,6 +48,8 @@ class B1CustomDataset(Dataset):
         self.verbose = verbose
         if self.verbose:
             print("[INFO] Initializing Baseline 1 Custom Dataset...")
+
+        self.mode = mode
         self.transform = transforms.Compose(
             [
                 transforms.ToPILImage(),
@@ -87,6 +89,14 @@ class B1CustomDataset(Dataset):
             unit="video",
             disable=not verbose,
         ):
+            if (
+                self.mode == ModelMode.TRAIN and clip_id not in app_settings.TRAIN_IDS
+            ) or (
+                self.mode == ModelMode.TEST
+                and clip_id not in app_settings.VALIDATION_IDS
+            ):
+                continue
+
             video_path = os.path.join(
                 app_settings.PATH_DATA_ROOT,
                 app_settings.PATH_VIDEOS_ROOT,
