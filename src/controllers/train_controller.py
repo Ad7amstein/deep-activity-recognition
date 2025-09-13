@@ -52,7 +52,7 @@ def main():
     """Entry Point for the Program."""
     log_stream(log_file="b1", prog="train", verbose=True, overwrite=True)
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = TrainController(B1CustomDataset, B1Model())
+    train_controller = TrainController(B1CustomDataset, B1Model(verbose=True))
     train_controller.train()
 
 
