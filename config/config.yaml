@@ -2,7 +2,9 @@ PATH_DATA_ROOT: "data/volleyball"
 PATH_TRACK_ANNOT_ROOT: "volleyball_tracking_annotation/volleyball_tracking_annotation"
 PATH_VIDEOS_ROOT: "volleyball_/videos"
 PATH_MODELS: "models"
-PATH_MODELS_CHECKPOINTS: "models/checkpoints"
+PATH_MODELS_CHECKPOINTS: "checkpoints"
+PATH_ASSETS: "assets"
+PATH_METRICS: "metrics_plots"
 NUM_ACTIVITY_LABELS: 8
 NUM_ACTION_LABELS: 9
 EPOCHS: 5
