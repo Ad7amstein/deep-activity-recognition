@@ -46,10 +46,10 @@ class B1CustomDataset(Dataset):
 
         super().__init__()
         self.verbose = verbose
-        if self.verbose:
-            print("[INFO] Initializing Baseline 1 Custom Dataset...")
-
         self.mode = mode
+        if self.verbose:
+            print(f"[INFO] Initializing Baseline 1 Custom Dataset (mode={self.mode})...")
+
         self.transform = transforms.Compose(
             [
                 transforms.ToPILImage(),
@@ -89,12 +89,13 @@ class B1CustomDataset(Dataset):
             desc="Loading Dataset",
             unit="video",
             disable=not verbose,
+            position=0
         ):
             if (
-                self.mode == ModelMode.TRAIN and clip_id not in app_settings.TRAIN_IDS
+                self.mode == ModelMode.TRAIN and video_id not in app_settings.TRAIN_IDS
             ) or (
                 self.mode == ModelMode.TEST
-                and clip_id not in app_settings.VALIDATION_IDS
+                and video_id not in app_settings.VALIDATION_IDS
             ):
                 continue
 
@@ -105,9 +106,10 @@ class B1CustomDataset(Dataset):
             )
             for clip_id, clip_annot in tqdm(
                 video_annot.items(),
-                desc="Loading Clips",
+                desc=f"Loading V-{video_id} Clips",
                 unit="clip",
                 disable=not verbose,
+                position=1
             ):
                 clip_path = os.path.join(video_path, str(clip_id))
                 clip_category = clip_annot["category"]
