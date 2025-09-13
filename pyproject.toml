@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deep-activity-recognition"
+version = "1.0.0"
+description = "Hierarchical Deep Temporal Models for Group Activity Recognition."
+authors = [
+    { name="Adham Allam", email="adham32003200@gmail.com" },
+]
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+license-files = ["LICEN[CS]E*", "AUTHORS.md"]
+keywords = ["computer-vision", "classification", "activity-recognition", "fine-tuning"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Setup Tools",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/Ad7amstein/deep-activity-recognition"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+# Example: mycli = "my_package.cli:main"
