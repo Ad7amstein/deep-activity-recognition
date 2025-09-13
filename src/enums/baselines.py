@@ -17,7 +17,7 @@ class B1Enum(Enum):
     FEATURES_SHAPE = (224, 224)
     RIGHT_FRAMES = 5
     LEFT_FRAMES = 4
-    TRAIN_EPOCHS = 3
+    TRAIN_EPOCHS = 10
     BATCH_SIZE = 64
     LR = 0.1
     FREEZE_BACKBONE = False
