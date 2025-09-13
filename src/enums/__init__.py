@@ -1,6 +1,6 @@
 from enums.activity import ActivityEnum
 from enums.baselines import B1Enum
-from enums.model_results import ModelResults
+from enums.model import ModelResults, ModelMode
 
 activity_category2label_dct = {
     ActivityEnum.RIGHT_SET_CATEGORY.value: ActivityEnum.RIGHT_SET_LABEL.value,
