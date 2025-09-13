@@ -40,7 +40,7 @@ class MultiStream:
         return any(hasattr(s, "isatty") and s.isatty() for s in self.streams)
 
 
-def log_stream(log_file, prog, verbose: bool = False, overwrite: bool = True):
+def log_stream(log_file: str, prog: str, verbose: bool = False, overwrite: bool = True):
     """Redirect stdout to both a log file and optionally the console.
 
     Args:
