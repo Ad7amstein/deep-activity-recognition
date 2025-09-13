@@ -1,27 +1,54 @@
 import os
 from typing import Type
+import torch
 from torch import nn
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
 from controllers.base_controller import BaseController
-from utils.model_utils import train
 from data_processing import AnnotationLoader
+from utils.model_utils import train
+from enums.model import ModelMode
+from enums.baselines import B1Enum
+from stores.baselines.providers import B1CustomDataset, B1Model
 
 
 class TrainController(BaseController):
-    def __init__(self, DatasetClass: Type[Dataset]) -> None:
+    def __init__(self, DatasetClass, model: nn.Module) -> None:
         super().__init__()
+        self.model = model
         self.volleyball_data = AnnotationLoader(verbose=True).load_pkl_version()
         self.DatasetClass = DatasetClass
+        self.loss_fn = nn.CrossEntropyLoss()
+        self.optimizer = torch.optim.SGD(params=model.parameters(), lr=B1Enum.LR.value)
 
-    def train(self, model: nn.Module):
-        train_dataset = self.DatasetClass()
+    def train(self):
+        train_dataset = self.DatasetClass(
+            volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=True
+        )
+        test_dataset = self.DatasetClass(
+            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=True
+        )
+        train_loader = DataLoader(
+            train_dataset, batch_size=B1Enum.BATCH_SIZE.value, shuffle=True
+        )
+        test_loader = DataLoader(
+            test_dataset, batch_size=B1Enum.BATCH_SIZE.value, shuffle=False
+        )
+        train(
+            model=self.model,
+            train_dataloader=train_loader,
+            test_dataloader=test_loader,
+            loss_fn=self.loss_fn,
+            optimizer=self.optimizer,
+            epochs=B1Enum.TRAIN_EPOCHS.value,
+            verbose=True,
+        )
 
 
 def main():
     """Entry Point for the Program."""
-    print(
-        f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module. Nothing to do ^_____^!"
-    )
+    print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
+    train_controller = TrainController(B1CustomDataset, B1Model())
 
 
 if __name__ == "__main__":
