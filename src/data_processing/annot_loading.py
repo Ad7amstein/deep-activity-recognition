@@ -9,11 +9,11 @@ from typing import Optional
 import cv2 as cv
 from tqdm import tqdm
 from data_processing.box_info import BoxInfo
-from utils.config_utils import load_config
+from utils.config_utils import get_settings
 from utils.path_utils import check_path
-from pydantic_models.data_repr import TrackingData, VolleyballData
+from pydantic_models import TrackingData, VolleyballData
 
-CONFIG = load_config()
+app_settings = get_settings()
 
 
 class AnnotationLoader:
@@ -60,25 +60,25 @@ class AnnotationLoader:
 
         for frame_id, boxes_info in frame_boxes_dict.items():
             img_path = os.path.join(clip_path, f"{frame_id}.{frame_fmt}")
-            img = cv.imread(img_path)
+            img = cv.imread(img_path)  # pylint: disable=[E1101]
             clip_name = "/".join(clip_path.split("\\")[-2:])
 
             for box_info in boxes_info:
-                cv.rectangle(img, box_info.box[:2], box_info.box[2:], (0, 0, 255), 2)
-                cv.putText(
-                    img,
+                cv.rectangle(img, box_info.box[:2], box_info.box[2:], (0, 0, 255), 2)  # type: ignore # pylint: disable=[E1101]
+                cv.putText(  # type: ignore # pylint: disable=[E1101]
+                    img,  # type: ignore
                     box_info.category,
                     box_info.box[:2],
-                    cv.FONT_HERSHEY_SIMPLEX,
+                    cv.FONT_HERSHEY_SIMPLEX,  # pylint: disable=[E1101]
                     0.5,
                     (0, 255, 0),
                     2,
                 )
 
-            cv.imshow(f"Tracking Annotation for clip {clip_name}", img)
-            cv.waitKey(200)
+            cv.imshow(f"Tracking Annotation for clip {clip_name}", img)  # type: ignore # pylint: disable=[E1101]
+            cv.waitKey(200)  # pylint: disable=[E1101]
 
-        cv.destroyAllWindows()
+        cv.destroyAllWindows()  # pylint: disable=[E1101]
 
     def load_tracking_annot(
         self, annot_file: str, verbose: Optional[bool] = None
@@ -202,21 +202,23 @@ class AnnotationLoader:
 
         return clip_category_dct
 
-    def load_volleyball_dataset(
-        self, videos_root: str, tracking_annot_root: str, verbose: Optional[bool] = None
-    ) -> VolleyballData:
+    def load_volleyball_dataset(self, verbose: Optional[bool] = None) -> VolleyballData:
         """
         Loads volleyball dataset annotations for all videos in the given root directory.
         Aggregates annotations and tracking data by video ID.
         Args:
-            videos_root (str): Root directory with video subdirectories.
-            tracking_annot_root (str): Root directory for tracking annotations.
             verbose (Optional[bool]): If True, prints progress info.
         Returns:
             VolleyballData: Mapping of video IDs to annotation data.
         """
 
         verbose = self.verbose if verbose is None else verbose
+        videos_root = os.path.join(
+            app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT
+        )
+        tracking_annot_root = os.path.join(
+            app_settings.PATH_DATA_ROOT, app_settings.PATH_TRACK_ANNOT_ROOT
+        )
         if verbose:
             print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
         check_path(videos_root, "dir")
@@ -263,19 +265,9 @@ class AnnotationLoader:
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             print("[INFO] Saving Pickle Volleyball Dataset Version...")
-        videos_root = os.path.join(
-            CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"]
-        )
-        tracking_annot_root = os.path.join(
-            CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"]
-        )
-        save_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
+        save_path = os.path.join(app_settings.PATH_DATA_ROOT, "volleyball_dataset.pkl")
 
-        volleyball_data = (
-            data
-            if data is not None
-            else self.load_volleyball_dataset(videos_root, tracking_annot_root)
-        )
+        volleyball_data = data if data is not None else self.load_volleyball_dataset()
 
         if os.path.exists(save_path):
             print(
@@ -303,7 +295,7 @@ class AnnotationLoader:
         """
 
         verbose = self.verbose if verbose is None else verbose
-        data_path = os.path.join(CONFIG["PATH"]["data_root"], "volleyball_dataset.pkl")
+        data_path = os.path.join(app_settings.PATH_DATA_ROOT, "volleyball_dataset.pkl")
         check_path(data_path, "file")
         if verbose:
             print(f"[INFO] Loading Data from pickle file: {data_path}")
@@ -329,20 +321,17 @@ def main():
 
     test_clip = r"7/38025"
     annot_file = os.path.join(
-        CONFIG["PATH"]["data_root"],
-        CONFIG["PATH"]["track_annot"],
+        app_settings.PATH_DATA_ROOT,
+        app_settings.PATH_TRACK_ANNOT_ROOT,
         test_clip,
         f"{os.path.basename(test_clip)}.txt",
     )
     clip_dir = os.path.join(
-        CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"], test_clip
+        app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT, test_clip
     )
 
     annot_loader.vis_clip(annot_file, clip_dir)
-    volleyballdata = annot_loader.load_volleyball_dataset(
-        os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["videos"]),
-        os.path.join(CONFIG["PATH"]["data_root"], CONFIG["PATH"]["track_annot"]),
-    )
+    volleyballdata = annot_loader.load_volleyball_dataset()
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
     data = annot_loader.load_pkl_version()
     print(data)
