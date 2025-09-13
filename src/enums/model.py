@@ -26,6 +26,18 @@ class ModelResults(StrEnum):
     TEST_F1_SCORE = "test_f1_score"
 
 
+class ModelMode(StrEnum):
+    """Enumeration of model execution modes.
+
+    Attributes:
+        TRAIN (str): Mode for training the model.
+        TEST (str): Mode for evaluating or testing the model.
+    """
+
+    TRAIN = "train"
+    TEST = "test"
+
+
 def main():
     """Entry Point for the Program."""
     print(
