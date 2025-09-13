@@ -332,7 +332,7 @@ def main():
         app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT, test_clip
     )
 
-    annot_loader.vis_clip(annot_file, clip_dir)
+    # annot_loader.vis_clip(annot_file, clip_dir)
     volleyballdata = annot_loader.load_volleyball_dataset()
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
     data = annot_loader.load_pkl_version()
