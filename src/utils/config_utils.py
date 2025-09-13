@@ -44,6 +44,8 @@ class Settings(BaseSettings):
     MODEL_MODE: str = Field(...)
     TRAIN_IDS: List[int] = Field(...)
     VALIDATION_IDS: List[int] = Field(...)
+    PATH_ASSETS: str = Field(...)
+    PATH_METRICS: str = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
