@@ -59,11 +59,17 @@ class B1CustomDataset(Dataset):
                     transforms.ToPILImage(),
                     transforms.Resize((256, 256)),
                     transforms.CenterCrop(img_shape),
-                    transforms.ColorJitter(
-                        brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05
+                    transforms.RandomChoice(
+                        [
+                            transforms.ColorJitter(
+                                brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05
+                            ),
+                            transforms.RandomGrayscale(
+                                p=1.0
+                            ),
+                            transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
+                        ]
                     ),
-                    transforms.RandomGrayscale(p=0.1),
-                    transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
                     transforms.ToTensor(),
                     transforms.Normalize(
                         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
