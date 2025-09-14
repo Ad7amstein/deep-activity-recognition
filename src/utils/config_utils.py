@@ -32,17 +32,18 @@ class Settings(BaseSettings):
 
     # Baseline 1
     B1_PATH_MODEL: str = Field(...)
-    B1_FEATURES_SHAPE_0: int
-    B1_FEATURES_SHAPE_1: int
-    B1_LEFT_FRAMES: int
-    B1_RIGHT_FRAMES: int
-    B1_TRAIN_EPOCHS: int
-    B1_BATCH_SIZE: int
-    B1_LR: float
-    B1_FREEZE_BACKBONE: bool
-    B1_NUM_WORKERS: int
-    B1_OPTIMIZER: str
-    B1_WEIGHT_DECAY: float
+    B1_FEATURES_SHAPE_0: int = Field(...)
+    B1_FEATURES_SHAPE_1: int = Field(...)
+    B1_LEFT_FRAMES: int = Field(...)
+    B1_RIGHT_FRAMES: int = Field(...)
+    B1_TRAIN_EPOCHS: int = Field(...)
+    B1_BATCH_SIZE: int = Field(...)
+    B1_LR: float = Field(...)
+    B1_FREEZE_BACKBONE: bool = Field(...)
+    B1_NUM_WORKERS: int = Field(...)
+    B1_OPTIMIZER: str = Field(...)
+    B1_WEIGHT_DECAY: float = Field(...)
+    B1_LOSS_FN: str = Field(...)
 
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
