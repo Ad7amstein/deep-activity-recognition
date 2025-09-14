@@ -39,13 +39,13 @@ class TrainController(BaseController):
         )
         train_loader = DataLoader(
             train_dataset,
-            batch_size=self.baseline_config.BATCH_SIZE,
+            batch_size=self.baseline_config.TRAIN_BATCH_SIZE,
             shuffle=True,
             num_workers=self.baseline_config.NUM_WORKERS,
         )
         valid_loader = DataLoader(
             valid_dataset,
-            batch_size=self.baseline_config.BATCH_SIZE,
+            batch_size=self.baseline_config.EVAL_BATCH_SIZE,
             shuffle=False,
             num_workers=self.baseline_config.NUM_WORKERS,
         )
@@ -67,7 +67,7 @@ class TrainController(BaseController):
         )
         test_loader = DataLoader(
             test_dataset,
-            batch_size=self.baseline_config.BATCH_SIZE,
+            batch_size=self.baseline_config.EVAL_BATCH_SIZE,
             shuffle=False,
             num_workers=self.baseline_config.NUM_WORKERS,
         )
