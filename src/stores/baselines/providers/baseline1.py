@@ -23,7 +23,10 @@ class B1CustomDataset(Dataset):
     def __init__(
         self,
         volleyball_data: VolleyballData,
-        img_shape: Tuple[int, int] = (app_settings.B1_FEATURES_SHAPE_0, app_settings.B1_FEATURES_SHAPE_1),
+        img_shape: Tuple[int, int] = (
+            app_settings.B1_FEATURES_SHAPE_0,
+            app_settings.B1_FEATURES_SHAPE_1,
+        ),
         num_right_frames: int = app_settings.B1_RIGHT_FRAMES,
         num_left_frames: int = app_settings.B1_LEFT_FRAMES,
         mode: str = app_settings.MODEL_MODE,
@@ -49,6 +52,25 @@ class B1CustomDataset(Dataset):
                 ),
             ]
         )
+
+        if self.mode == ModelMode.TRAIN:
+            self.transform = transforms.Compose(
+                [
+                    transforms.ToPILImage(),
+                    transforms.Resize((256, 256)),
+                    transforms.CenterCrop(img_shape),
+                    transforms.ColorJitter(
+                        brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05
+                    ),
+                    transforms.RandomGrayscale(p=0.1),
+                    transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
+                    transforms.ToTensor(),
+                    transforms.Normalize(
+                        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    ),
+                ]
+            )
+
         self.num_right_frames = num_right_frames
         self.num_left_frames = num_left_frames
         self.volleyball_data = volleyball_data
@@ -62,6 +84,9 @@ class B1CustomDataset(Dataset):
             print(f"  - Num right frames: {self.num_right_frames}")
             print(f"  - Num left frames: {self.num_left_frames}")
             print(f"  - Dataset size (after init): {len(self.dataset)}")
+            print("  - Transforms:")
+            for t in self.transform.transforms:
+                print(f"    * {t}")
 
     def load_img_paths_lables(
         self, verbose: Optional[bool] = None
@@ -179,7 +204,10 @@ class B1Model(nn.Module):
         self,
         extract_features: bool = False,
         verbose: bool = False,
-        in_features: Tuple[int, int] = (app_settings.B1_FEATURES_SHAPE_0, app_settings.B1_FEATURES_SHAPE_1),
+        in_features: Tuple[int, int] = (
+            app_settings.B1_FEATURES_SHAPE_0,
+            app_settings.B1_FEATURES_SHAPE_1,
+        ),
         num_classes: int = app_settings.NUM_ACTIVITY_LABELS,
     ) -> None:
         """Initialize the baseline model.
