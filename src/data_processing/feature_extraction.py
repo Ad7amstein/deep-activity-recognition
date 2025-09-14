@@ -1,3 +1,7 @@
+"""
+Feature Extraction Module for Volleyball Dataset.
+"""
+
 import os
 from typing import Optional, Callable
 import cv2 as cv
@@ -18,7 +22,23 @@ app_settings = get_settings()
 
 
 class FeatureExtractor:
+    """
+    A class to handle feature extraction from volleyball dataset videos.
+
+    Attributes:
+        model (nn.Module): The feature extraction model (CNN backbone).
+        transform (transforms.Compose): Preprocessing pipeline for input images.
+        device (str): Device used for computation ('cuda' if available, else 'cpu').
+        verbose (bool): Controls logging verbosity.
+    """
+
     def __init__(self, verbose: bool = False) -> None:
+        """
+        Initialize the FeatureExtractor.
+
+        Args:
+            verbose (bool): Whether to print progress information. Defaults to False.
+        """
         self.model = None
         self.transform = None
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -31,9 +51,25 @@ class FeatureExtractor:
         last_layer: int = -1,
         verbose: Optional[bool] = None,
     ) -> tuple[nn.Module, transforms.Compose]:
+        """
+        Prepare the CNN model and preprocessing transforms.
+
+        Args:
+            model (Callable[..., nn.Module]): A callable that returns a pretrained model
+                (e.g., torchvision.models.resnet50).
+            img_level (bool): If True, prepares transforms for full-frame extraction.
+                Otherwise, prepares transforms for cropped bounding boxes.
+            last_layer (int): Index of the last layer to keep from the model.
+                Defaults to -1 (use all layers except final classifier).
+            verbose (Optional[bool]): Override for verbosity. Defaults to class-level setting.
+
+        Returns:
+            tuple[nn.Module, transforms.Compose]: The prepared model and preprocessing transform.
+        """
         verbose = self.verbose if not verbose else verbose
         if verbose:
             print("[INFO] Preparing Model and Preprocessor...")
+
         if self.transform is None:
             if img_level:
                 self.transform = transforms.Compose(
@@ -73,9 +109,24 @@ class FeatureExtractor:
         img_level: bool = False,
         verbose: Optional[bool] = None,
     ):
+        """
+        Extract features from the volleyball dataset videos.
+
+        Args:
+            videos_root (str): Root directory containing volleyball videos.
+            output_file (str): Path to the output `.npy` file where features will be saved.
+            volleyball_data (VolleyballData): Parsed dataset annotations.
+            img_level (bool): If True, extract features at full-frame level.
+                If False, extract features from bounding boxes.
+            verbose (Optional[bool]): Override for verbosity. Defaults to class-level setting.
+
+        Side Effects:
+            Saves extracted features to the specified `output_file`.
+        """
         verbose = self.verbose if not verbose else verbose
         if verbose:
             print("[INFO] Extracting Features from Volleyball Dataset...")
+
         with torch.inference_mode():
             for video_id, video_annot_dct in tqdm(
                 volleyball_data.items(),
@@ -107,6 +158,7 @@ class FeatureExtractor:
                                 preprocessed_imgs.append(
                                     self.transform(cropped_img).unsqueeze(0)  # type: ignore
                                 )
+
                         preprocessed_imgs = torch.cat(preprocessed_imgs)
                         preprocessed_imgs = preprocessed_imgs.to(self.device)
                         if img_level:
@@ -117,13 +169,16 @@ class FeatureExtractor:
                             extracted_features.shape[0], -1
                         )
                         np.save(output_file, extracted_features.cpu().detach().numpy())
+
                         # Free GPU memory
                         del preprocessed_imgs, extracted_features
                         torch.cuda.empty_cache()
 
 
 def main():
-    """Entry Point for the Program."""
+    """
+    Entry Point for the Program.
+    """
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
     feature_extractor = FeatureExtractor()
     _, _ = feature_extractor.prepare_model(model=models.resnet50(pretrained=True))

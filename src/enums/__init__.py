@@ -1,4 +1,6 @@
 from enums.activity import ActivityEnum
+from enums.model import ModelResults, ModelMode
+from enums.train import OptimizerEnum, LossFNEnum
 
 activity_category2label_dct = {
     ActivityEnum.RIGHT_SET_CATEGORY.value: ActivityEnum.RIGHT_SET_LABEL.value,

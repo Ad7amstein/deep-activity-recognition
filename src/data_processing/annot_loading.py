@@ -11,6 +11,7 @@ from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
+from utils.stream_utils import log_stream
 from pydantic_models import TrackingData, VolleyballData
 
 app_settings = get_settings()
@@ -25,13 +26,14 @@ class AnnotationLoader:
     def __init__(self, verbose: bool = False) -> None:
         """
         Initializes the Annotation Loader object.
+
         Args:
             verbose (bool, optional): If True, enables verbose output. Defaults to False.
         """
 
         self.verbose = verbose
         if self.verbose:
-            print("\n[INFO] Initializing Annotation Loader Object...")
+            print("[INFO] Initializing Annotation Loader Object...")
 
     def vis_clip(
         self,
@@ -42,6 +44,7 @@ class AnnotationLoader:
     ) -> None:
         """
         Visualizes annotated bounding boxes for each frame in a video clip.
+
         Args:
             annot_file (str): Path to the annotation file containing tracking data.
             clip_path (str): Directory path containing the video frames as images.
@@ -85,6 +88,7 @@ class AnnotationLoader:
     ) -> TrackingData:
         """
         Loads tracking annotation data from a specified file and organizes it by player and frame.
+
         Args:
             annot_file (str): Path to the annotation file to be loaded.
             verbose (Optional[bool], optional): If True, prints progress and information messages.
@@ -129,7 +133,6 @@ class AnnotationLoader:
                 unit="player",
             ):
                 boxes_info = sorted(boxes_info, key=lambda box_info: box_info.frame_id)
-                boxes_info = boxes_info[5:-5]
                 for box_info in boxes_info:
                     if box_info.frame_id not in frame_boxes_dct:
                         frame_boxes_dct[box_info.frame_id] = []
@@ -330,7 +333,7 @@ def main():
         app_settings.PATH_DATA_ROOT, app_settings.PATH_VIDEOS_ROOT, test_clip
     )
 
-    annot_loader.vis_clip(annot_file, clip_dir)
+    # annot_loader.vis_clip(annot_file, clip_dir)
     volleyballdata = annot_loader.load_volleyball_dataset()
     annot_loader.save_pkl_version(volleyballdata, verbose=True)
     data = annot_loader.load_pkl_version()
@@ -338,4 +341,5 @@ def main():
 
 
 if __name__ == "__main__":
+    log_stream(log_file="annot_loading", prog="data_preprocessing", verbose=True, overwrite=True)
     main()
