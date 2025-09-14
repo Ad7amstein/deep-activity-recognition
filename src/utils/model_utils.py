@@ -194,6 +194,7 @@ def train(
     valid_dataloader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
     optimizer: torch.optim.Optimizer,
+    scheduler,
     epochs: int = app_settings.EPOCHS,
     device: torch.device = (
         torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -277,6 +278,8 @@ def train(
             confusion_matrix_fn=confusion_matrix_fn,
             verbose=True,
         )
+
+        scheduler.step(test_loss)
 
         if verbose:
             print(
