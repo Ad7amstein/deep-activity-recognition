@@ -6,6 +6,10 @@ class OptimizerEnum(Enum):
     ADAMW = "AdamW"
     SGD = "SGD"
 
+class LossFNEnum(Enum):
+    CROSS_ENTROPY_LOSS = "cross_entropy_loss"
+    BCE_LOSS = "bce_loss"
+
 
 def main():
     """Entry Point for the Program."""
