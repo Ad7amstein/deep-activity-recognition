@@ -23,10 +23,12 @@ class TrainController(BaseController):
         self.DatasetClass = DatasetClass
         self.loss_fn = self.load_loss_fn()
         self.optimizer = self.load_optimizer()
+        self.scheduler = self.load_scheduler()
 
         print(f"\n[Baseline-{self.baseline_number} Configuration]")
         for k, v in vars(self.baseline_config).items():
             print(f"  - {k}: {v}")
+        print(f"  - Scheduler: {type(self.scheduler).__name__}")
 
     def train(self):
         train_dataset = self.DatasetClass(
@@ -55,6 +57,7 @@ class TrainController(BaseController):
             valid_dataloader=valid_loader,
             loss_fn=self.loss_fn,
             optimizer=self.optimizer,
+            scheduler=self.scheduler,
             epochs=self.baseline_config.TRAIN_EPOCHS,
             baseline_path=self.baseline_config.PATH_MODEL,
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
@@ -76,11 +79,15 @@ class TrainController(BaseController):
             test_loader=test_loader,
             loss_fn=self.loss_fn,
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
-            verbose=True
+            verbose=True,
         )
 
     def load_optimizer(self) -> torch.optim.Optimizer:
-        optimizer = torch.optim.SGD(params=self.model.parameters(), lr=self.baseline_config.LR, weight_decay=self.baseline_config.WEIGHT_DECAY)
+        optimizer = torch.optim.SGD(
+            params=self.model.parameters(),
+            lr=self.baseline_config.LR,
+            weight_decay=self.baseline_config.WEIGHT_DECAY,
+        )
         if self.baseline_config.OPTIMIZER == OptimizerEnum.ADAMW.value:
             optimizer = torch.optim.AdamW(
                 params=self.model.parameters(),
@@ -97,6 +104,22 @@ class TrainController(BaseController):
 
         return loss_fn
 
+    def load_scheduler(self) -> torch.optim.lr_scheduler._LRScheduler | torch.optim.lr_scheduler.ReduceLROnPlateau:
+        """Load a learning rate scheduler for the optimizer.
+
+        Returns:
+            torch.optim.lr_scheduler: Scheduler object controlling LR updates.
+        """
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer,
+            mode="min",
+            factor=0.1,
+            patience=3,
+        )
+
+        return scheduler
+
+
     def load_config(self, baseline_number: int) -> SimpleNamespace:
         """
         Load configuration for the given baseline into a dictionary with general keys.
@@ -105,7 +128,7 @@ class TrainController(BaseController):
             baseline_number (int): The baseline number (e.g., 1 for baseline-1).
 
         Returns:
-            dict: A dictionary of baseline configuration values 
+            dict: A dictionary of baseline configuration values
                 with general keys (e.g., TRAIN_EPOCHS instead of B1_TRAIN_EPOCHS).
         """
         settings = self.app_settings
@@ -125,7 +148,9 @@ def main():
     """Entry Point for the Program."""
     log_stream(log_file="b1", prog="train", verbose=True, overwrite=True)
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = TrainController(B1CustomDataset, B1Model(verbose=True), baseline_number=1)
+    train_controller = TrainController(
+        B1CustomDataset, B1Model(verbose=True), baseline_number=1
+    )
     train_controller.train()
 
 
