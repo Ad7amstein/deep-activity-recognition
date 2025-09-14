@@ -7,7 +7,7 @@ from controllers.base_controller import BaseController
 from data_processing.annot_loading import AnnotationLoader
 from utils.model_utils import train, test
 from utils.stream_utils import log_stream
-from enums import ModelMode, OptimizerEnum
+from enums import ModelMode, OptimizerEnum, LossFNEnum
 from stores.baselines.providers import B1CustomDataset, B1Model
 
 
@@ -21,15 +21,8 @@ class TrainController(BaseController):
             verbose=True
         )
         self.DatasetClass = DatasetClass
-        self.loss_fn = nn.CrossEntropyLoss()
-
-        self.optimizer = torch.optim.SGD(params=model.parameters(), lr=self.baseline_config.LR, weight_decay=self.baseline_config.WEIGHT_DECAY)
-        if self.baseline_config.OPTIMIZER == OptimizerEnum.ADAMW.value:
-            self.optimizer = torch.optim.AdamW(
-                params=self.model.parameters(),
-                lr=self.baseline_config.LR,
-                weight_decay=self.baseline_config.WEIGHT_DECAY,
-            )
+        self.loss_fn = self.load_loss_fn()
+        self.optimizer = self.load_optimizer()
 
         print(f"\n[Baseline-{self.baseline_number} Configuration]")
         for k, v in vars(self.baseline_config).items():
@@ -38,9 +31,6 @@ class TrainController(BaseController):
     def train(self):
         train_dataset = self.DatasetClass(
             volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=True
-        )
-        test_dataset = self.DatasetClass(
-            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=True
         )
         valid_dataset = self.DatasetClass(
             volleyball_data=self.volleyball_data,
@@ -51,12 +41,6 @@ class TrainController(BaseController):
             train_dataset,
             batch_size=self.baseline_config.BATCH_SIZE,
             shuffle=True,
-            num_workers=self.baseline_config.NUM_WORKERS,
-        )
-        test_loader = DataLoader(
-            test_dataset,
-            batch_size=self.baseline_config.BATCH_SIZE,
-            shuffle=False,
             num_workers=self.baseline_config.NUM_WORKERS,
         )
         valid_loader = DataLoader(
@@ -73,8 +57,45 @@ class TrainController(BaseController):
             optimizer=self.optimizer,
             epochs=self.baseline_config.TRAIN_EPOCHS,
             baseline_path=self.baseline_config.PATH_MODEL,
+            num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
             verbose=True,
         )
+
+    def test(self):
+        test_dataset = self.DatasetClass(
+            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=True
+        )
+        test_loader = DataLoader(
+            test_dataset,
+            batch_size=self.baseline_config.BATCH_SIZE,
+            shuffle=False,
+            num_workers=self.baseline_config.NUM_WORKERS,
+        )
+        test(
+            model=self.model,
+            test_loader=test_loader,
+            loss_fn=self.loss_fn,
+            num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
+            verbose=True
+        )
+
+    def load_optimizer(self) -> torch.optim.Optimizer:
+        optimizer = torch.optim.SGD(params=self.model.parameters(), lr=self.baseline_config.LR, weight_decay=self.baseline_config.WEIGHT_DECAY)
+        if self.baseline_config.OPTIMIZER == OptimizerEnum.ADAMW.value:
+            optimizer = torch.optim.AdamW(
+                params=self.model.parameters(),
+                lr=self.baseline_config.LR,
+                weight_decay=self.baseline_config.WEIGHT_DECAY,
+            )
+
+        return optimizer
+
+    def load_loss_fn(self) -> nn.Module:
+        loss_fn = nn.CrossEntropyLoss()
+        if self.baseline_config.LOSS_FN == LossFNEnum.BCE_LOSS.value:
+            loss_fn = nn.BCELoss()
+
+        return loss_fn
 
     def load_config(self, baseline_number: int) -> SimpleNamespace:
         """
