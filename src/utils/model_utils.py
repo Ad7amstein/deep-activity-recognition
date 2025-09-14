@@ -140,6 +140,11 @@ def test_step(
     recall_fn.to(device)
     f1_score_fn.to(device)
 
+    acc_fn.reset()
+    precision_fn.reset()
+    recall_fn.reset()
+    f1_score_fn.reset()
+
     test_loss, test_acc = 0, 0
     test_precision, test_recall, test_f1_score = 0, 0, 0
 
@@ -361,7 +366,7 @@ def save_checkpoint(
         os.path.join(save_path, f"{file_name}_epoch_{checkpoint['epoch'] + 1}.pth"),
     )
     if verbose:
-        print(f"Checkpoint saved for epoch {checkpoint['epoch'] + 1}\n")
+        print(f"Checkpoint saved for epoch {checkpoint['epoch'] + 1}")
 
 
 def test(

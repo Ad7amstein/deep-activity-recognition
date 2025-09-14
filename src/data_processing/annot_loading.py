@@ -33,7 +33,7 @@ class AnnotationLoader:
 
         self.verbose = verbose
         if self.verbose:
-            print("\n[INFO] Initializing Annotation Loader Object...")
+            print("[INFO] Initializing Annotation Loader Object...")
 
     def vis_clip(
         self,
