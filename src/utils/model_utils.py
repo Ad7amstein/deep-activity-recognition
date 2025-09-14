@@ -3,11 +3,14 @@
 import os
 import time
 from typing import Dict, Any
+import json
+from datetime import datetime
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 import torch
 from torch import nn
 import seaborn as sns
+from torchmetrics import Metric
 from torchmetrics.classification import (
     MulticlassAccuracy,
     MulticlassPrecision,
@@ -45,7 +48,7 @@ def train_step(
     data_loader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
     optimizer: torch.optim.Optimizer,
-    acc_fn: nn.Module,
+    acc_fn: Metric,
     device: torch.device,
     verbose: bool = False,
 ):
@@ -112,11 +115,11 @@ def test_step(
     device: torch.device,
     data_loader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
-    acc_fn: nn.Module,
-    precision_fn: nn.Module,
-    recall_fn: nn.Module,
-    f1_score_fn: nn.Module,
-    confusion_matrix_fn: nn.Module,
+    acc_fn: Metric,
+    precision_fn: Metric,
+    recall_fn: Metric,
+    f1_score_fn: Metric,
+    confusion_matrix_fn: Metric,
     verbose: bool = False,
 ):
     """Evaluates the model on a validation/test set for one epoch.
@@ -216,6 +219,8 @@ def train(
         dict: Dictionary containing lists of metrics (loss, accuracy, precision,
         recall, F1-score) for all epochs.
     """
+    if verbose:
+        print("[INFO] Training Started and in Progress...")
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
     precision_fn = MulticlassPrecision(num_classes=num_classes)
@@ -364,8 +369,8 @@ def plot_results(results: dict, save_path: str):
                 cmap="Blues",
                 cbar=True,
                 ax=ax,
-                xticklabels=activity_category2label_dct.keys(),
-                yticklabels=activity_category2label_dct.keys(),
+                xticklabels=list(activity_category2label_dct.keys()),
+                yticklabels=list(activity_category2label_dct.keys()),
             )
             ax.set_title("Confusion Matrix")
             ax.set_xlabel("Predicted")
@@ -376,12 +381,16 @@ def plot_results(results: dict, save_path: str):
             plt.close(fig)
             continue
 
-        lower_name = name.lower()
-
-        if any(k in lower_name for k in ("accuracy", "precision", "recall", "f1")):
+        if name in [
+            ModelResults.TEST_ACCURACY.value,
+            ModelResults.TRAIN_ACCURACY.value,
+            ModelResults.TEST_PRECISION.value,
+            ModelResults.TEST_RECALL.value,
+            ModelResults.TEST_F1_SCORE.value,
+        ]:
             plot_vals = [v * 100 for v in vals]
             ylabel = "Percentage (%)"
-        elif "loss" in lower_name:
+        elif name in [ModelResults.TEST_LOSS.value, ModelResults.TRAIN_LOSS.value]:
             plot_vals = vals
             ylabel = "Loss"
         else:
@@ -447,6 +456,8 @@ def test(
     Returns:
         dict: Dictionary containing test loss, accuracy, precision, recall, and F1-score.
     """
+    if verbose:
+        print("[INFO] Testing Started and in Progress...")
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
     precision_fn = MulticlassPrecision(num_classes=num_classes)
@@ -492,6 +503,45 @@ def test(
                 ]
             )
         )
+
+    # prepare a directory similar to where metrics/plots are stored
+    save_dir = os.path.join(
+        app_settings.PATH_ASSETS, model.__class__.__name__, app_settings.PATH_METRICS
+    )
+    os.makedirs(save_dir, exist_ok=True)
+
+    # make a JSON-serializable copy of results
+    serializable = {}
+    for k, v in results.items():
+        try:
+            # numpy arrays and many tensor-like objects expose tolist()
+            if hasattr(v, "tolist"):
+                serializable[k] = v.tolist()
+            else:
+                # convert numeric scalars to native Python types
+                if isinstance(v, (int, float)):
+                    serializable[k] = v
+                else:
+                    serializable[k] = v
+        except Exception:
+            # fallback to string representation
+            serializable[k] = str(v)
+
+    # add metadata (timestamp, device, model name)
+    meta = {
+        "saved_at": datetime.utcnow().isoformat() + "Z",
+        "model": model.__class__.__name__,
+        "device": str(device),
+    }
+    output = {"meta": meta, "results": serializable}
+
+    file_name = f"test_results_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
+    file_path = os.path.join(save_dir, file_name)
+    with open(file_path, "w") as fh:
+        json.dump(output, fh, indent=2)
+
+    if verbose:
+        print(f"Test results saved to {file_path}")
 
     return results
 
