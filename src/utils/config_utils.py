@@ -10,24 +10,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettin
 
 
 class Settings(BaseSettings):
-    """Application configuration settings.
-
-    Attributes:
-        GH_PAT (Optional[str]): GitHub Personal Access Token (from `.env`).
-        CLONING (Optional[str]): Repository cloning configuration (from `.env`).
-        PATH_DATA_ROOT (str): Root directory for dataset storage (from YAML).
-        PATH_TRACK_ANNOT_ROOT (str): Directory for tracking annotations (from YAML).
-        PATH_VIDEOS_ROOT (str): Directory for input videos (from YAML).
-        NUM_ACTIVITY_LABELS (int): Number of activity labels (from YAML).
-        NUM_ACTION_LABELS (int): Number of action labels (from YAML).
-        EPOCHS (int): Number of training epochs (from YAML).
-        PATH_MODELS (str): Path to store trained models (from YAML).
-        PATH_MODELS_CHECKPOINTS (str): Path to store model checkpoints (from YAML).
-        MODEL_MODE (str): Execution mode, e.g., "train" or "test" (from YAML).
-        TRAIN_IDS (List[int]): Training dataset IDs (from YAML).
-        VALIDATION_IDS (List[int]): Validation dataset IDs (from YAML).
-    """
-
     # .env
     GH_PAT: Optional[str] = Field(None)
     CLONING: Optional[str] = Field(None)
@@ -44,8 +26,24 @@ class Settings(BaseSettings):
     MODEL_MODE: str = Field(...)
     TRAIN_IDS: List[int] = Field(...)
     VALIDATION_IDS: List[int] = Field(...)
+    TEST_IDS: List[int] = Field(...)
     PATH_ASSETS: str = Field(...)
     PATH_METRICS: str = Field(...)
+
+    # Baseline 1
+    B1_PATH_B1MODEL: str = Field(...)
+    B1_FEATURES_SHAPE_0: int
+    B1_FEATURES_SHAPE_1: int
+    B1_LEFT_FRAMES: int
+    B1_RIGHT_FRAMES: int
+    B1_TRAIN_EPOCHS: int
+    B1_BATCH_SIZE: int
+    B1_LR: float
+    B1_FREEZE_BACKBONE: bool
+    B1_NUM_WORKERS: int
+    B1_OPTIMIZER: str
+    B1_WEIGHT_DECAY: float
+
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
