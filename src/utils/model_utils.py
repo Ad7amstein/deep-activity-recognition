@@ -363,10 +363,10 @@ def save_checkpoint(
     os.makedirs(save_path, exist_ok=True)
     torch.save(
         checkpoint,
-        os.path.join(save_path, f"{file_name}_epoch_{checkpoint['epoch'] + 1}.pth"),
+        os.path.join(save_path, f"{file_name}_epoch_{checkpoint['epoch']}.pth"),
     )
     if verbose:
-        print(f"Checkpoint saved for epoch {checkpoint['epoch'] + 1}")
+        print(f"Checkpoint saved for epoch {checkpoint['epoch']}")
 
 
 def test(
