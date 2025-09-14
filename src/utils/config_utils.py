@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     PATH_METRICS: str = Field(...)
 
     # Baseline 1
-    B1_PATH_B1MODEL: str = Field(...)
+    B1_PATH_MODEL: str = Field(...)
     B1_FEATURES_SHAPE_0: int
     B1_FEATURES_SHAPE_1: int
     B1_LEFT_FRAMES: int

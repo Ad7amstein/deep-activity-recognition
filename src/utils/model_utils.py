@@ -7,14 +7,17 @@ from matplotlib import pyplot as plt
 from tqdm import tqdm
 import torch
 from torch import nn
+import seaborn as sns
 from torchmetrics.classification import (
     MulticlassAccuracy,
     MulticlassPrecision,
     MulticlassRecall,
     MulticlassF1Score,
+    ConfusionMatrix,
 )
 from utils.config_utils import get_settings
 from enums import ModelResults
+from enums import activity_category2label_dct
 
 app_settings = get_settings()
 
@@ -82,8 +85,7 @@ def train_step(
         loss = loss_fn(y_logits, y)
         train_loss += loss.item()
 
-        acc_fn.update(y_pred_labels, y)
-        train_acc = acc_fn.compute().item() * 100
+        train_acc = acc_fn(y_pred_labels, y).item() * 100
 
         optimizer.zero_grad()
         loss.backward()
@@ -114,6 +116,7 @@ def test_step(
     precision_fn: nn.Module,
     recall_fn: nn.Module,
     f1_score_fn: nn.Module,
+    confusion_matrix_fn: nn.Module,
     verbose: bool = False,
 ):
     """Evaluates the model on a validation/test set for one epoch.
@@ -139,14 +142,15 @@ def test_step(
     precision_fn.to(device)
     recall_fn.to(device)
     f1_score_fn.to(device)
+    confusion_matrix_fn.to(device)
 
     acc_fn.reset()
     precision_fn.reset()
     recall_fn.reset()
     f1_score_fn.reset()
+    confusion_matrix_fn.reset()
 
-    test_loss, test_acc = 0, 0
-    test_precision, test_recall, test_f1_score = 0, 0, 0
+    test_loss = 0
 
     model.eval()
     with torch.inference_mode():
@@ -159,29 +163,32 @@ def test_step(
             x, y = x.to(device), y.to(device)
 
             test_pred_logits = model(x).squeeze(dim=1)
-            test_pred_labels = torch.round(torch.sigmoid(test_pred_logits))
+            test_pred_probs = torch.softmax(test_pred_logits, dim=1)
+            test_pred_labels = torch.argmax(test_pred_probs, dim=1)
 
             loss = loss_fn(test_pred_logits, y)
             test_loss += loss.item()
 
             acc_fn.update(test_pred_labels, y)
-
             precision_fn.update(test_pred_labels, y)
             recall_fn.update(test_pred_labels, y)
             f1_score_fn.update(test_pred_labels, y)
+            confusion_matrix_fn.update(test_pred_labels, y)
 
         test_loss /= len(data_loader)
         test_acc = acc_fn.compute().item()
         test_precision = precision_fn.compute().item()
         test_recall = recall_fn.compute().item()
         test_f1_score = f1_score_fn.compute().item()
-    return test_loss, test_acc, test_precision, test_recall, test_f1_score
+        test_confmat = confusion_matrix_fn.compute().cpu().numpy()
+
+    return test_loss, test_acc, test_precision, test_recall, test_f1_score, test_confmat
 
 
 def train(
     model: nn.Module,
     train_dataloader: torch.utils.data.DataLoader,
-    test_dataloader: torch.utils.data.DataLoader,
+    valid_dataloader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
     optimizer: torch.optim.Optimizer,
     epochs: int = app_settings.EPOCHS,
@@ -189,6 +196,7 @@ def train(
         torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     ),
     num_classes=app_settings.NUM_ACTIVITY_LABELS,
+    baseline_path: str = "baseline",
     verbose: bool = False,
 ):
     """Runs the full training loop with evaluation and checkpointing.
@@ -213,6 +221,10 @@ def train(
     precision_fn = MulticlassPrecision(num_classes=num_classes)
     recall_fn = MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS)
     f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+    confusion_matrix_fn = ConfusionMatrix(
+        num_classes=app_settings.NUM_ACTIVITY_LABELS, task="multiclass"
+    )
+    best_test_loss = float("inf")
 
     results = {
         ModelResults.TRAIN_LOSS.value: [],
@@ -222,6 +234,7 @@ def train(
         ModelResults.TEST_PRECISION.value: [],
         ModelResults.TEST_RECALL.value: [],
         ModelResults.TEST_F1_SCORE.value: [],
+        ModelResults.CONFUSION_MATRIX.value: None,
     }
 
     total_start = time.time()
@@ -240,15 +253,23 @@ def train(
             verbose=True,
         )
 
-        test_loss, test_acc, test_precision, test_recall, test_f1_score = test_step(
+        (
+            test_loss,
+            test_acc,
+            test_precision,
+            test_recall,
+            test_f1_score,
+            test_confmat,
+        ) = test_step(
             model=model,
             device=device,
-            data_loader=test_dataloader,
+            data_loader=valid_dataloader,
             loss_fn=loss_fn,
             acc_fn=acc_fn,
             precision_fn=precision_fn,
             recall_fn=recall_fn,
             f1_score_fn=f1_score_fn,
+            confusion_matrix_fn=confusion_matrix_fn,
             verbose=True,
         )
 
@@ -272,6 +293,16 @@ def train(
         results[ModelResults.TEST_PRECISION.value].append(test_precision)
         results[ModelResults.TEST_RECALL.value].append(test_recall)
         results[ModelResults.TEST_F1_SCORE.value].append(test_f1_score)
+        results[ModelResults.CONFUSION_MATRIX.value] = test_confmat
+
+        plot_results(
+            results=results,
+            save_path=os.path.join(
+                app_settings.PATH_ASSETS,
+                model.__class__.__name__,
+                app_settings.PATH_METRICS,
+            ),
+        )
 
         checkpoint = {
             "epoch": epoch + 1,
@@ -280,9 +311,26 @@ def train(
             "results": results,
         }
 
+        if test_loss < best_test_loss:
+            best_test_loss = test_loss
+            save_checkpoint(
+                save_path=os.path.join(
+                    app_settings.PATH_MODELS,
+                    baseline_path,
+                    app_settings.PATH_MODELS_CHECKPOINTS,
+                    "best",
+                ),
+                file_name=f"{model.__class__.__name__}_best",
+                checkpoint=checkpoint,
+                verbose=True,
+            )
+
         save_checkpoint(
             save_path=os.path.join(
-                app_settings.PATH_MODELS, app_settings.PATH_MODELS_CHECKPOINTS
+                app_settings.PATH_MODELS,
+                baseline_path,
+                app_settings.PATH_MODELS_CHECKPOINTS,
+                "epochs",
             ),
             file_name=model.__class__.__name__,
             checkpoint=checkpoint,
@@ -294,16 +342,9 @@ def train(
         _ = print_train_time(total_start, total_end, device)
 
     save_checkpoint(
-        save_path=os.path.join(
-            app_settings.PATH_MODELS, app_settings.PATH_MODELS_CHECKPOINTS
-        ),
+        save_path=app_settings.PATH_MODELS,
         file_name=model.__class__.__name__,
         checkpoint=checkpoint,
-    )
-
-    plot_results(
-        results=results,
-        save_path=os.path.join(app_settings.PATH_ASSETS, app_settings.PATH_METRICS),
     )
 
     return results
@@ -313,27 +354,38 @@ def plot_results(results: dict, save_path: str):
     os.makedirs(save_path, exist_ok=True)
 
     for name, vals in results.items():
-        if not isinstance(vals, (list, tuple)) or len(vals) == 0:
-            continue
 
-        cleaned = []
-        for v in vals:
-            try:
-                cleaned.append(float(v))
-            except Exception:
-                continue
-        if len(cleaned) == 0:
+        if name == ModelResults.CONFUSION_MATRIX.value:
+            fig, ax = plt.subplots(figsize=(8, 6))
+            sns.heatmap(
+                vals,
+                annot=True,
+                fmt="d",
+                cmap="Blues",
+                cbar=True,
+                ax=ax,
+                xticklabels=activity_category2label_dct.keys(),
+                yticklabels=activity_category2label_dct.keys(),
+            )
+            ax.set_title("Confusion Matrix")
+            ax.set_xlabel("Predicted")
+            ax.set_ylabel("Actual")
+            ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
+            plt.tight_layout()
+            fig.savefig(os.path.join(save_path, "confusion_matrix.png"), dpi=300)
+            plt.close(fig)
             continue
 
         lower_name = name.lower()
+
         if any(k in lower_name for k in ("accuracy", "precision", "recall", "f1")):
-            plot_vals = [v * 100 for v in cleaned]
+            plot_vals = [v * 100 for v in vals]
             ylabel = "Percentage (%)"
         elif "loss" in lower_name:
-            plot_vals = cleaned
+            plot_vals = vals
             ylabel = "Loss"
         else:
-            plot_vals = cleaned
+            plot_vals = vals
             ylabel = "Value"
 
         fig, ax = plt.subplots()
@@ -373,20 +425,9 @@ def test(
     model: nn.Module,
     test_loader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
+    num_classes: int,
     device: torch.device = (
         torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    ),
-    acc_fn: nn.Module = MulticlassAccuracy(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS
-    ),
-    precision_fn: nn.Module = MulticlassPrecision(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS
-    ),
-    recall_fn: nn.Module = MulticlassRecall(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS
-    ),
-    f1_score_fn: nn.Module = MulticlassF1Score(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS
     ),
     verbose: bool = False,
 ):
@@ -407,16 +448,27 @@ def test(
         dict: Dictionary containing test loss, accuracy, precision, recall, and F1-score.
     """
 
-    test_loss, test_acc, test_precision, test_recall, test_f1_score = test_step(
-        model=model,
-        device=device,
-        data_loader=test_loader,
-        loss_fn=loss_fn,
-        acc_fn=acc_fn,
-        precision_fn=precision_fn,
-        recall_fn=recall_fn,
-        f1_score_fn=f1_score_fn,
-        verbose=verbose,
+    acc_fn = MulticlassAccuracy(num_classes=num_classes)
+    precision_fn = MulticlassPrecision(num_classes=num_classes)
+    recall_fn = MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+    f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+    confusion_matrix_fn = ConfusionMatrix(
+        num_classes=app_settings.NUM_ACTIVITY_LABELS, task="multiclass"
+    )
+
+    test_loss, test_acc, test_precision, test_recall, test_f1_score, test_confmat = (
+        test_step(
+            model=model,
+            device=device,
+            data_loader=test_loader,
+            loss_fn=loss_fn,
+            acc_fn=acc_fn,
+            precision_fn=precision_fn,
+            recall_fn=recall_fn,
+            f1_score_fn=f1_score_fn,
+            confusion_matrix_fn=confusion_matrix_fn,
+            verbose=verbose,
+        )
     )
 
     results = {
@@ -425,6 +477,7 @@ def test(
         ModelResults.TEST_PRECISION.value: test_precision,
         ModelResults.TEST_RECALL.value: test_recall,
         ModelResults.TEST_F1_SCORE.value: test_f1_score,
+        ModelResults.CONFUSION_MATRIX.value: test_confmat,
     }
 
     if verbose:

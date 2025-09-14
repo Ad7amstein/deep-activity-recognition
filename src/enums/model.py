@@ -24,6 +24,7 @@ class ModelResults(Enum):
     TEST_PRECISION = "test_precision"
     TEST_RECALL = "test_recall"
     TEST_F1_SCORE = "test_f1_score"
+    CONFUSION_MATRIX = "test_confmat"
 
 
 class ModelMode(Enum):
@@ -35,6 +36,7 @@ class ModelMode(Enum):
     """
 
     TRAIN = "train"
+    VALIDATION = "valid"
     TEST = "test"
 
 

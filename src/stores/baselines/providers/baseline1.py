@@ -11,7 +11,7 @@ from torchvision import transforms
 from torchvision.models import resnet50, ResNet50_Weights
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
-from enums import activity_category2label_dct, B1Enum, ModelMode
+from enums import activity_category2label_dct, ModelMode
 from data_processing.annot_loading import AnnotationLoader
 
 app_settings = get_settings()
@@ -23,26 +23,12 @@ class B1CustomDataset(Dataset):
     def __init__(
         self,
         volleyball_data: VolleyballData,
-        img_shape: Tuple[int, int] = B1Enum.FEATURES_SHAPE.value,
-        num_right_frames: int = B1Enum.RIGHT_FRAMES.value,
-        num_left_frames: int = B1Enum.LEFT_FRAMES.value,
+        img_shape: Tuple[int, int] = (app_settings.B1_FEATURES_SHAPE_0, app_settings.B1_FEATURES_SHAPE_1),
+        num_right_frames: int = app_settings.B1_RIGHT_FRAMES,
+        num_left_frames: int = app_settings.B1_LEFT_FRAMES,
         mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
-        """Initialize the dataset with volleyball annotations.
-
-        Args:
-            volleyball_data (VolleyballData): Annotation data containing video clips
-                and activity categories.
-            img_shape (Tuple[int, int], optional): Target image shape after cropping.
-                Defaults to `B1Enum.FEATURES_SHAPE.value`.
-            num_right_frames (int, optional): Number of frames to include to the right
-                of the clip center. Defaults to `B1Enum.RIGHT_FRAMES.value`.
-            num_left_frames (int, optional): Number of frames to include to the left
-                of the clip center. Defaults to `B1Enum.LEFT_FRAMES.value`.
-            verbose (bool, optional): Whether to log progress during initialization.
-                Defaults to False.
-        """
 
         super().__init__()
         self.verbose = verbose
@@ -100,10 +86,18 @@ class B1CustomDataset(Dataset):
             unit="video",
         ):
             if (
-                self.mode == ModelMode.TRAIN and video_id not in app_settings.TRAIN_IDS
-            ) or (
-                self.mode == ModelMode.TEST
-                and video_id not in app_settings.VALIDATION_IDS
+                (
+                    self.mode == ModelMode.TRAIN
+                    and video_id not in app_settings.TRAIN_IDS
+                )
+                or (
+                    self.mode == ModelMode.TEST
+                    and video_id not in app_settings.TEST_IDS
+                )
+                or (
+                    self.mode == ModelMode.VALIDATION
+                    and video_id not in app_settings.VALIDATION_IDS
+                )
             ):
                 continue
 
@@ -125,7 +119,7 @@ class B1CustomDataset(Dataset):
                 num_files = len(img_files)
                 mid_idx = num_files // 2
                 img_files = img_files[
-                    mid_idx - self.num_right_frames - 1 : mid_idx + self.num_left_frames
+                    mid_idx - self.num_left_frames - 1 : mid_idx + self.num_right_frames
                 ]
 
                 for img_file in img_files:
@@ -185,7 +179,7 @@ class B1Model(nn.Module):
         self,
         extract_features: bool = False,
         verbose: bool = False,
-        in_features: Tuple[int, int] = B1Enum.FEATURES_SHAPE.value,
+        in_features: Tuple[int, int] = (app_settings.B1_FEATURES_SHAPE_0, app_settings.B1_FEATURES_SHAPE_1),
         num_classes: int = app_settings.NUM_ACTIVITY_LABELS,
     ) -> None:
         """Initialize the baseline model.
@@ -238,7 +232,7 @@ class B1Model(nn.Module):
         resnet_model.fc = torch.nn.Linear(
             in_features=num_features, out_features=self.num_classes
         )
-        if B1Enum.FREEZE_BACKBONE.value:
+        if app_settings.B1_FREEZE_BACKBONE:
             for param in resnet_model.parameters():
                 param.requires_grad = False
 
