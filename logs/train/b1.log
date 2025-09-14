@@ -7,103 +7,158 @@ Welcome from `train_controller` Module.
   - Number of classes: 8
   - Extract features mode: False
   - Backbone: ResNet-50 (pretrained)
-
 [INFO] Initializing Annotation Loader Object...
 [INFO] Loading Data from pickle file: data/volleyball/volleyball_dataset.pkl
+
+[Baseline-1 Configuration]
+  - PATH_MODEL: baseline1
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - LEFT_FRAMES: 5
+  - RIGHT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 32
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - Scheduler: ReduceLROnPlateau
 [INFO] Initializing Baseline 1 Custom Dataset (mode=ModelMode.TRAIN)...
 [INFO] Loading Image Paths and Labels...
 [CONFIG] Dataset Configuration:
   - Mode: ModelMode.TRAIN
   - Image shape: (224, 224)
-  - Num right frames: 5
-  - Num left frames: 4
+  - Num right frames: 4
+  - Num left frames: 5
   - Dataset size (after init): 21520
-[INFO] Initializing Baseline 1 Custom Dataset (mode=ModelMode.TEST)...
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(256, 256), interpolation=bilinear, max_size=None, antialias=True)
+    * CenterCrop(size=(224, 224))
+    * RandomChoice(
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=(-0.05, 0.05))
+    RandomGrayscale(p=1.0)
+    GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 2.0))
+)(p=None)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[INFO] Initializing Baseline 1 Custom Dataset (mode=ModelMode.VALIDATION)...
 [INFO] Loading Image Paths and Labels...
 [CONFIG] Dataset Configuration:
-  - Mode: ModelMode.TEST
+  - Mode: ModelMode.VALIDATION
   - Image shape: (224, 224)
-  - Num right frames: 5
-  - Num left frames: 4
+  - Num right frames: 4
+  - Num left frames: 5
   - Dataset size (after init): 13410
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(256, 256), interpolation=bilinear, max_size=None, antialias=True)
+    * CenterCrop(size=(224, 224))
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[INFO] Training Started and in Progress...
 [INFO] Epoch 1/10
-	[BATCH 0/337] Loss: 2.0622 | Acc: 19.49%
-	[BATCH 100/337] Loss: 0.6328 | Acc: 42.23%
-	[BATCH 200/337] Loss: 0.4462 | Acc: 61.26%
-	[BATCH 300/337] Loss: 0.1174 | Acc: 70.94%
-Epoch: 0 | Train loss: 0.7174 | Train acc: 73.34% | Eval loss: 2.0423 | Eval acc: 52.74%
-Checkpoint saved for epoch 2
-
+	[BATCH 0/673] Loss: 2.0871 | Acc: 13.75%
+	[BATCH 100/673] Loss: 1.6745 | Acc: 40.00%
+	[BATCH 200/673] Loss: 0.9857 | Acc: 61.04%
+	[BATCH 300/673] Loss: 0.7957 | Acc: 79.52%
+	[BATCH 400/673] Loss: 0.4962 | Acc: 82.81%
+	[BATCH 500/673] Loss: 0.4120 | Acc: 81.81%
+	[BATCH 600/673] Loss: 0.2200 | Acc: 94.38%
+Epoch: 0 | Train loss: 0.7604 | Train acc: 71.73% | Eval loss: 1.0468 | Eval acc: 71.66%
+Checkpoint saved for epoch 1
+Checkpoint saved for epoch 1
 [INFO] Epoch 2/10
-	[BATCH 0/337] Loss: 0.3073 | Acc: 89.07%
-	[BATCH 100/337] Loss: 0.0616 | Acc: 96.32%
-	[BATCH 200/337] Loss: 0.0226 | Acc: 97.03%
-	[BATCH 300/337] Loss: 0.2734 | Acc: 97.19%
-Epoch: 1 | Train loss: 0.0954 | Train acc: 97.26% | Eval loss: 2.2711 | Eval acc: 73.37%
-Checkpoint saved for epoch 3
-
+	[BATCH 0/673] Loss: 0.3036 | Acc: 93.33%
+	[BATCH 100/673] Loss: 0.3094 | Acc: 91.43%
+	[BATCH 200/673] Loss: 0.1273 | Acc: 97.92%
+	[BATCH 300/673] Loss: 0.1615 | Acc: 95.09%
+	[BATCH 400/673] Loss: 0.2594 | Acc: 97.50%
+	[BATCH 500/673] Loss: 0.1056 | Acc: 98.41%
+	[BATCH 600/673] Loss: 0.0571 | Acc: 100.00%
+Epoch: 1 | Train loss: 0.1255 | Train acc: 96.34% | Eval loss: 1.2620 | Eval acc: 72.52%
+Checkpoint saved for epoch 2
 [INFO] Epoch 3/10
-	[BATCH 0/337] Loss: 0.3197 | Acc: 83.24%
-	[BATCH 100/337] Loss: 0.0024 | Acc: 98.91%
-	[BATCH 200/337] Loss: 0.0022 | Acc: 99.04%
-	[BATCH 300/337] Loss: 0.0109 | Acc: 99.14%
-Epoch: 2 | Train loss: 0.0317 | Train acc: 99.17% | Eval loss: 1.4864 | Eval acc: 73.55%
-Checkpoint saved for epoch 4
-
+	[BATCH 0/673] Loss: 0.0199 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0563 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0164 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0577 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0231 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0619 | Acc: 95.83%
+	[BATCH 600/673] Loss: 0.0373 | Acc: 100.00%
+Epoch: 2 | Train loss: 0.0642 | Train acc: 98.29% | Eval loss: 1.4789 | Eval acc: 70.07%
+Checkpoint saved for epoch 3
 [INFO] Epoch 4/10
-	[BATCH 0/337] Loss: 0.0032 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0417 | Acc: 99.50%
-	[BATCH 200/337] Loss: 0.0023 | Acc: 99.59%
-	[BATCH 300/337] Loss: 0.0083 | Acc: 99.58%
-Epoch: 3 | Train loss: 0.0179 | Train acc: 99.55% | Eval loss: 1.4093 | Eval acc: 72.78%
-Checkpoint saved for epoch 5
-
+	[BATCH 0/673] Loss: 0.0141 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0034 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0058 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0423 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0535 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0433 | Acc: 97.92%
+	[BATCH 600/673] Loss: 0.0032 | Acc: 100.00%
+Epoch: 3 | Train loss: 0.0456 | Train acc: 98.67% | Eval loss: 1.4257 | Eval acc: 71.73%
+Checkpoint saved for epoch 4
 [INFO] Epoch 5/10
-	[BATCH 0/337] Loss: 0.0048 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0062 | Acc: 99.66%
-	[BATCH 200/337] Loss: 0.0073 | Acc: 99.71%
-	[BATCH 300/337] Loss: 0.0003 | Acc: 99.72%
-Epoch: 4 | Train loss: 0.0103 | Train acc: 99.73% | Eval loss: 1.6044 | Eval acc: 74.23%
-Checkpoint saved for epoch 6
-
+	[BATCH 0/673] Loss: 0.0088 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0053 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0269 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0031 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0037 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0045 | Acc: 100.00%
+	[BATCH 600/673] Loss: 0.0039 | Acc: 100.00%
+Epoch: 4 | Train loss: 0.0339 | Train acc: 99.04% | Eval loss: 1.4916 | Eval acc: 71.95%
+Checkpoint saved for epoch 5
 [INFO] Epoch 6/10
-	[BATCH 0/337] Loss: 0.0116 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0022 | Acc: 99.94%
-	[BATCH 200/337] Loss: 0.0167 | Acc: 99.85%
-	[BATCH 300/337] Loss: 0.0017 | Acc: 99.85%
-Epoch: 5 | Train loss: 0.0072 | Train acc: 99.82% | Eval loss: 1.5634 | Eval acc: 72.73%
-Checkpoint saved for epoch 7
-
+	[BATCH 0/673] Loss: 0.0030 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0068 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0042 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0015 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0077 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0003 | Acc: 100.00%
+	[BATCH 600/673] Loss: 0.0045 | Acc: 100.00%
+Epoch: 5 | Train loss: 0.0194 | Train acc: 99.51% | Eval loss: 1.3725 | Eval acc: 73.48%
+Checkpoint saved for epoch 6
 [INFO] Epoch 7/10
-	[BATCH 0/337] Loss: 0.0006 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0040 | Acc: 99.64%
-	[BATCH 200/337] Loss: 0.0259 | Acc: 99.68%
-	[BATCH 300/337] Loss: 0.0075 | Acc: 99.73%
-Epoch: 6 | Train loss: 0.0098 | Train acc: 99.72% | Eval loss: 1.5923 | Eval acc: 74.62%
-Checkpoint saved for epoch 8
-
+	[BATCH 0/673] Loss: 0.0028 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0013 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0033 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0028 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0087 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0009 | Acc: 100.00%
+	[BATCH 600/673] Loss: 0.0016 | Acc: 100.00%
+Epoch: 6 | Train loss: 0.0085 | Train acc: 99.78% | Eval loss: 1.4125 | Eval acc: 74.39%
+Checkpoint saved for epoch 7
 [INFO] Epoch 8/10
-	[BATCH 0/337] Loss: 0.0006 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0004 | Acc: 99.80%
-	[BATCH 200/337] Loss: 0.0020 | Acc: 99.79%
-	[BATCH 300/337] Loss: 0.0035 | Acc: 99.80%
-Epoch: 7 | Train loss: 0.0080 | Train acc: 99.81% | Eval loss: 1.6103 | Eval acc: 74.70%
-Checkpoint saved for epoch 9
-
+	[BATCH 0/673] Loss: 0.0012 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0250 | Acc: 99.04%
+	[BATCH 200/673] Loss: 0.0014 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0359 | Acc: 98.61%
+	[BATCH 400/673] Loss: 0.0008 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0004 | Acc: 100.00%
+	[BATCH 600/673] Loss: 0.0012 | Acc: 100.00%
+Epoch: 7 | Train loss: 0.0070 | Train acc: 99.79% | Eval loss: 1.4593 | Eval acc: 74.15%
+Checkpoint saved for epoch 8
 [INFO] Epoch 9/10
-	[BATCH 0/337] Loss: 0.0007 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0006 | Acc: 99.86%
-	[BATCH 200/337] Loss: 0.0155 | Acc: 99.84%
-	[BATCH 300/337] Loss: 0.0037 | Acc: 99.85%
-Epoch: 8 | Train loss: 0.0040 | Train acc: 99.86% | Eval loss: 1.7171 | Eval acc: 75.58%
-Checkpoint saved for epoch 10
-
+	[BATCH 0/673] Loss: 0.0108 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0015 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0072 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0088 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0009 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0010 | Acc: 100.00%
+	[BATCH 600/673] Loss: 0.0006 | Acc: 100.00%
+Epoch: 8 | Train loss: 0.0040 | Train acc: 99.92% | Eval loss: 1.5106 | Eval acc: 73.88%
+Checkpoint saved for epoch 9
 [INFO] Epoch 10/10
-	[BATCH 0/337] Loss: 0.0022 | Acc: 100.00%
-	[BATCH 100/337] Loss: 0.0161 | Acc: 99.93%
-	[BATCH 200/337] Loss: 0.0001 | Acc: 99.94%
-	[BATCH 300/337] Loss: 0.0001 | Acc: 99.94%
-Epoch: 9 | Train loss: 0.0020 | Train acc: 99.93% | Eval loss: 1.7860 | Eval acc: 75.11%
-Checkpoint saved for epoch 11
-
-Total Train time on cuda: 7095.822 seconds
+	[BATCH 0/673] Loss: 0.0006 | Acc: 100.00%
+	[BATCH 100/673] Loss: 0.0112 | Acc: 100.00%
+	[BATCH 200/673] Loss: 0.0017 | Acc: 100.00%
+	[BATCH 300/673] Loss: 0.0169 | Acc: 100.00%
+	[BATCH 400/673] Loss: 0.0005 | Acc: 100.00%
+	[BATCH 500/673] Loss: 0.0187 | Acc: 100.00%
+	[BATCH 600/673] Loss: 0.0006 | Acc: 100.00%
+Epoch: 9 | Train loss: 0.0037 | Train acc: 99.92% | Eval loss: 1.4810 | Eval acc: 74.40%
+Checkpoint saved for epoch 10
+Total Train time on cuda: 2181.393 seconds
