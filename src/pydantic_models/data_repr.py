@@ -1,3 +1,8 @@
+"""
+Data structures for volleyball tracking and clip annotations.
+"""
+
+import os
 from typing import Dict, List, NamedTuple, TypedDict
 from data_processing.box_info import BoxInfo
 
@@ -5,6 +10,7 @@ from data_processing.box_info import BoxInfo
 class TrackingData(NamedTuple):
     """
     TrackingData stores bounding box information for players and frames.
+
     Attributes:
         player_boxes (Dict[int, List[BoxInfo]]): A mapping from player IDs to
             lists of BoxInfo objects representing bounding boxes associated with each player.
@@ -19,6 +25,7 @@ class TrackingData(NamedTuple):
 class ClipAnnotation(TypedDict):
     """
     A TypedDict representing the annotation for a video clip.
+
     Attributes:
         category (str): The category label for the clip.
         tracking_annot_dct (TrackingData): The tracking annotation data associated with the clip.
@@ -29,3 +36,14 @@ class ClipAnnotation(TypedDict):
 
 
 VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
+
+
+def main():
+    """Entry Point for the Program."""
+    print(
+        f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module. Nothing to do ^_____^!"
+    )
+
+
+if __name__ == "__main__":
+    main()
