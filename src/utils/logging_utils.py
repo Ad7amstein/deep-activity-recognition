@@ -52,6 +52,7 @@ def setup_logger(
         use_tqdm (bool, optional): If True, console output will use tqdm-safe handler.
         file_mode (str, optional): File open mode: "a" (append) or "w" (overwrite).
     """
+
     if file_mode not in {"a", "w"}:
         raise ValueError("file_mode must be 'a' (append) or 'w' (write).")
 
@@ -81,21 +82,16 @@ def setup_logger(
     )
 
     # Per-file handler (optional)
+    log_files = [("all_logs", "a")]
     if log_file:
-        per_file_path = os.path.join(
-            log_dir, f"{os.path.splitext(os.path.basename(log_file))[0]}.log"
-        )
-        file_handler = logging.FileHandler(per_file_path, mode=file_mode)
+        log_files.append((log_file, file_mode))
+
+    for _file, _mode in log_files:
+        per_file_path = os.path.join(log_dir, f"{_file}.log")
+        file_handler = logging.FileHandler(per_file_path, mode=_mode)
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-
-    # Always-on aggregate log
-    all_logs_path = os.path.join(log_dir, "all_logs.log")
-    file_handler_all_logs = logging.FileHandler(all_logs_path, mode="a")
-    file_handler_all_logs.setLevel(logging.DEBUG)
-    file_handler_all_logs.setFormatter(formatter)
-    logger.addHandler(file_handler_all_logs)
 
     # Console logging
     if log_to_console:
@@ -117,8 +113,7 @@ def main():
 
     # Example: tqdm logger (console-safe for progress bars)
     logger = setup_logger(
-        logger_name=__file__,
-        log_file="training",
+        log_file=__file__,
         log_dir="logs",
         log_to_console=True,
         use_tqdm=True,
