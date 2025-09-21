@@ -122,7 +122,7 @@ def main():
 
     for i in tqdm.tqdm(range(50)):
         if i == 25:
-            logger.info("Half-way there!")
+            logger.info("Half-way there!\n Hi\n Hi\n Hi\n Hi\n Hi")
         time.sleep(0.05)
 
 
