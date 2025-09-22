@@ -1,4 +1,5 @@
 import os
+from typing import Union
 from types import SimpleNamespace
 import torch
 from torch import nn
@@ -6,15 +7,29 @@ from torch.utils.data import DataLoader
 from controllers.base_controller import BaseController
 from data_processing.annot_loading import AnnotationLoader
 from utils.model_utils import train, test
-from utils.stream_utils import log_stream
-from enums import ModelMode, OptimizerEnum, LossFNEnum
+from utils.logging_utils import setup_logger
+from enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
 from stores.baselines.providers import B1CustomDataset, B1Model
 
 
 class TrainController(BaseController):
-    def __init__(self, DatasetClass, model: nn.Module, baseline_number: int) -> None:
+    def __init__(
+        self, DatasetClass, baseline_number: int, verbose: bool = True
+    ) -> None:
         super().__init__()
-        self.model = model
+        self.logger = setup_logger(
+            log_file=__file__,
+            log_dir=self.app_settings.PATH_LOGS,
+            log_to_console=verbose,
+            use_tqdm=True,
+        )
+
+        try:
+            self.model = self.load_model(baseline_number)
+        except ValueError as exc:
+            self.logger.exception(str(exc))
+            raise exc
+
         self.baseline_number = baseline_number
         self.baseline_config = self.load_config(self.baseline_number)
         self.volleyball_data = AnnotationLoader(verbose=True).load_pkl_version(
@@ -85,6 +100,26 @@ class TrainController(BaseController):
     def inference(self, x):
         pass
 
+    def load_model(self, baseline_number: int) -> nn.Module:
+        baseline_model = {
+            ModelBaseline.BASELINE1.value: B1Model(),
+            ModelBaseline.BASELINE2.value: None,
+            ModelBaseline.BASELINE3.value: None,
+            ModelBaseline.BASELINE4.value: None,
+            ModelBaseline.BASELINE5.value: None,
+            ModelBaseline.BASELINE6.value: None,
+            ModelBaseline.BASELINE7.value: None,
+            ModelBaseline.BASELINE8.value: None,
+        }
+
+        model: Union[nn.Module, None] = baseline_model.get(baseline_number, None)
+        if model is None:
+            raise ValueError(
+                f"The Model for the given baseline number ({baseline_number}) not found."
+            )
+
+        return model
+
     def load_optimizer(self) -> torch.optim.Optimizer:
         optimizer = torch.optim.SGD(
             params=self.model.parameters(),
@@ -107,7 +142,12 @@ class TrainController(BaseController):
 
         return loss_fn
 
-    def load_scheduler(self) -> torch.optim.lr_scheduler._LRScheduler | torch.optim.lr_scheduler.ReduceLROnPlateau:
+    def load_scheduler(
+        self,
+    ) -> (
+        torch.optim.lr_scheduler._LRScheduler
+        | torch.optim.lr_scheduler.ReduceLROnPlateau
+    ):
         """Load a learning rate scheduler for the optimizer.
 
         Returns:
@@ -121,7 +161,6 @@ class TrainController(BaseController):
         )
 
         return scheduler
-
 
     def load_config(self, baseline_number: int) -> SimpleNamespace:
         """
@@ -149,11 +188,8 @@ class TrainController(BaseController):
 
 def main():
     """Entry Point for the Program."""
-    log_stream(log_file="b1", prog="train", verbose=True, overwrite=True)
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = TrainController(
-        B1CustomDataset, B1Model(verbose=True), baseline_number=1
-    )
+    train_controller = TrainController(B1CustomDataset, baseline_number=10)
     train_controller.train()
 
 
