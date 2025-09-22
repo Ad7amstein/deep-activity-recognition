@@ -22,17 +22,19 @@ class Settings(BaseSettings):
     PATH_DATA_ROOT: str = Field(...)
     PATH_TRACK_ANNOT_ROOT: str = Field(...)
     PATH_VIDEOS_ROOT: str = Field(...)
+    PATH_ASSETS: str = Field(...)
+    PATH_METRICS: str = Field(...)
+    PATH_MODELS: str = Field(...)
+    PATH_MODELS_CHECKPOINTS: str = Field(...)
+    PATH_LOGS: str = Field(...)
+
     NUM_ACTIVITY_LABELS: int = Field(...)
     NUM_ACTION_LABELS: int = Field(...)
     EPOCHS: int = Field(...)
-    PATH_MODELS: str = Field(...)
-    PATH_MODELS_CHECKPOINTS: str = Field(...)
     MODEL_MODE: str = Field(...)
     TRAIN_IDS: List[int] = Field(...)
     VALIDATION_IDS: List[int] = Field(...)
     TEST_IDS: List[int] = Field(...)
-    PATH_ASSETS: str = Field(...)
-    PATH_METRICS: str = Field(...)
 
     # Baseline 1
     B1_PATH_MODEL: str = Field(...)
