@@ -39,6 +39,15 @@ class ModelMode(Enum):
     VALIDATION = "valid"
     TEST = "test"
 
+class ModelBaseline(Enum):
+    BASELINE1 = 1
+    BASELINE2 = 2
+    BASELINE3 = 3
+    BASELINE4 = 4
+    BASELINE5 = 5
+    BASELINE6 = 6
+    BASELINE7 = 7
+    BASELINE8 = 8
 
 def main():
     """Entry Point for the Program."""

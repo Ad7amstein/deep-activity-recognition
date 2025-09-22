@@ -1,5 +1,5 @@
 from enums.activity import ActivityEnum
-from enums.model import ModelResults, ModelMode
+from enums.model import ModelResults, ModelMode, ModelBaseline
 from enums.train import OptimizerEnum, LossFNEnum
 
 activity_category2label_dct = {
