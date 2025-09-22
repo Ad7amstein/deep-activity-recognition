@@ -5,14 +5,18 @@ Utilities for loading and handling configuration files.
 import os
 from pathlib import Path
 from typing import Optional, List
-from pydantic import Field
+from pydantic import Field, ValidationError, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
+from utils.logging_utils import setup_logger
+
+logger = setup_logger(log_file=__file__)
 
 
 class Settings(BaseSettings):
+    """Pydantic BaseSettings container for application config."""
+
     # .env
-    GH_PAT: Optional[str] = Field(None)
-    CLONING: Optional[str] = Field(None)
+    GH_PAT: Optional[SecretStr] = Field(None)
 
     # .yaml
     PATH_DATA_ROOT: str = Field(...)
@@ -45,7 +49,6 @@ class Settings(BaseSettings):
     B1_OPTIMIZER: str = Field(...)
     B1_WEIGHT_DECAY: float = Field(...)
     B1_LOSS_FN: str = Field(...)
-
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
@@ -83,13 +86,30 @@ class Settings(BaseSettings):
         )
 
 
-def get_settings():
+def get_settings(verbose: bool = False) -> Settings:
     """Retrieve application settings.
+
+    Args:
+        verbose (bool): If True, log the loaded settings (with secrets masked).
 
     Returns:
         Settings: An initialized settings object.
     """
-    return Settings()  # type: ignore
+    logger.info("Loading App Settings")
+
+    try:
+        settings = Settings()  # type: ignore
+    except (ValidationError, FileNotFoundError, OSError) as exc:
+        logger.exception("Failed to initialize settings: %s", exc)
+        raise
+
+    if verbose:
+        dump = getattr(settings, "model_dump", None)
+        values = dump() if callable(dump) else getattr(settings, "dict", lambda: {})()
+
+        logger.info("Loaded settings: %s", values)
+
+    return settings
 
 
 def main():
@@ -101,7 +121,7 @@ def main():
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.\n")
 
     # Usage
-    settings = get_settings()
+    settings = get_settings(verbose=True)
 
     print(settings.PATH_DATA_ROOT)  # From config.yaml
     print(settings.PATH_VIDEOS_ROOT)  # From config.yaml
