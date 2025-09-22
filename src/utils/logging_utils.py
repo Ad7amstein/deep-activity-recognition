@@ -38,7 +38,7 @@ def setup_logger(
     logger_name: Optional[str] = None,
     log_file: Optional[str] = None,
     log_dir: str = "logs",
-    log_to_console: bool = True,
+    log_to_console: bool = False,
     use_tqdm: bool = False,
     file_mode: Literal["a", "w"] = "a",
 ) -> logging.Logger:
@@ -48,7 +48,7 @@ def setup_logger(
         logger_name (Optional[str]): The name or path for the per-file log (optional).
         log_file (Optional[str]): File name for the log file.
         log_dir (str, optional): Directory where log files will be created. Defaults to "logs".
-        log_to_console (bool, optional): Whether to log messages to the console. Defaults to True.
+        log_to_console (bool, optional): Whether to log messages to the console. Defaults to False.
         use_tqdm (bool, optional): If True, console output will use tqdm-safe handler.
         file_mode (str, optional): File open mode: "a" (append) or "w" (overwrite).
     """
