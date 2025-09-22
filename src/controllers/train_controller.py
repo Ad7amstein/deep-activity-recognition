@@ -82,6 +82,9 @@ class TrainController(BaseController):
             verbose=True,
         )
 
+    def inference(self, x):
+        pass
+
     def load_optimizer(self) -> torch.optim.Optimizer:
         optimizer = torch.optim.SGD(
             params=self.model.parameters(),
