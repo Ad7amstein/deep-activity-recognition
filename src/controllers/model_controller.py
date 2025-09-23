@@ -1,5 +1,5 @@
 import os
-from typing import Union, Type
+from typing import Union, Type, Optional
 from types import SimpleNamespace
 import torch
 from torch import nn
@@ -49,14 +49,15 @@ class ModelController(BaseController):
             self.logger.info("  - %s: %s", k, v)
         self.logger.info("  - Scheduler: %s", type(self.scheduler).__name__)
 
-    def train(self):
+    def train(self, verbose: Optional[bool] = None):
+        verbose = self.verbose if verbose is None else verbose
         train_dataset = self.dataset_class(
-            volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=True  # type: ignore
+            volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=verbose  # type: ignore
         )
         valid_dataset = self.dataset_class(
             volleyball_data=self.volleyball_data,  # type: ignore
             mode=ModelMode.VALIDATION,  # type: ignore
-            verbose=True,  # type: ignore
+            verbose=verbose,  # type: ignore
         )
         train_loader = DataLoader(
             train_dataset,
@@ -80,12 +81,13 @@ class ModelController(BaseController):
             epochs=self.baseline_config.TRAIN_EPOCHS,
             baseline_path=self.baseline_config.PATH_MODEL,
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
-            verbose=True,
+            verbose=verbose,
         )
 
-    def test(self):
+    def test(self, verbose: Optional[bool] = None):
+        verbose = self.verbose if verbose is None else verbose
         test_dataset = self.dataset_class(
-            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=True  # type: ignore
+            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=verbose  # type: ignore
         )
         test_loader = DataLoader(
             test_dataset,
@@ -98,7 +100,7 @@ class ModelController(BaseController):
             test_loader=test_loader,
             loss_fn=self.loss_fn,
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
-            verbose=True,
+            verbose=verbose,
         )
 
     def inference(self, x):
