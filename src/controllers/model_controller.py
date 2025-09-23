@@ -1,9 +1,9 @@
 import os
-from typing import Union
+from typing import Union, Type
 from types import SimpleNamespace
 import torch
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from controllers.base_controller import BaseController
 from data_processing.annot_loading import AnnotationLoader
 from utils.model_utils import train, test
@@ -13,46 +13,50 @@ from stores.baselines.providers import B1CustomDataset, B1Model
 
 
 class ModelController(BaseController):
-    def __init__(
-        self, DatasetClass, baseline_number: int, verbose: bool = True
-    ) -> None:
+    def __init__(self, baseline_number: int, verbose: bool = True) -> None:
         super().__init__()
+        self.verbose = verbose
         self.logger = setup_logger(
             log_file=__file__,
             log_dir=self.app_settings.PATH_LOGS,
-            log_to_console=verbose,
+            log_to_console=self.verbose,
             use_tqdm=True,
         )
+        self.baseline_number = baseline_number
+        self.baseline_config = self.load_config(self.baseline_number)
 
         try:
-            self.model = self.load_model(baseline_number)
+            self.model = self.load_model(self.baseline_number)
         except ValueError as exc:
             self.logger.exception(str(exc))
             raise exc
 
-        self.baseline_number = baseline_number
-        self.baseline_config = self.load_config(self.baseline_number)
         self.volleyball_data = AnnotationLoader(verbose=True).load_pkl_version(
             verbose=True
         )
-        self.DatasetClass = DatasetClass
+        try:
+            self.dataset_class = self.load_dataset_class(self.baseline_number)
+        except ValueError as exc:
+            self.logger.exception(str(exc))
+            raise exc
+
         self.loss_fn = self.load_loss_fn()
         self.optimizer = self.load_optimizer()
         self.scheduler = self.load_scheduler()
 
-        print(f"\n[Baseline-{self.baseline_number} Configuration]")
+        self.logger.info("Baseline-%s Configuration:", self.baseline_number)
         for k, v in vars(self.baseline_config).items():
-            print(f"  - {k}: {v}")
-        print(f"  - Scheduler: {type(self.scheduler).__name__}")
+            self.logger.info("  - %s: %s", k, v)
+        self.logger.info("  - Scheduler: %s", type(self.scheduler).__name__)
 
     def train(self):
-        train_dataset = self.DatasetClass(
-            volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=True
+        train_dataset = self.dataset_class(
+            volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=True  # type: ignore
         )
-        valid_dataset = self.DatasetClass(
-            volleyball_data=self.volleyball_data,
-            mode=ModelMode.VALIDATION,
-            verbose=True,
+        valid_dataset = self.dataset_class(
+            volleyball_data=self.volleyball_data,  # type: ignore
+            mode=ModelMode.VALIDATION,  # type: ignore
+            verbose=True,  # type: ignore
         )
         train_loader = DataLoader(
             train_dataset,
@@ -80,8 +84,8 @@ class ModelController(BaseController):
         )
 
     def test(self):
-        test_dataset = self.DatasetClass(
-            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=True
+        test_dataset = self.dataset_class(
+            volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=True  # type: ignore
         )
         test_loader = DataLoader(
             test_dataset,
@@ -119,6 +123,28 @@ class ModelController(BaseController):
             )
 
         return model
+
+    def load_dataset_class(self, baseline_number: int) -> Type[Dataset]:
+        baseline_dataset = {
+            ModelBaseline.BASELINE1.value: B1CustomDataset,
+            ModelBaseline.BASELINE2.value: None,
+            ModelBaseline.BASELINE3.value: None,
+            ModelBaseline.BASELINE4.value: None,
+            ModelBaseline.BASELINE5.value: None,
+            ModelBaseline.BASELINE6.value: None,
+            ModelBaseline.BASELINE7.value: None,
+            ModelBaseline.BASELINE8.value: None,
+        }
+
+        dataset_class: Union[Type[Dataset], None] = baseline_dataset.get(
+            baseline_number, None
+        )
+        if dataset_class is None:
+            raise ValueError(
+                f"The Dataset Class for the given baseline number ({baseline_number}) not found."
+            )
+
+        return dataset_class
 
     def load_optimizer(self) -> torch.optim.Optimizer:
         optimizer = torch.optim.SGD(
@@ -183,13 +209,19 @@ class ModelController(BaseController):
                 general_key = field_name.replace(prefix, "", 1)
                 config[general_key] = value
 
+        if len(list(config.keys())) == 0:
+            self.logger.warning(
+                "The Config for the given baseline number (%s) not found.",
+                baseline_number,
+            )
+
         return SimpleNamespace(**config)
 
 
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = ModelController(B1CustomDataset, baseline_number=10)
+    train_controller = ModelController(baseline_number=10)
     train_controller.train()
 
 
