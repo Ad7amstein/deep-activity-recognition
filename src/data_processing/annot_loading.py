@@ -12,6 +12,7 @@ from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
 from utils.stream_utils import log_stream
+from utils.logging_utils import setup_logger
 from pydantic_models import TrackingData, VolleyballData
 
 app_settings = get_settings()
@@ -32,8 +33,14 @@ class AnnotationLoader:
         """
 
         self.verbose = verbose
+        self.logger = setup_logger(
+            log_file=__file__,
+            log_dir=app_settings.PATH_LOGS,
+            log_to_console=self.verbose,
+            use_tqdm=True,
+        )
         if self.verbose:
-            print("[INFO] Initializing Annotation Loader Object...")
+            self.logger.info("Initializing Annotation Loader Object...")
 
     def vis_clip(
         self,
@@ -55,7 +62,7 @@ class AnnotationLoader:
 
         verbose = self.verbose if verbose is None else verbose
         if verbose:
-            print(f"[INFO] Visualizing clip {clip_path} with annotations...")
+            self.logger.info("Visualizing clip %s with annotations...", clip_path)
         check_path(annot_file, path_type="file")
         check_path(clip_path, path_type="dir")
 
@@ -102,7 +109,7 @@ class AnnotationLoader:
 
         verbose = self.verbose if verbose is None else verbose
         if verbose:
-            print(f"[INFO] Loading tracking annotation from file {annot_file}")
+            self.logger.info("Loading tracking annotation from file %s", annot_file)
         check_path(annot_file, path_type="file")
 
         with open(annot_file, mode="r", encoding="utf-8") as file:
@@ -122,8 +129,8 @@ class AnnotationLoader:
                 if box_info.player_id < 12:
                     player_boxes_dct[box_info.player_id].append(box_info)
                 else:
-                    print(
-                        f"[WARNING] Skipping line {i}. Player ID ({box_info.player_id}) > 11."
+                    self.logger.warning(
+                        "Skipping line %s. Player ID (%s) > 11.", i, box_info.player_id
                     )
 
             for boxes_info in tqdm(
@@ -169,7 +176,7 @@ class AnnotationLoader:
 
         verbose = self.verbose if verbose is None else verbose
         if verbose:
-            print(f"[INFO] Loading Video Annotations from {video_annot_file}")
+            self.logger.info("Loading Video Annotations from %s", video_annot_file)
         clip_category_dct = {}
         check_path(video_annot_file, "file")
         check_path(tracking_annot_root, "dir")
@@ -223,7 +230,7 @@ class AnnotationLoader:
             app_settings.PATH_DATA_ROOT, app_settings.PATH_TRACK_ANNOT_ROOT
         )
         if verbose:
-            print(f"[INFO] Loading Volleyball Dataset From {videos_root}...")
+            self.logger.info("Loading Volleyball Dataset From %s...", videos_root)
         check_path(videos_root, "dir")
         check_path(tracking_annot_root, "dir")
         video_annot_dct = {}
@@ -235,8 +242,8 @@ class AnnotationLoader:
         ):
             video_path = os.path.join(videos_root, video_dir)
             if not os.path.isdir(video_path):
-                print(
-                    f"[WARNING] {video_path} doesn't exist or it not a directory. Skipping..."
+                self.logger.warning(
+                    "%s doesn't exist or it not a directory. Skipping...", video_path
                 )
                 continue
             video_annot_file = os.path.join(video_path, "annotations.txt")
@@ -341,5 +348,10 @@ def main():
 
 
 if __name__ == "__main__":
-    log_stream(log_file="annot_loading", prog="data_preprocessing", verbose=True, overwrite=True)
+    log_stream(
+        log_file="annot_loading",
+        prog="data_preprocessing",
+        verbose=True,
+        overwrite=True,
+    )
     main()
