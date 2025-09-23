@@ -12,7 +12,7 @@ from enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
 from stores.baselines.providers import B1CustomDataset, B1Model
 
 
-class TrainController(BaseController):
+class ModelController(BaseController):
     def __init__(
         self, DatasetClass, baseline_number: int, verbose: bool = True
     ) -> None:
@@ -189,7 +189,7 @@ class TrainController(BaseController):
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = TrainController(B1CustomDataset, baseline_number=10)
+    train_controller = ModelController(B1CustomDataset, baseline_number=10)
     train_controller.train()
 
 
