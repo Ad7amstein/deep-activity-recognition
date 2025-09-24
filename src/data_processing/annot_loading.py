@@ -11,7 +11,6 @@ from tqdm import tqdm
 from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
-from utils.stream_utils import log_stream
 from utils.logging_utils import setup_logger
 from pydantic_models import TrackingData, VolleyballData
 
@@ -35,7 +34,9 @@ class AnnotationLoader:
         self.verbose = verbose
         self.logger = setup_logger(
             log_file=__file__,
-            log_dir=app_settings.PATH_LOGS,
+            log_dir=os.path.join(
+                app_settings.PATH_LOGS, app_settings.PATH_DATA_PROCESSING_MODULE
+            ),
             log_to_console=self.verbose,
             use_tqdm=True,
         )
@@ -274,13 +275,13 @@ class AnnotationLoader:
 
         verbose = self.verbose if verbose is None else verbose
         if verbose:
-            print("[INFO] Saving Pickle Volleyball Dataset Version...")
+            self.logger.info("Saving Pickle Volleyball Dataset Version...")
         save_path = os.path.join(app_settings.PATH_DATA_ROOT, "volleyball_dataset.pkl")
 
         volleyball_data = data if data is not None else self.load_volleyball_dataset()
 
         if os.path.exists(save_path):
-            print(
+            self.logger.warning(
                 " ".join(
                     [
                         f"[WARNING] The save path '{save_path}' already exists",
@@ -308,16 +309,17 @@ class AnnotationLoader:
         data_path = os.path.join(app_settings.PATH_DATA_ROOT, "volleyball_dataset.pkl")
         check_path(data_path, "file")
         if verbose:
-            print(f"[INFO] Loading Data from pickle file: {data_path}")
+            self.logger.info("Loading Data from pickle file: %s", data_path)
 
         try:
             with open(data_path, "rb") as file:
                 loaded_data = pickle.load(file)
                 return loaded_data
         except FileNotFoundError as exc:
-            raise FileNotFoundError(
-                f"[ERROR]: The file '{data_path}' was not found."
-            ) from exc
+            self.logger.exception(
+                "The file '%s' was not found: (%s)", data_path, str(exc)
+            )
+            raise FileNotFoundError(f"The file '{data_path}' was not found.") from exc
 
     def __repr__(self) -> str:
         return f"{__class__.__name__}(verbose=False)"
@@ -348,10 +350,4 @@ def main():
 
 
 if __name__ == "__main__":
-    log_stream(
-        log_file="annot_loading",
-        prog="data_preprocessing",
-        verbose=True,
-        overwrite=True,
-    )
     main()

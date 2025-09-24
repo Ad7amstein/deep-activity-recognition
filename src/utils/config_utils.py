@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     PATH_MODELS: str = Field(...)
     PATH_MODELS_CHECKPOINTS: str = Field(...)
     PATH_LOGS: str = Field(...)
+    PATH_DATA_PROCESSING_MODULE: str = Field(...)
+    PATH_UTILS_MODULE: str = Field(...)
 
     NUM_ACTIVITY_LABELS: int = Field(...)
     NUM_ACTION_LABELS: int = Field(...)
