@@ -82,12 +82,12 @@ def setup_logger(
     )
 
     # Per-file handler (optional)
-    log_files = [("all_logs", "a")]
+    log_files = [(os.path.join("logs", "all_logs"), "a")]
     if log_file:
-        log_files.append((log_file, file_mode))
+        log_files.append((os.path.join(log_dir, log_file), file_mode))
 
     for _file, _mode in log_files:
-        per_file_path = os.path.join(log_dir, f"{_file}.log")
+        per_file_path = os.path.join(f"{_file}.log")
         file_handler = logging.FileHandler(per_file_path, mode=_mode)
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
