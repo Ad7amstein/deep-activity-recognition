@@ -11,6 +11,7 @@ from torchvision import transforms
 from torchvision.models import resnet50, ResNet50_Weights
 from pydantic_models import VolleyballData
 from utils.config_utils import get_settings
+from utils.logging_utils import setup_logger
 from enums import activity_category2label_dct, ModelMode
 from data_processing.annot_loading import AnnotationLoader
 
@@ -35,10 +36,17 @@ class B1CustomDataset(Dataset):
 
         super().__init__()
         self.verbose = verbose
+        self.logger = setup_logger(
+            logger_name=__name__,
+            log_file=__file__,
+            log_dir=app_settings.PATH_LOGS,
+            log_to_console=self.verbose,
+            use_tqdm=True,
+        )
         self.mode = mode
         if self.verbose:
-            print(
-                f"[INFO] Initializing Baseline 1 Custom Dataset (mode={self.mode})..."
+            self.logger.info(
+                "Initializing Baseline 1 Custom Dataset (mode=%s)...", self.mode
             )
 
         self.transform = transforms.Compose(
@@ -64,9 +72,7 @@ class B1CustomDataset(Dataset):
                             transforms.ColorJitter(
                                 brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05
                             ),
-                            transforms.RandomGrayscale(
-                                p=1.0
-                            ),
+                            transforms.RandomGrayscale(p=1.0),
                             transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
                         ]
                     ),
@@ -84,15 +90,20 @@ class B1CustomDataset(Dataset):
         self.dataset = self.load_img_paths_lables(verbose=self.verbose)
 
         if self.verbose:
-            print("[CONFIG] Dataset Configuration:")
-            print(f"  - Mode: {self.mode}")
-            print(f"  - Image shape: {img_shape}")
-            print(f"  - Num right frames: {self.num_right_frames}")
-            print(f"  - Num left frames: {self.num_left_frames}")
-            print(f"  - Dataset size (after init): {len(self.dataset)}")
-            print("  - Transforms:")
-            for t in self.transform.transforms:
-                print(f"    * {t}")
+            self.logger.info(
+                "\n".join(
+                    [
+                        "Dataset Configuration:",
+                        f"  - Mode: {self.mode}",
+                        f"  - Image shape: {img_shape}",
+                        f"  - Num right frames: {self.num_right_frames}",
+                        f"  - Num left frames: {self.num_left_frames}",
+                        f"  - Dataset size (after init): {len(self.dataset)}",
+                        "  - Transforms:",
+                        "\n".join(f"    * {t}" for t in self.transform.transforms),
+                    ]
+                )
+            )
 
     def load_img_paths_lables(
         self, verbose: Optional[bool] = None
@@ -109,7 +120,8 @@ class B1CustomDataset(Dataset):
 
         verbose = self.verbose if not verbose else verbose
         if verbose:
-            print("[INFO] Loading Image Paths and Labels...")
+            self.logger.info("Loading Image Paths and Labels...")
+
         dataset = []
         for video_id, video_annot in tqdm(
             self.volleyball_data.items(),
@@ -150,7 +162,7 @@ class B1CustomDataset(Dataset):
                 num_files = len(img_files)
                 mid_idx = num_files // 2
                 img_files = img_files[
-                    mid_idx - self.num_left_frames - 1 : mid_idx + self.num_right_frames
+                    mid_idx - self.num_left_frames : mid_idx + self.num_right_frames + 1
                 ]
 
                 for img_file in img_files:
@@ -180,12 +192,14 @@ class B1CustomDataset(Dataset):
         try:
             img_path, label = self.dataset[index]
         except IndexError as exc:
+            self.logger.exception(str(exc))
             raise IndexError(
                 f"Index {index} out of range for dataset with length {len(self.dataset)}"
             ) from exc
 
         img = cv.imread(img_path)  # type: ignore pylint: disable=[E1101]
         if img is None:
+            self.logger.exception("Failed to read image at %s", img_path)
             raise RuntimeError(f"Failed to read image at {img_path!r}")
 
         if self.transform:
@@ -230,8 +244,15 @@ class B1Model(nn.Module):
 
         super().__init__()
         self.verbose = verbose
+        self.logger = setup_logger(
+            logger_name=__name__,
+            log_file=__file__,
+            log_dir=app_settings.PATH_LOGS,
+            log_to_console=self.verbose,
+            use_tqdm=True,
+        )
         if self.verbose:
-            print("[INFO] Initializing Baseline-1 Model...")
+            self.logger.info("[INFO] Initializing Baseline-1 Model...")
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.in_features = in_features
         self.num_classes = num_classes
@@ -239,12 +260,18 @@ class B1Model(nn.Module):
         self.extract_features = extract_features
 
         if self.verbose:
-            print("[CONFIG] Model Configuration:")
-            print(f"  - Device: {self.device}")
-            print(f"  - Input features shape: {self.in_features}")
-            print(f"  - Number of classes: {self.num_classes}")
-            print(f"  - Extract features mode: {self.extract_features}")
-            print(f"  - Backbone: ResNet-50 (pretrained)")
+            self.logger.info(
+                "\n".join(
+                    [
+                        "Model Configuration:",
+                        f"  - Device: {self.device}",
+                        f"  - Input features shape: {self.in_features}",
+                        f"  - Number of classes: {self.num_classes}",
+                        f"  - Extract features mode: {self.extract_features}",
+                        "  - Backbone: ResNet-50 (pretrained)",
+                    ]
+                )
+            )
 
     def prepare_model(
         self, device: torch.device, verbose: Optional[bool] = None
@@ -260,7 +287,7 @@ class B1Model(nn.Module):
 
         verbose = self.verbose if verbose is None else verbose
         if verbose:
-            print("[INFO] Preparing Baseline-1 Model...")
+            self.logger.info("Preparing Baseline-1 Model...")
         resnet_model = resnet50(weights=ResNet50_Weights.DEFAULT, progress=verbose)
         num_features = resnet_model.fc.in_features
         resnet_model.fc = torch.nn.Linear(
