@@ -202,7 +202,7 @@ def train(
     num_classes=app_settings.NUM_ACTIVITY_LABELS,
     baseline_path: str = "baseline",
     verbose: bool = False,
-):
+) -> dict[str, Any]:
     """Runs the full training loop with evaluation and checkpointing.
 
     Args:
@@ -285,7 +285,7 @@ def train(
             print(
                 "".join(
                     [
-                        f"Epoch: {epoch} | ",
+                        f"Epoch: {epoch + 1} | ",
                         f"Train loss: {train_loss:.4f} | ",
                         f"Train acc: {100*train_acc:.2f}% | ",
                         f"Eval loss: {test_loss:.4f} | ",
@@ -302,15 +302,6 @@ def train(
         results[ModelResults.TEST_RECALL.value].append(test_recall)
         results[ModelResults.TEST_F1_SCORE.value].append(test_f1_score)
         results[ModelResults.CONFUSION_MATRIX.value] = test_confmat
-
-        plot_results(
-            results=results,
-            save_path=os.path.join(
-                app_settings.PATH_ASSETS,
-                model.__class__.__name__,
-                app_settings.PATH_METRICS,
-            ),
-        )
 
         checkpoint = {
             "epoch": epoch + 1,

@@ -6,7 +6,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from controllers.base_controller import BaseController
 from data_processing.annot_loading import AnnotationLoader
-from utils.model_utils import train, test
+from utils.model_utils import train, test, plot_results
 from utils.logging_utils import setup_logger
 from enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
 from stores.baselines.providers import B1CustomDataset, B1Model
@@ -71,7 +71,8 @@ class ModelController(BaseController):
             shuffle=False,
             num_workers=self.baseline_config.NUM_WORKERS,
         )
-        train(
+
+        train_results = train(
             model=self.model,
             train_dataloader=train_loader,
             valid_dataloader=valid_loader,
@@ -82,6 +83,15 @@ class ModelController(BaseController):
             baseline_path=self.baseline_config.PATH_MODEL,
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
             verbose=verbose,
+        )
+
+        plot_results(
+            results=train_results,
+            save_path=os.path.join(
+                self.app_settings.PATH_ASSETS,
+                self.model.__class__.__name__,
+                self.app_settings.PATH_METRICS,
+            ),
         )
 
     def test(self, verbose: Optional[bool] = None):
