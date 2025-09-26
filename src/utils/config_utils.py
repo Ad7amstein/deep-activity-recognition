@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     GH_PAT: Optional[SecretStr] = Field(None)
 
     # .yaml
+    APP_NAME: str = Field(...)
+    APP_VERSION: str = Field(...)
+
     PATH_DATA_ROOT: str = Field(...)
     PATH_TRACK_ANNOT_ROOT: str = Field(...)
     PATH_VIDEOS_ROOT: str = Field(...)
