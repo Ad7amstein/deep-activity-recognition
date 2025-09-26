@@ -2,9 +2,10 @@
 
 import os
 import time
+from datetime import timedelta
+from datetime import datetime
 from typing import Dict, Any
 import json
-from datetime import datetime
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 import torch
@@ -26,20 +27,18 @@ app_settings = get_settings()
 
 
 # time out the experience
-def print_train_time(start: float, end: float, device: torch.device) -> float:
-    """Prints and returns the elapsed training time.
+def get_train_time(start: float, end: float) -> float:
+    """Returns the elapsed training time.
 
     Args:
         start (float): Start time of computation (e.g., from timeit).
         end (float): End time of computation.
-        device (torch.device): Device on which the computation is running.
 
     Returns:
         float: Time difference in seconds between start and end.
     """
 
     total_time = end - start
-    print(f"Total Train time on {device}: {total_time:.3f} seconds")
     return total_time
 
 
@@ -208,7 +207,7 @@ def train(
     Args:
         model (nn.Module): Model to be trained.
         train_dataloader (DataLoader): DataLoader for training data.
-        test_dataloader (DataLoader): DataLoader for test data.
+        valid_dataloader (DataLoader): DataLoader for validation data.
         loss_fn (nn.Module): Loss function.
         optimizer (Optimizer): Optimizer for updating model parameters.
         epochs (int, optional): Number of training epochs. Defaults to app_settings.EPOCHS.
@@ -218,8 +217,9 @@ def train(
 
     Returns:
         dict: Dictionary containing lists of metrics (loss, accuracy, precision,
-        recall, F1-score) for all epochs.
+        recall, F1-score, confusion-matrix) for all epochs.
     """
+
     if verbose:
         print("[INFO] Training Started and in Progress...")
 
@@ -230,7 +230,8 @@ def train(
     confusion_matrix_fn = ConfusionMatrix(
         num_classes=app_settings.NUM_ACTIVITY_LABELS, task="multiclass"
     )
-    best_test_loss = float("inf")
+    best_val_loss = float("inf")
+    best_val_acc = float("-inf")
 
     results = {
         ModelResults.TRAIN_LOSS.value: [],
@@ -240,10 +241,12 @@ def train(
         ModelResults.TEST_PRECISION.value: [],
         ModelResults.TEST_RECALL.value: [],
         ModelResults.TEST_F1_SCORE.value: [],
+        ModelResults.TIME_PER_EPOCH.value: [],
         ModelResults.CONFUSION_MATRIX.value: None,
+        ModelResults.TOTAL_TRAIN_TIME.value: None,
     }
 
-    total_start = time.time()
+    start_time = time.time()
     for epoch in tqdm(
         range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch"
     ):
@@ -294,6 +297,8 @@ def train(
                 )
             )
 
+        epoch_end_time = time.time()
+        epoch_total_time = get_train_time(start_time, epoch_end_time)
         results[ModelResults.TRAIN_LOSS.value].append(train_loss)
         results[ModelResults.TRAIN_ACCURACY.value].append(train_acc)
         results[ModelResults.TEST_LOSS.value].append(test_loss)
@@ -301,6 +306,7 @@ def train(
         results[ModelResults.TEST_PRECISION.value].append(test_precision)
         results[ModelResults.TEST_RECALL.value].append(test_recall)
         results[ModelResults.TEST_F1_SCORE.value].append(test_f1_score)
+        results[ModelResults.TIME_PER_EPOCH.value].append(epoch_total_time)
         results[ModelResults.CONFUSION_MATRIX.value] = test_confmat
 
         checkpoint = {
@@ -310,8 +316,31 @@ def train(
             "results": results,
         }
 
-        if test_loss < best_test_loss:
-            best_test_loss = test_loss
+        # Save each 2 epocsh and ensure last checkpoint is saved
+        if epoch % 2 == 0 or epoch == epochs - 1:
+            save_checkpoint(
+                save_path=os.path.join(
+                    app_settings.PATH_MODELS,
+                    baseline_path,
+                    app_settings.PATH_MODELS_CHECKPOINTS,
+                    "epochs",
+                ),
+                file_name=f"{model.__class__.__name__}_epoch_{epoch}",
+                checkpoint=checkpoint,
+                verbose=True,
+            )
+
+        # Save the last epoch as the main model
+        if epoch == epochs - 1:
+            save_checkpoint(
+                save_path=app_settings.PATH_MODELS,
+                file_name=f"{model.__class__.__name__}",
+                checkpoint=checkpoint,
+            )
+
+        # Save the best loss
+        if test_loss < best_val_loss:
+            best_val_loss = test_loss
             save_checkpoint(
                 save_path=os.path.join(
                     app_settings.PATH_MODELS,
@@ -319,33 +348,34 @@ def train(
                     app_settings.PATH_MODELS_CHECKPOINTS,
                     "best",
                 ),
-                file_name=f"{model.__class__.__name__}_best",
+                file_name=f"{model.__class__.__name__}_best_loss",
                 checkpoint=checkpoint,
                 verbose=True,
             )
 
-        save_checkpoint(
-            save_path=os.path.join(
-                app_settings.PATH_MODELS,
-                baseline_path,
-                app_settings.PATH_MODELS_CHECKPOINTS,
-                "epochs",
-            ),
-            file_name=model.__class__.__name__,
-            checkpoint=checkpoint,
-            verbose=True,
+        # Save the best accuracy
+        if test_acc > best_val_acc:
+            best_val_acc = test_acc
+            save_checkpoint(
+                save_path=os.path.join(
+                    app_settings.PATH_MODELS,
+                    baseline_path,
+                    app_settings.PATH_MODELS_CHECKPOINTS,
+                    "best",
+                ),
+                file_name=f"{model.__class__.__name__}_best_acc",
+                checkpoint=checkpoint,
+                verbose=True,
+            )
+
+    end_time = time.time()
+    total_train_time = get_train_time(start_time, end_time)
+    if verbose:
+        print(
+            f"Total Train time on {device}: {str(timedelta(seconds=int(total_train_time)))}"
         )
 
-    total_end = time.time()
-    if verbose:
-        _ = print_train_time(total_start, total_end, device)
-
-    save_checkpoint(
-        save_path=app_settings.PATH_MODELS,
-        file_name=model.__class__.__name__,
-        checkpoint=checkpoint,
-    )
-
+    results[ModelResults.TOTAL_TRAIN_TIME.value] = total_train_time
     return results
 
 
@@ -505,7 +535,7 @@ def plot_results(results: dict, save_path: str):
 
 def save_checkpoint(
     save_path, file_name, checkpoint: Dict[str, Any], verbose: bool = False
-):
+) -> None:
     """Saves a model checkpoint to disk.
 
     Args:
@@ -519,10 +549,10 @@ def save_checkpoint(
     os.makedirs(save_path, exist_ok=True)
     torch.save(
         checkpoint,
-        os.path.join(save_path, f"{file_name}_epoch_{checkpoint['epoch']}.pth"),
+        os.path.join(save_path, f"{file_name}.pth"),
     )
     if verbose:
-        print(f"Checkpoint saved for epoch {checkpoint['epoch']}")
+        print(f"Checkpoint {file_name} saved in {save_path}")
 
 
 def test(
