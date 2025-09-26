@@ -415,6 +415,9 @@ def plot_results(results: dict, save_path: str):
         elif name in [ModelResults.TEST_LOSS.value, ModelResults.TRAIN_LOSS.value]:
             plot_vals = vals
             ylabel = "Loss"
+        elif name in [ModelResults.TIME_PER_EPOCH.value]:
+            plot_vals = vals
+            ylabel = "Elapsed Time (seconds)"
         else:
             plot_vals = vals
             ylabel = "Value"
