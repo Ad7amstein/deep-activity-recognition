@@ -25,6 +25,8 @@ class ModelResults(Enum):
     TEST_RECALL = "test_recall"
     TEST_F1_SCORE = "test_f1_score"
     CONFUSION_MATRIX = "test_confmat"
+    TOTAL_TRAIN_TIME = "total_train_time"
+    TIME_PER_EPOCH = "time_per_epoch"
 
 
 class ModelMode(Enum):
