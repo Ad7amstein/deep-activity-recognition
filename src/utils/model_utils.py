@@ -362,7 +362,6 @@ def plot_results(results: dict, save_path: str):
     os.makedirs(save_path, exist_ok=True)
 
     for name, vals in results.items():
-
         if name == ModelResults.CONFUSION_MATRIX.value:
             fig, ax = plt.subplots(figsize=(8, 6))
             sns.heatmap(
@@ -383,7 +382,6 @@ def plot_results(results: dict, save_path: str):
             fig.savefig(os.path.join(save_path, "confusion_matrix.png"), dpi=300)
             plt.close(fig)
             continue
-
         if name in [
             ModelResults.TEST_ACCURACY.value,
             ModelResults.TRAIN_ACCURACY.value,
@@ -399,15 +397,118 @@ def plot_results(results: dict, save_path: str):
         else:
             plot_vals = vals
             ylabel = "Value"
-
         fig, ax = plt.subplots()
         ax.plot(range(1, len(plot_vals) + 1), plot_vals, marker="o")
         ax.set_title(name)
         ax.set_xlabel("Epoch")
         ax.set_ylabel(ylabel)
         ax.grid(True)
-
         fig.savefig(os.path.join(save_path, f"{name}_plot.png"), dpi=300)
+        plt.close(fig)
+
+    # Configuration for the four comparison plots
+    plot_configs = [
+        {
+            "title": "Train Loss vs. Train Accuracy",
+            "filename": "train_loss_vs_accuracy.png",
+            "metric1_key": ModelResults.TRAIN_LOSS.value,
+            "metric1_label": "Train Loss",
+            "metric1_ylabel": "Loss",
+            "metric1_color": "tab:red",
+            "metric1_scale": 1.0,
+            "metric2_key": ModelResults.TRAIN_ACCURACY.value,
+            "metric2_label": "Train Accuracy",
+            "metric2_ylabel": "Accuracy (%)",
+            "metric2_color": "tab:blue",
+            "metric2_scale": 100.0,
+            "dual_axis": True,
+        },
+        {
+            "title": "Test Loss vs. Test Accuracy",
+            "filename": "test_loss_vs_accuracy.png",
+            "metric1_key": ModelResults.TEST_LOSS.value,
+            "metric1_label": "Test Loss",
+            "metric1_ylabel": "Loss",
+            "metric1_color": "tab:red",
+            "metric1_scale": 1.0,
+            "metric2_key": ModelResults.TEST_ACCURACY.value,
+            "metric2_label": "Test Accuracy",
+            "metric2_ylabel": "Accuracy (%)",
+            "metric2_color": "tab:blue",
+            "metric2_scale": 100.0,
+            "dual_axis": True,
+        },
+        {
+            "title": "Train Loss vs. Test Loss",
+            "filename": "train_vs_test_loss.png",
+            "metric1_key": ModelResults.TRAIN_LOSS.value,
+            "metric1_label": "Train Loss",
+            "metric1_ylabel": "Loss",
+            "metric1_color": "tab:blue",
+            "metric1_scale": 1.0,
+            "metric2_key": ModelResults.TEST_LOSS.value,
+            "metric2_label": "Test Loss",
+            "metric2_ylabel": "Loss",
+            "metric2_color": "tab:orange",
+            "metric2_scale": 1.0,
+            "dual_axis": False,
+        },
+        {
+            "title": "Train Accuracy vs. Test Accuracy",
+            "filename": "train_vs_test_accuracy.png",
+            "metric1_key": ModelResults.TRAIN_ACCURACY.value,
+            "metric1_label": "Train Accuracy",
+            "metric1_ylabel": "Accuracy (%)",
+            "metric1_color": "tab:blue",
+            "metric1_scale": 100.0,
+            "metric2_key": ModelResults.TEST_ACCURACY.value,
+            "metric2_label": "Test Accuracy",
+            "metric2_ylabel": "Accuracy (%)",
+            "metric2_color": "tab:orange",
+            "metric2_scale": 100.0,
+            "dual_axis": False,
+        },
+    ]
+
+    # Plotting loop
+    for config in plot_configs:
+        fig, ax1 = plt.subplots(figsize=(8, 6))
+        ax1.set_xlabel("Epoch")
+        ax1.set_ylabel(config["metric1_ylabel"], color=config["metric1_color"])
+        ax1.plot(
+            range(1, len(results[config["metric1_key"]]) + 1),
+            [v * config["metric1_scale"] for v in results[config["metric1_key"]]],
+            marker="o",
+            color=config["metric1_color"],
+            label=config["metric1_label"],
+        )
+        ax1.tick_params(axis="y", labelcolor=config["metric1_color"])
+        ax1.grid(True)
+
+        if config["dual_axis"]:
+            ax2 = ax1.twinx()
+            ax2.set_ylabel(config["metric2_ylabel"], color=config["metric2_color"])
+            ax2.plot(
+                range(1, len(results[config["metric2_key"]]) + 1),
+                [v * config["metric2_scale"] for v in results[config["metric2_key"]]],
+                marker="s",
+                color=config["metric2_color"],
+                label=config["metric2_label"],
+            )
+            ax2.tick_params(axis="y", labelcolor=config["metric2_color"])
+        else:
+            ax1.plot(
+                range(1, len(results[config["metric2_key"]]) + 1),
+                [v * config["metric2_scale"] for v in results[config["metric2_key"]]],
+                marker="s",
+                color=config["metric2_color"],
+                label=config["metric2_label"],
+            )
+
+        fig.suptitle(config["title"])
+        fig.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=2)
+        plt.tight_layout()
+        fig.savefig(os.path.join(save_path, config["filename"]), dpi=300)
         plt.close(fig)
 
 
@@ -526,8 +627,8 @@ def test(
                     serializable[k] = v
                 else:
                     serializable[k] = v
-        except Exception:
-            # fallback to string representation
+        except (AttributeError, TypeError, ValueError):
+            # fallback to string representation for unsupported or unexpected types
             serializable[k] = str(v)
 
     # add metadata (timestamp, device, model name)
@@ -540,7 +641,7 @@ def test(
 
     file_name = f"test_results_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
     file_path = os.path.join(save_dir, file_name)
-    with open(file_path, "w") as fh:
+    with open(file_path, "w", encoding="utf-8") as fh:
         json.dump(output, fh, indent=2)
 
     if verbose:
