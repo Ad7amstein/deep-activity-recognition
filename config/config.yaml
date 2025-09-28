@@ -10,7 +10,8 @@ PATH_MODELS: "models"
 PATH_MODELS_CHECKPOINTS: "checkpoints"
 PATH_ASSETS: "assets"
 PATH_METRICS: "metrics_plots"
-PATH_LOGS: "logs"
+# Hard write PATH_LOGS in [config_utils.py]
+PATH_LOGS: "logs/baseline1/exp_1"
 PATH_DATA_PROCESSING_MODULE: "data_processing"
 PATH_UTILS_MODULE: "utils"
 
@@ -24,8 +25,6 @@ VALIDATION_IDS: [0, 2, 8, 12, 17, 19, 24, 26, 27, 28, 30, 33, 46, 49, 51]
 TEST_IDS: [4, 5, 9, 11, 14, 20, 21, 25, 29, 34, 35, 37, 43, 44, 45, 47]
 
 # --------------- B1 Config ---------------
-# output
-B1_PATH_MODEL: baseline1
 # dataset
 B1_FEATURES_SHAPE_0: 224
 B1_FEATURES_SHAPE_1: 224
@@ -41,3 +40,4 @@ B1_NUM_WORKERS: 6
 B1_OPTIMIZER: "AdamW"
 B1_WEIGHT_DECAY: 0.001
 B1_LOSS_FN: "cross_entropy_loss"
+B1_EXPERIMENT_NUM: 1

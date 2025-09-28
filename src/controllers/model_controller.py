@@ -80,7 +80,9 @@ class ModelController(BaseController):
             optimizer=self.optimizer,
             scheduler=self.scheduler,
             epochs=self.baseline_config.TRAIN_EPOCHS,
-            baseline_path=self.baseline_config.PATH_MODEL,
+            baseline_path=os.path.join(
+                str(self.model.__class__.__name__), str(self.baseline_config.EXPERIMENT_NUM)
+            ),
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
             verbose=verbose,
         )
@@ -90,6 +92,7 @@ class ModelController(BaseController):
             save_path=os.path.join(
                 self.app_settings.PATH_ASSETS,
                 self.model.__class__.__name__,
+                self.get_experiment_path(),
                 self.app_settings.PATH_METRICS,
             ),
         )
@@ -229,11 +232,14 @@ class ModelController(BaseController):
 
         return SimpleNamespace(**config)
 
+    def get_experiment_path(self) -> str:
+        return f"exp_{str(self.baseline_config.EXPERIMENT_NUM)}"
+
 
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = ModelController(baseline_number=10)
+    train_controller = ModelController(baseline_number=1)
     train_controller.train()
 
 

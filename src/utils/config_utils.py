@@ -9,7 +9,7 @@ from pydantic import Field, ValidationError, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 from utils.logging_utils import setup_logger
 
-logger = setup_logger(log_file=__file__)
+logger = setup_logger(log_file=__file__, log_dir="logs/baseline1/exp_1")
 
 
 class Settings(BaseSettings):
@@ -42,7 +42,6 @@ class Settings(BaseSettings):
     TEST_IDS: List[int] = Field(...)
 
     # Baseline 1
-    B1_PATH_MODEL: str = Field(...)
     B1_FEATURES_SHAPE_0: int = Field(...)
     B1_FEATURES_SHAPE_1: int = Field(...)
     B1_LEFT_FRAMES: int = Field(...)
@@ -56,6 +55,7 @@ class Settings(BaseSettings):
     B1_OPTIMIZER: str = Field(...)
     B1_WEIGHT_DECAY: float = Field(...)
     B1_LOSS_FN: str = Field(...)
+    B1_EXPERIMENT_NUM: int = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
