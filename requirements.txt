@@ -8,6 +8,7 @@ torchmetrics==1.8.2
 seaborn==0.13.2
 fastapi==0.117.1
 uvicorn==0.37.0
+python-multipart==0.0.20
 
 
 --extra-index-url https://download.pytorch.org/whl/cu129
