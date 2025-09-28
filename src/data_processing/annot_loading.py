@@ -34,9 +34,7 @@ class AnnotationLoader:
         self.verbose = verbose
         self.logger = setup_logger(
             log_file=__file__,
-            log_dir=os.path.join(
-                app_settings.PATH_LOGS, app_settings.PATH_DATA_PROCESSING_MODULE
-            ),
+            log_dir=app_settings.PATH_LOGS,
             log_to_console=self.verbose,
             use_tqdm=True,
         )
