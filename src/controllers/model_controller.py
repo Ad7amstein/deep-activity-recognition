@@ -44,10 +44,12 @@ class ModelController(BaseController):
         self.optimizer = self.load_optimizer()
         self.scheduler = self.load_scheduler()
 
-        self.logger.info("Baseline-%s Configuration:", self.baseline_number)
+        config_str = [f"Baseline-{self.baseline_number} Configuration:"]
         for k, v in vars(self.baseline_config).items():
-            self.logger.info("  - %s: %s", k, v)
-        self.logger.info("  - Scheduler: %s", type(self.scheduler).__name__)
+            config_str.append(f"  - {k}: {v}")
+        config_str.append(f"  - Scheduler: {type(self.scheduler).__name__}")
+
+        self.logger.info("\n".join(config_str))
 
     def train(self, verbose: Optional[bool] = None):
         verbose = self.verbose if verbose is None else verbose
@@ -81,7 +83,8 @@ class ModelController(BaseController):
             scheduler=self.scheduler,
             epochs=self.baseline_config.TRAIN_EPOCHS,
             baseline_path=os.path.join(
-                str(self.model.__class__.__name__), str(self.baseline_config.EXPERIMENT_NUM)
+                str(self.model.__class__.__name__),
+                str(self.baseline_config.EXPERIMENT_NUM),
             ),
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
             verbose=verbose,
