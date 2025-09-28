@@ -5,7 +5,7 @@ Main script for the application.
 import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from routes import base
+from routes import base, ai
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
 
@@ -42,6 +42,7 @@ async def lifespan(app: FastAPI):  # pylint: disable=[W0621]
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(base.base_router)
+app.include_router(ai.ai_router)
 
 
 def main():
