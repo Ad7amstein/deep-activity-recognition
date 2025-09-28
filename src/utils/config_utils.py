@@ -56,6 +56,7 @@ class Settings(BaseSettings):
     B1_OPTIMIZER: str = Field(...)
     B1_WEIGHT_DECAY: float = Field(...)
     B1_LOSS_FN: str = Field(...)
+    B1_EXPERIMENT_NUM: int = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
