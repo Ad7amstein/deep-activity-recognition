@@ -18,7 +18,7 @@ class ModelController(BaseController):
         self.verbose = verbose
         self.logger = setup_logger(
             log_file=__file__,
-            log_dir=self.app_settings.PATH_LOGS,
+            log_dir=self.app_settings.PATH_LOGS_DIR,
             log_to_console=self.verbose,
             use_tqdm=True,
         )
@@ -80,7 +80,9 @@ class ModelController(BaseController):
             optimizer=self.optimizer,
             scheduler=self.scheduler,
             epochs=self.baseline_config.TRAIN_EPOCHS,
-            baseline_path=self.baseline_config.PATH_MODEL,
+            baseline_path=os.path.join(
+                self.model.__class__.__name__, self.baseline_config.EXPERIMENT_NUM
+            ),
             num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
             verbose=verbose,
         )
@@ -90,6 +92,7 @@ class ModelController(BaseController):
             save_path=os.path.join(
                 self.app_settings.PATH_ASSETS,
                 self.model.__class__.__name__,
+                self.get_experiment_path(),
                 self.app_settings.PATH_METRICS,
             ),
         )
@@ -228,6 +231,9 @@ class ModelController(BaseController):
             )
 
         return SimpleNamespace(**config)
+
+    def get_experiment_path(self) -> str:
+        return f"exp_{self.baseline_config.EXPERIMENT_NUM}"
 
 
 def main():
