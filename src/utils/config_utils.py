@@ -30,6 +30,7 @@ class Settings(BaseSettings):
     PATH_MODELS: str = Field(...)
     PATH_MODELS_CHECKPOINTS: str = Field(...)
     PATH_LOGS: str = Field(...)
+    PATH_LOGS_DIR: str = Field(...)
     PATH_DATA_PROCESSING_MODULE: str = Field(...)
     PATH_UTILS_MODULE: str = Field(...)
 
@@ -42,7 +43,6 @@ class Settings(BaseSettings):
     TEST_IDS: List[int] = Field(...)
 
     # Baseline 1
-    B1_PATH_MODEL: str = Field(...)
     B1_FEATURES_SHAPE_0: int = Field(...)
     B1_FEATURES_SHAPE_1: int = Field(...)
     B1_LEFT_FRAMES: int = Field(...)
