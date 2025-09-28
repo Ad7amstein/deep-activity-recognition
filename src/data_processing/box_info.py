@@ -4,6 +4,10 @@ and storing bounding box information from a formatted string.
 """
 
 import os
+from utils.logging_utils import setup_logger
+from utils.config_utils import get_settings
+
+app_settings = get_settings()
 
 
 class BoxInfo:
@@ -29,6 +33,12 @@ class BoxInfo:
         """
 
         self.verbose = verbose
+        self.logger = setup_logger(
+            logger_name=__name__,
+            log_file=__file__,
+            log_dir=app_settings.PATH_LOGS,
+            log_to_console=verbose,
+        )
         if self.verbose:
             print(f"\n[INFO] Initializing {__class__.__name__} Class...")
         self.line = line
