@@ -22,6 +22,7 @@ class ModelController(BaseController):
             log_to_console=self.verbose,
             use_tqdm=True,
         )
+        self.logger.info("Initializing ModelController Module...")
         self.baseline_number = baseline_number
         self.baseline_config = self.load_config(self.baseline_number)
 
@@ -31,8 +32,8 @@ class ModelController(BaseController):
             self.logger.exception(str(exc))
             raise exc
 
-        self.volleyball_data = AnnotationLoader(verbose=True).load_pkl_version(
-            verbose=True
+        self.volleyball_data = AnnotationLoader(verbose=verbose).load_pkl_version(
+            verbose=verbose
         )
         try:
             self.dataset_class = self.load_dataset_class(self.baseline_number)
@@ -53,6 +54,8 @@ class ModelController(BaseController):
 
     def train(self, verbose: Optional[bool] = None):
         verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info("Setup training")
         train_dataset = self.dataset_class(
             volleyball_data=self.volleyball_data, mode=ModelMode.TRAIN, verbose=verbose  # type: ignore
         )
@@ -102,6 +105,8 @@ class ModelController(BaseController):
 
     def test(self, verbose: Optional[bool] = None):
         verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info("Setup Testing")
         test_dataset = self.dataset_class(
             volleyball_data=self.volleyball_data, mode=ModelMode.TEST, verbose=verbose  # type: ignore
         )
@@ -122,7 +127,12 @@ class ModelController(BaseController):
     def inference(self, x):
         pass
 
-    def load_model(self, baseline_number: int) -> nn.Module:
+    def load_model(
+        self, baseline_number: int, verbose: Optional[bool] = None
+    ) -> nn.Module:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info("Loading model for baseline %s", str(baseline_number))
         baseline_model = {
             ModelBaseline.BASELINE1.value: B1Model(),
             ModelBaseline.BASELINE2.value: None,
@@ -142,7 +152,14 @@ class ModelController(BaseController):
 
         return model
 
-    def load_dataset_class(self, baseline_number: int) -> Type[Dataset]:
+    def load_dataset_class(
+        self, baseline_number: int, verbose: Optional[bool] = None
+    ) -> Type[Dataset]:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info(
+                "Loading dataset_class for baseline %s", str(baseline_number)
+            )
         baseline_dataset = {
             ModelBaseline.BASELINE1.value: B1CustomDataset,
             ModelBaseline.BASELINE2.value: None,
@@ -164,7 +181,12 @@ class ModelController(BaseController):
 
         return dataset_class
 
-    def load_optimizer(self) -> torch.optim.Optimizer:
+    def load_optimizer(self, verbose: Optional[bool] = None) -> torch.optim.Optimizer:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info(
+                "Loading optimizer: %s", str(self.baseline_config.OPTIMIZER)
+            )
         optimizer = torch.optim.SGD(
             params=self.model.parameters(),
             lr=self.baseline_config.LR,
@@ -179,7 +201,12 @@ class ModelController(BaseController):
 
         return optimizer
 
-    def load_loss_fn(self) -> nn.Module:
+    def load_loss_fn(self, verbose: Optional[bool] = None) -> nn.Module:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info(
+                "Loading Loss Function: %s", str(self.baseline_config.LOSS_FN)
+            )
         loss_fn = nn.CrossEntropyLoss()
         if self.baseline_config.LOSS_FN == LossFNEnum.BCE_LOSS.value:
             loss_fn = nn.BCELoss()
@@ -187,7 +214,7 @@ class ModelController(BaseController):
         return loss_fn
 
     def load_scheduler(
-        self,
+        self, verbose: Optional[bool] = None
     ) -> (
         torch.optim.lr_scheduler._LRScheduler
         | torch.optim.lr_scheduler.ReduceLROnPlateau
@@ -197,6 +224,9 @@ class ModelController(BaseController):
         Returns:
             torch.optim.lr_scheduler: Scheduler object controlling LR updates.
         """
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info("Loading Scheduler: %s", "ReduceLROnPlateau")
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.optimizer,
             mode="min",
@@ -206,7 +236,9 @@ class ModelController(BaseController):
 
         return scheduler
 
-    def load_config(self, baseline_number: int) -> SimpleNamespace:
+    def load_config(
+        self, baseline_number: int, verbose: Optional[bool] = None
+    ) -> SimpleNamespace:
         """
         Load configuration for the given baseline into a dictionary with general keys.
 
@@ -217,6 +249,11 @@ class ModelController(BaseController):
             dict: A dictionary of baseline configuration values
                 with general keys (e.g., TRAIN_EPOCHS instead of B1_TRAIN_EPOCHS).
         """
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info(
+                "Loading Model Config for baseline %s", self.baseline_number
+            )
         settings = self.app_settings
 
         prefix = f"B{baseline_number}_"
@@ -235,7 +272,12 @@ class ModelController(BaseController):
 
         return SimpleNamespace(**config)
 
-    def get_experiment_path(self) -> str:
+    def get_experiment_path(self, verbose: Optional[bool] = None) -> str:
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info(
+                "Getting Experiment Path for baseline %s", self.baseline_number
+            )
         return f"exp_{str(self.baseline_config.EXPERIMENT_NUM)}"
 
 

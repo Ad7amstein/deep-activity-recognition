@@ -260,7 +260,7 @@ def train(
         range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch"
     ):
         if verbose:
-            logger.info(f"Epoch {epoch+1}/{epochs}")
+            logger.info("Epoch %s/%s", str(epoch + 1), str(epochs))
         train_loss, train_acc = train_step(
             model=model,
             data_loader=train_dataloader,
@@ -381,14 +381,18 @@ def train(
     total_train_time = get_train_time(start_time, end_time)
     if verbose:
         logger.info(
-            f"Total Train time on {device}: {str(timedelta(seconds=int(total_train_time)))}"
+            "Total Train time on %s: %s",
+            device,
+            str(timedelta(seconds=int(total_train_time))),
         )
 
     results[ModelResults.TOTAL_TRAIN_TIME.value] = total_train_time
     return results
 
 
-def plot_results(results: dict, save_path: str):
+def plot_results(results: dict, save_path: str, verbose: bool = True):
+    if verbose:
+        logger.info("Plotting Results...")
     os.makedirs(save_path, exist_ok=True)
 
     for name, vals in results.items():
@@ -566,7 +570,7 @@ def save_checkpoint(
         os.path.join(save_path, f"{file_name}.pth"),
     )
     if verbose:
-        logger.info(f"Checkpoint {file_name} saved in {save_path}")
+        logger.info("Checkpoint %s saved in %s", file_name, save_path)
 
 
 def test(
@@ -680,7 +684,7 @@ def test(
         json.dump(output, fh, indent=2)
 
     if verbose:
-        logger.info(f"Test results saved to {file_path}")
+        logger.info("Test results saved to %s", file_path)
 
     return results
 
