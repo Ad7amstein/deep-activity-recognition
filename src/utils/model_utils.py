@@ -20,10 +20,19 @@ from torchmetrics.classification import (
     ConfusionMatrix,
 )
 from utils.config_utils import get_settings
+from utils.logging_utils import setup_logger
 from enums import ModelResults
 from enums import activity_category2label_dct
 
 app_settings = get_settings()
+logger = setup_logger(
+    logger_name=__name__,
+    log_file=__file__,
+    log_dir=app_settings.PATH_LOGS,
+    log_to_console=True,
+    use_tqdm=True,
+    file_mode="a",
+)
 
 
 # time out the experience
@@ -94,7 +103,7 @@ def train_step(
         optimizer.step()
 
         if verbose and batch_idx % 100 == 0:
-            print(
+            logger.info(
                 "".join(
                     [
                         f"\t[BATCH {batch_idx}/{len(data_loader)}] ",
@@ -221,7 +230,7 @@ def train(
     """
 
     if verbose:
-        print("[INFO] Training Started and in Progress...")
+        logger.info("Training Started and in Progress...")
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
     precision_fn = MulticlassPrecision(num_classes=num_classes)
@@ -251,7 +260,7 @@ def train(
         range(epochs), desc="Train Epochs", disable=not verbose, unit="Epoch"
     ):
         if verbose:
-            print(f"[INFO] Epoch {epoch+1}/{epochs}")
+            logger.info(f"Epoch {epoch+1}/{epochs}")
         train_loss, train_acc = train_step(
             model=model,
             data_loader=train_dataloader,
@@ -285,7 +294,7 @@ def train(
         scheduler.step(test_loss)
 
         if verbose:
-            print(
+            logger.info(
                 "".join(
                     [
                         f"Epoch: {epoch + 1} | ",
@@ -325,7 +334,7 @@ def train(
                     app_settings.PATH_MODELS_CHECKPOINTS,
                     "epochs",
                 ),
-                file_name=f"{model.__class__.__name__}_epoch_{epoch}",
+                file_name=f"{model.__class__.__name__}_epoch_{epoch+1}",
                 checkpoint=checkpoint,
                 verbose=True,
             )
@@ -371,7 +380,7 @@ def train(
     end_time = time.time()
     total_train_time = get_train_time(start_time, end_time)
     if verbose:
-        print(
+        logger.info(
             f"Total Train time on {device}: {str(timedelta(seconds=int(total_train_time)))}"
         )
 
@@ -555,7 +564,7 @@ def save_checkpoint(
         os.path.join(save_path, f"{file_name}.pth"),
     )
     if verbose:
-        print(f"Checkpoint {file_name} saved in {save_path}")
+        logger.info(f"Checkpoint {file_name} saved in {save_path}")
 
 
 def test(
@@ -585,7 +594,7 @@ def test(
         dict: Dictionary containing test loss, accuracy, precision, recall, and F1-score.
     """
     if verbose:
-        print("[INFO] Testing Started and in Progress...")
+        logger.info("Testing Started and in Progress...")
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
     precision_fn = MulticlassPrecision(num_classes=num_classes)
@@ -620,7 +629,7 @@ def test(
     }
 
     if verbose:
-        print(
+        logger.info(
             "".join(
                 [
                     f"Test Results -> Loss: {test_loss:.4f} | ",
@@ -669,7 +678,7 @@ def test(
         json.dump(output, fh, indent=2)
 
     if verbose:
-        print(f"Test results saved to {file_path}")
+        logger.info(f"Test results saved to {file_path}")
 
     return results
 
