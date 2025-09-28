@@ -19,6 +19,7 @@ class BaseController:
             log_dir=self.app_settings.PATH_LOGS,
             log_to_console=self.verbose,
         )
+        self.logger.info("Initializing BaseController Module...")
         if set_seeds:
             self.set_all_seeds(seed_value=seed_value)
 
