@@ -17,6 +17,7 @@ from pydantic_models import (  # pylint: disable=[W0611]
 )
 from data_processing.annot_loading import AnnotationLoader
 from utils.config_utils import get_settings
+from utils.logging_utils import setup_logger
 
 app_settings = get_settings()
 
@@ -39,10 +40,18 @@ class FeatureExtractor:
         Args:
             verbose (bool): Whether to print progress information. Defaults to False.
         """
+        self.verbose = verbose
+        self.logger = setup_logger(
+            logger_name=__name__,
+            log_file=__file__,
+            log_dir=app_settings.PATH_LOGS,
+            log_to_console=self.verbose,
+            use_tqdm=True,
+        )
+        self.logger.info("Initializing Feature Extractor Module...")
         self.model = None
         self.transform = None
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.verbose = verbose
 
     def prepare_model(
         self,
@@ -68,7 +77,7 @@ class FeatureExtractor:
         """
         verbose = self.verbose if not verbose else verbose
         if verbose:
-            print("[INFO] Preparing Model and Preprocessor...")
+            self.logger.info("Preparing Model and Preprocessor...")
 
         if self.transform is None:
             if img_level:
@@ -125,7 +134,7 @@ class FeatureExtractor:
         """
         verbose = self.verbose if not verbose else verbose
         if verbose:
-            print("[INFO] Extracting Features from Volleyball Dataset...")
+            self.logger.info("Extracting Features from Volleyball Dataset...")
 
         with torch.inference_mode():
             for video_id, video_annot_dct in tqdm(
@@ -176,9 +185,8 @@ class FeatureExtractor:
 
 
 def main():
-    """
-    Entry Point for the Program.
-    """
+    """Entry Point for the Program."""
+
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
     feature_extractor = FeatureExtractor()
     _, _ = feature_extractor.prepare_model(model=models.resnet50(pretrained=True))
