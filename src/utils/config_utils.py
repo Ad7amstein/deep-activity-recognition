@@ -9,7 +9,7 @@ from pydantic import Field, ValidationError, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 from utils.logging_utils import setup_logger
 
-logger = setup_logger(log_file=__file__)
+logger = setup_logger(log_file=__file__, log_dir="logs/baseline1/exp_1")
 
 
 class Settings(BaseSettings):
@@ -30,7 +30,6 @@ class Settings(BaseSettings):
     PATH_MODELS: str = Field(...)
     PATH_MODELS_CHECKPOINTS: str = Field(...)
     PATH_LOGS: str = Field(...)
-    PATH_LOGS_DIR: str = Field(...)
     PATH_DATA_PROCESSING_MODULE: str = Field(...)
     PATH_UTILS_MODULE: str = Field(...)
 
