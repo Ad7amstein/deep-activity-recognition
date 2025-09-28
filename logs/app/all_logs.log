@@ -1,0 +1,151 @@
+[2025-09-28 22:14:46] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:14:46] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:19:03] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:19:10] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:19:10] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:19:11] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:19:12] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:19:12] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:19:20] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:19:20] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:19:21] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:19:23] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:19:23] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:19:23] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:19:53] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:19:53] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:19:53] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:22:19] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:22:20] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:20] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:22:25] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:22:26] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:26] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:22:29] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:22:27] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:27] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:22:38] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:22:38] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:39] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:22:43] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:22:56] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:56] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:59] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:22:59] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:31] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:31] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:33] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:33] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:33] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:33] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:30:38] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:30:38] - [base_controller.py:22] - [INFO]: Initializing BaseController Module...
+[2025-09-28 22:30:38] - [base_controller.py:27] - [INFO]: Setting all seeds...
+[2025-09-28 22:30:38] - [model_controller.py:25] - [INFO]: Initializing ModelController Module...
+[2025-09-28 22:30:38] - [model_controller.py:298] - [INFO]: Loading Model Config for baseline 1
+[2025-09-28 22:30:38] - [model_controller.py:179] - [INFO]: Loading model for baseline 1
+[2025-09-28 22:30:39] - [annot_loading.py:42] - [INFO]: Initializing Annotation Loader Object...
+[2025-09-28 22:30:54] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:35:41] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:35:41] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:35:43] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:35:43] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:35:43] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:35:43] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:35:47] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:35:47] - [base_controller.py:22] - [INFO]: Initializing BaseController Module...
+[2025-09-28 22:35:47] - [base_controller.py:27] - [INFO]: Setting all seeds...
+[2025-09-28 22:35:47] - [model_controller.py:25] - [INFO]: Initializing ModelController Module...
+[2025-09-28 22:35:47] - [model_controller.py:298] - [INFO]: Loading Model Config for baseline 1
+[2025-09-28 22:35:47] - [model_controller.py:179] - [INFO]: Loading model for baseline 1
+[2025-09-28 22:36:16] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:36:45] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:45] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:45] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:45] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:45] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:45] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:36:45] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:45] - [base_controller.py:22] - [INFO]: Initializing BaseController Module...
+[2025-09-28 22:36:45] - [base_controller.py:27] - [INFO]: Setting all seeds...
+[2025-09-28 22:36:45] - [model_controller.py:25] - [INFO]: Initializing ModelController Module...
+[2025-09-28 22:36:45] - [model_controller.py:300] - [INFO]: Loading Model Config for baseline 1
+[2025-09-28 22:36:45] - [model_controller.py:181] - [INFO]: Loading model for baseline 1
+[2025-09-28 22:36:46] - [model_controller.py:55] - [INFO]: Baseline-1 Configuration:
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - LEFT_FRAMES: 5
+  - RIGHT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 32
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 1
+[2025-09-28 22:36:49] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:36:49] - [base_controller.py:22] - [INFO]: Initializing BaseController Module...
+[2025-09-28 22:36:49] - [base_controller.py:27] - [INFO]: Setting all seeds...
+[2025-09-28 22:36:49] - [model_controller.py:25] - [INFO]: Initializing ModelController Module...
+[2025-09-28 22:36:49] - [model_controller.py:300] - [INFO]: Loading Model Config for baseline 1
+[2025-09-28 22:36:49] - [model_controller.py:181] - [INFO]: Loading model for baseline 1
+[2025-09-28 22:36:50] - [model_controller.py:55] - [INFO]: Baseline-1 Configuration:
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - LEFT_FRAMES: 5
+  - RIGHT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 32
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 1
+[2025-09-28 22:37:26] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:37:29] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:29] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:31] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:31] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:31] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:31] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:37:33] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-28 22:37:35] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:35] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:36] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:36] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:36] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:36] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:37:38] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:38] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:40] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:40] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:40] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:40] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-28 22:37:40] - [config_utils.py:105] - [INFO]: Loading App Settings
+[2025-09-28 22:37:40] - [base_controller.py:22] - [INFO]: Initializing BaseController Module...
+[2025-09-28 22:37:40] - [base_controller.py:27] - [INFO]: Setting all seeds...
+[2025-09-28 22:37:40] - [model_controller.py:25] - [INFO]: Initializing ModelController Module...
+[2025-09-28 22:37:40] - [model_controller.py:300] - [INFO]: Loading Model Config for baseline 1
+[2025-09-28 22:37:40] - [model_controller.py:181] - [INFO]: Loading model for baseline 1
+[2025-09-28 22:37:41] - [model_controller.py:55] - [INFO]: Baseline-1 Configuration:
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - LEFT_FRAMES: 5
+  - RIGHT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 32
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 1
+[2025-09-28 22:37:41] - [model_controller.py:153] - [INFO]: Running inference on input with shape (1, 3, 224, 224)
