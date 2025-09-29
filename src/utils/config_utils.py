@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     APP_NAME: str = Field(...)
     APP_VERSION: str = Field(...)
     FILE_ALLOWED_TYPES: List[str] = Field(...)
+    FILE_MAX_SIZE: int = Field(...)
 
     PATH_DATA_ROOT: str = Field(...)
     PATH_TRACK_ANNOT_ROOT: str = Field(...)

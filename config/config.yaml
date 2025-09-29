@@ -4,6 +4,7 @@ APP_VERSION: 1.0.0
 FILE_ALLOWED_TYPES:
   - "image/jpeg"
   - "image/png"
+FILE_MAX_SIZE: 10
 
 # --------------- PATH Config ---------------
 PATH_DATA_ROOT: "data/volleyball"
