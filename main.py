@@ -33,7 +33,7 @@ async def lifespan(app: FastAPI):  # pylint: disable=[W0621]
         initialization. Cleanup is performed after the yield when the application
         is shutting down.
     """
-    app.state.settings = app_settings
+    app.state.app_settings = app_settings
 
     logger.info("START: Application is started")
     yield
