@@ -1,6 +1,9 @@
 # --------------- APP Config ---------------
 APP_NAME: "deep-activity-recognition"
 APP_VERSION: 1.0.0
+FILE_ALLOWED_TYPES:
+  - "image/jpeg"
+  - "image/png"
 
 # --------------- PATH Config ---------------
 PATH_DATA_ROOT: "data/volleyball"
