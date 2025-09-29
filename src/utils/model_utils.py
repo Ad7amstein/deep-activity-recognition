@@ -21,8 +21,8 @@ from torchmetrics.classification import (
 )
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
-from enums import ModelResults
-from enums import activity_category2label_dct
+from models.enums import ModelResults
+from models.enums import activity_category2label_dct
 
 app_settings = get_settings()
 logger = setup_logger(

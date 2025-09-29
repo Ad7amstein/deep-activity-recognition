@@ -8,7 +8,7 @@ from controllers.base_controller import BaseController
 from data_processing.annot_loading import AnnotationLoader
 from utils.model_utils import train, test, plot_results
 from utils.logging_utils import setup_logger
-from enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
+from models.enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
 from stores.baselines.providers import B1CustomDataset, B1Model
 
 
