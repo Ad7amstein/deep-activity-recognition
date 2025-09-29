@@ -1,6 +1,7 @@
 import os
 from typing import Optional
 import random
+import string
 import numpy as np
 import torch
 from utils.config_utils import get_settings
@@ -20,6 +21,8 @@ class BaseController:
             log_to_console=self.verbose,
         )
         self.logger.info("Initializing BaseController Module...")
+        self.base_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        self.files_dir = os.path.join(self.base_dir, "assets", "files")
         if set_seeds:
             self.set_all_seeds(seed_value=seed_value)
 
@@ -33,6 +36,11 @@ class BaseController:
         os.environ["PYTHONHASHSEED"] = str(seed_value)
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+
+    def generate_random_string(self, length: int = 12):
+        return "".join(
+            random.choices("".join([string.ascii_lowercase, string.digits]), k=length)
+        )
 
 
 def main():

@@ -29,3 +29,7 @@
 [2025-09-28 22:37:36] - [main.py:38] - [INFO]: START: Application is started
 [2025-09-28 22:37:40] - [main.py:38] - [INFO]: START: Application is started
 [2025-09-28 22:38:59] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-29 14:24:55] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-29 14:27:09] - [main.py:40] - [INFO]: END: Application is ended
+[2025-09-29 14:27:11] - [main.py:38] - [INFO]: START: Application is started
+[2025-09-29 14:30:12] - [main.py:40] - [INFO]: END: Application is ended

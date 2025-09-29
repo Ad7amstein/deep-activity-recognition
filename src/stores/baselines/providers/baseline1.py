@@ -9,10 +9,10 @@ from torch.utils.data import Dataset
 from torch import nn
 from torchvision import transforms
 from torchvision.models import resnet50, ResNet50_Weights
-from pydantic_models import VolleyballData
+from models import VolleyballData
+from models.enums import activity_category2label_dct, ModelMode
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
-from enums import activity_category2label_dct, ModelMode
 from data_processing.annot_loading import AnnotationLoader
 
 app_settings = get_settings()

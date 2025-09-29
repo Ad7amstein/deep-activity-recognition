@@ -10,7 +10,7 @@ import torch
 from torch import nn
 from tqdm import tqdm
 from torchvision import transforms, models
-from pydantic_models import (  # pylint: disable=[W0611]
+from models import (  # pylint: disable=[W0611]
     VolleyballData,
     TrackingData,
     ClipAnnotation,
