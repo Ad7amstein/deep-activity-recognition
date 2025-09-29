@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class InferenceRequest(BaseModel):
     baseline_number: int
+    image_filename: str
 
 
 def main():
