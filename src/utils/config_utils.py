@@ -9,7 +9,7 @@ from pydantic import Field, ValidationError, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 from utils.logging_utils import setup_logger
 
-logger = setup_logger(log_file=__file__, log_dir="logs/baseline1/exp_1")
+logger = setup_logger(log_file=__file__, log_dir="logs/app")
 
 
 class Settings(BaseSettings):
@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     # .yaml
     APP_NAME: str = Field(...)
     APP_VERSION: str = Field(...)
+    FILE_ALLOWED_TYPES: List[str] = Field(...)
+    FILE_MAX_SIZE: int = Field(...)
+    FILE_DEFAULT_CHUNK_SIZE: int = Field(...)
 
     PATH_DATA_ROOT: str = Field(...)
     PATH_TRACK_ANNOT_ROOT: str = Field(...)

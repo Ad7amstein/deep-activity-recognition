@@ -12,7 +12,7 @@ from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
 from utils.logging_utils import setup_logger
-from pydantic_models import TrackingData, VolleyballData
+from models import TrackingData, VolleyballData
 
 app_settings = get_settings()
 
