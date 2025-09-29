@@ -16,7 +16,7 @@ PATH_MODELS_CHECKPOINTS: "checkpoints"
 PATH_ASSETS: "assets"
 PATH_METRICS: "metrics_plots"
 # Hard write PATH_LOGS in [config_utils.py]
-PATH_LOGS: "logs/baseline1/exp_1"
+PATH_LOGS: "logs/app"
 PATH_DATA_PROCESSING_MODULE: "data_processing"
 PATH_UTILS_MODULE: "utils"
 
