@@ -5,6 +5,7 @@ FILE_ALLOWED_TYPES:
   - "image/jpeg"
   - "image/png"
 FILE_MAX_SIZE: 10
+FILE_DEFAULT_CHUNK_SIZE: 512000 # 512 KB
 
 # --------------- PATH Config ---------------
 PATH_DATA_ROOT: "data/volleyball"
