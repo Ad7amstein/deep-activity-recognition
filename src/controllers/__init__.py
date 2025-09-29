@@ -1,1 +1,3 @@
 from controllers.data_controller import DataController
+from controllers.model_controller import ModelController
+from controllers.project_controller import ProjectController

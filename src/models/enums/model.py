@@ -30,16 +30,10 @@ class ModelResults(Enum):
 
 
 class ModelMode(Enum):
-    """Enumeration of model execution modes.
-
-    Attributes:
-        TRAIN (str): Mode for training the model.
-        TEST (str): Mode for evaluating or testing the model.
-    """
-
     TRAIN = "train"
     VALIDATION = "valid"
     TEST = "test"
+    INFERENCE = "inference"
 
 class ModelBaseline(Enum):
     BASELINE1 = 1

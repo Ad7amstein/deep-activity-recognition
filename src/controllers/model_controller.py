@@ -13,7 +13,7 @@ from stores.baselines.providers import B1CustomDataset, B1Model
 
 
 class ModelController(BaseController):
-    def __init__(self, baseline_number: int, verbose: bool = True) -> None:
+    def __init__(self, baseline_number: int, mode: str, verbose: bool = True) -> None:
         super().__init__()
         self.verbose = verbose
         self.logger = setup_logger(
@@ -32,23 +32,25 @@ class ModelController(BaseController):
             self.logger.exception(str(exc))
             raise exc
 
-        self.volleyball_data = AnnotationLoader(verbose=verbose).load_pkl_version(
-            verbose=verbose
-        )
-        try:
-            self.dataset_class = self.load_dataset_class(self.baseline_number)
-        except ValueError as exc:
-            self.logger.exception(str(exc))
-            raise exc
-
-        self.loss_fn = self.load_loss_fn()
-        self.optimizer = self.load_optimizer()
-        self.scheduler = self.load_scheduler()
+        if not mode == ModelMode.INFERENCE.value:
+            self.volleyball_data = AnnotationLoader(verbose=verbose).load_pkl_version(
+                verbose=verbose
+            )
+            try:
+                self.dataset_class = self.load_dataset_class(self.baseline_number)
+            except ValueError as exc:
+                self.logger.exception(str(exc))
+                raise exc
+            self.scheduler = self.load_scheduler()
+            self.optimizer = self.load_optimizer()
+            self.loss_fn = self.load_loss_fn()
 
         config_str = [f"Baseline-{self.baseline_number} Configuration:"]
         for k, v in vars(self.baseline_config).items():
             config_str.append(f"  - {k}: {v}")
-        config_str.append(f"  - Scheduler: {type(self.scheduler).__name__}")
+
+        if not mode == ModelMode.INFERENCE.value:
+            config_str.append(f"  - Scheduler: {type(self.scheduler).__name__}")
 
         self.logger.info("\n".join(config_str))
 
@@ -124,8 +126,52 @@ class ModelController(BaseController):
             verbose=verbose,
         )
 
-    def inference(self, x):
-        pass
+    def inference(self, x: torch.Tensor):
+        if x is None:
+            raise ValueError("Input `x` for inference must not be None.")
+
+        # ensure model on appropriate device
+        device = (
+            next(self.model.parameters()).device
+            if any(p is not None for p in self.model.parameters())
+            else torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        )
+        self.model.to(device)
+
+        # prepare input tensor
+        if not isinstance(x, torch.Tensor):
+            x = torch.tensor(x, dtype=torch.float32)
+        else:
+            x = x.to(dtype=torch.float32)
+
+        if x.dim() == 1:
+            x = x.unsqueeze(0)  # add batch dim
+
+        x = x.to(device)
+
+        if self.verbose:
+            self.logger.info("Running inference on input with shape %s", tuple(x.shape))
+
+        self.model.eval()
+        with torch.inference_mode():
+            outputs = self.model(x)
+            if isinstance(outputs, (tuple, list)):
+                logits = outputs[0]
+            else:
+                logits = outputs
+
+            # compute probabilities depending on loss / task type
+            if (
+                getattr(self.baseline_config, "LOSS_FN", None)
+                == LossFNEnum.BCE_LOSS.value
+            ):
+                probs = torch.sigmoid(logits)
+                preds = (probs > 0.5).int()
+            else:
+                probs = torch.softmax(logits, dim=1)
+                preds = probs.argmax(dim=1, keepdim=False)
+
+        return {"preds": preds.cpu().tolist(), "probs": probs.cpu().tolist()}
 
     def load_model(
         self, baseline_number: int, verbose: Optional[bool] = None
@@ -284,7 +330,7 @@ class ModelController(BaseController):
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = ModelController(baseline_number=1)
+    train_controller = ModelController(baseline_number=1, mode="train")
     train_controller.train()
 
 
