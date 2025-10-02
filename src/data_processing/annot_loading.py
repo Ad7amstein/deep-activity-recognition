@@ -12,7 +12,7 @@ from data_processing.box_info import BoxInfo
 from utils.config_utils import get_settings
 from utils.path_utils import check_path
 from utils.logging_utils import setup_logger
-from models import TrackingData, VolleyballData
+from models import TrackingData, VideoAnnotation, ClipAnnotation, VolleyballData
 
 app_settings = get_settings()
 
@@ -21,6 +21,10 @@ class AnnotationLoader:
     """
     Handles loading, processing, and visualization of volleyball annotation data.
     Provides methods to load, validate, visualize, and save dataset annotations.
+
+    Attributes:
+        verbose (bool): Flag to enable or disable verbose output.
+        logger (logging.Logger): Logger instance for recording events and debugging information.
     """
 
     def __init__(self, verbose: bool = False) -> None:
@@ -99,11 +103,9 @@ class AnnotationLoader:
             annot_file (str): Path to the annotation file to be loaded.
             verbose (Optional[bool], optional): If True, prints progress and information messages.
                 If None, uses the instance's default verbosity setting.
+
         Returns:
             TrackingData: An object containing player-wise and frame-wise tracking box information.
-        Raises:
-            FileNotFoundError: If the specified annotation file does not exist.
-            ValueError: If the annotation file contains invalid or malformed lines.
         """
 
         verbose = self.verbose if verbose is None else verbose
@@ -157,26 +159,23 @@ class AnnotationLoader:
         video_annot_file: str,
         tracking_annot_root: str,
         verbose: Optional[bool] = None,
-    ) -> dict:
+    ) -> VideoAnnotation:
         """
         Loads video annotation data and corresponding tracking annotations.
+
         Args:
             video_annot_file (str): Path to the video annotation file.
             tracking_annot_root (str): Root directory for tracking annotation files.
             verbose (Optional[bool]): If True, prints progress info.
-        Returns:
-            dict: Mapping from clip ID to its category and tracking annotation.
-        Raises:
-            FileNotFoundError: If the video annotation file or
-                tracking annotation directory does not exist.
-            ValueError: If the annotation file format is invalid or a required field is missing.
 
+        Returns:
+            VideoAnnotation: Mapping from clip ID to its category and tracking annotation.
         """
 
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info("Loading Video Annotations from %s", video_annot_file)
-        clip_category_dct = {}
+        video_annot_dct = {}
         check_path(video_annot_file, "file")
         check_path(tracking_annot_root, "dir")
 
@@ -198,25 +197,27 @@ class AnnotationLoader:
                     str(clip_id),
                     f"{clip_id}.txt",
                 )
-                clip_category_dct[clip_id] = {
-                    "category": category,
-                    "tracking_annot_dct": self.load_tracking_annot(
+                video_annot_dct[clip_id] = ClipAnnotation(
+                    category=category,
+                    tracking_annot_dct=self.load_tracking_annot(
                         cur_clip_annot_file, verbose=False
                     ),
-                }
+                )
 
-        clip_category_dct = dict(
-            sorted(clip_category_dct.items(), key=lambda item: item[0])
+        video_annot_dct_sorted = dict(
+            sorted(video_annot_dct.items(), key=lambda item: item[0])
         )
 
-        return clip_category_dct
+        return video_annot_dct_sorted
 
     def load_volleyball_dataset(self, verbose: Optional[bool] = None) -> VolleyballData:
         """
         Loads volleyball dataset annotations for all videos in the given root directory.
         Aggregates annotations and tracking data by video ID.
+
         Args:
             verbose (Optional[bool]): If True, prints progress info.
+
         Returns:
             VolleyballData: Mapping of video IDs to annotation data.
         """
@@ -232,7 +233,7 @@ class AnnotationLoader:
             self.logger.info("Loading Volleyball Dataset From %s...", videos_root)
         check_path(videos_root, "dir")
         check_path(tracking_annot_root, "dir")
-        video_annot_dct = {}
+        data_annot_dct = {}
         for video_dir in tqdm(
             os.listdir(videos_root),
             desc="Processing Videos",
@@ -247,28 +248,27 @@ class AnnotationLoader:
                 continue
             video_annot_file = os.path.join(video_path, "annotations.txt")
             video_id = int(video_dir)
-            video_annot_dct[video_id] = self.load_video_annot(
+            data_annot_dct[video_id] = self.load_video_annot(
                 video_annot_file, tracking_annot_root, verbose=False
             )
 
-        video_annot_dct = dict(
-            sorted(video_annot_dct.items(), key=lambda item: item[0])
+        data_annot_dct_sorted = dict(
+            sorted(data_annot_dct.items(), key=lambda item: item[0])
         )
 
-        return video_annot_dct
+        return data_annot_dct_sorted
 
     def save_pkl_version(
         self, data: Optional[VolleyballData] = None, verbose: Optional[bool] = None
     ) -> None:
         """
         Saves the Volleyball dataset as a pickle file.
+
         Args:
             data (Optional[VolleyballData]): The VolleyballData object to be saved.
                 If None, the dataset is loaded automatically.
             verbose (Optional[bool]): If True, prints informational messages during
                 the save process. If None, uses the instance's verbose attribute.
-        Returns:
-            None
         """
 
         verbose = self.verbose if verbose is None else verbose
@@ -294,11 +294,14 @@ class AnnotationLoader:
     def load_pkl_version(self, verbose: Optional[bool] = None) -> VolleyballData:
         """
         Loads the volleyball dataset from a pickle file.
+
         Args:
             verbose (Optional[bool]): If True, prints information about the loading process.
                 If None, uses the instance's verbosity setting.
+
         Returns:
             VolleyballData: The loaded volleyball dataset object.
+
         Raises:
             FileNotFoundError: If the pickle file does not exist at the specified path.
         """
