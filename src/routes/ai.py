@@ -1,3 +1,8 @@
+"""
+This module defines the AI inference route for handling image classification
+requests within a project.
+"""
+
 import os
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
@@ -11,7 +16,23 @@ ai_router = APIRouter(prefix="/api/v1/ai", tags=["api_v1"])
 
 
 @ai_router.post("/inference/{project_id}")
-def inference(request: Request, project_id: int, inference_request: InferenceRequest):
+def inference(
+    request: Request, project_id: int, inference_request: InferenceRequest
+) -> dict | JSONResponse:
+    """
+    Perform model inference on an uploaded image.
+
+    Args:
+        request (Request): FastAPI request object containing application state.
+        project_id (int): Identifier of the project containing the image.
+        inference_request (InferenceRequest): Pydantic model containing the
+            baseline model number and the image filename.
+
+    Returns:
+        dict | JSONResponse: A dictionary containing inference results including
+        baseline number, image filename, predicted category, and raw model output.
+        If the image file does not exist, returns a JSONResponse with an error signal.
+    """
     app_settings = request.app.state.app_settings
     project_controller = ProjectController()
     model_controller = ModelController(
@@ -19,13 +40,16 @@ def inference(request: Request, project_id: int, inference_request: InferenceReq
         verbose=True,
         mode="inference",
     )
+
     project_path = project_controller.get_project_path(project_id)
     img_file_path = os.path.join(project_path, inference_request.image_filename)
+
     if not os.path.exists(img_file_path):
         return JSONResponse(
             content={"signal": ResponseSignalEnum.FILE_ID_ERROR.value},
             status_code=status.HTTP_400_BAD_REQUEST,
         )
+
     img = Image.open(img_file_path).convert("RGB")
     transform = transforms.Compose(
         [
@@ -37,8 +61,9 @@ def inference(request: Request, project_id: int, inference_request: InferenceReq
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ]
     )
-    tensor = transform(img).unsqueeze(0)
+    tensor = transform(img).unsqueeze(0)  # type: ignore
     result = model_controller.inference(tensor)
+
     return {
         "baseline_number": inference_request.baseline_number,
         "image_filename": inference_request.image_filename,

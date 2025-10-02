@@ -5,7 +5,8 @@ from enum import Enum
 
 
 class ModelResults(Enum):
-    """String enumeration of training and evaluation result keys.
+    """
+    String enumeration of training and evaluation result keys.
 
     Attributes:
         TRAIN_LOSS (str): Key for training loss values.
@@ -15,6 +16,9 @@ class ModelResults(Enum):
         TEST_PRECISION (str): Key for test precision values.
         TEST_RECALL (str): Key for test recall values.
         TEST_F1_SCORE (str): Key for test F1-score values.
+        CONFUSION_MATRIX (str): Key for test confusion matrix values.
+        TOTAL_TRAIN_TIME (str): Key for total training time.
+        TIME_PER_EPOCH (str): Key for average time per epoch.
     """
 
     TRAIN_LOSS = "train_loss"
@@ -30,12 +34,37 @@ class ModelResults(Enum):
 
 
 class ModelMode(Enum):
+    """
+    Enumeration of model operational modes.
+
+    Attributes:
+        TRAIN (str): Mode for training the model.
+        VALIDATION (str): Mode for validating the model during training.
+        TEST (str): Mode for evaluating the model on the test dataset.
+        INFERENCE (str): Mode for running inference on unseen data.
+    """
+
     TRAIN = "train"
     VALIDATION = "valid"
     TEST = "test"
     INFERENCE = "inference"
 
+
 class ModelBaseline(Enum):
+    """
+    Enumeration of baseline model identifiers.
+
+    Attributes:
+        BASELINE1 (int): Identifier for baseline model 1.
+        BASELINE2 (int): Identifier for baseline model 2.
+        BASELINE3 (int): Identifier for baseline model 3.
+        BASELINE4 (int): Identifier for baseline model 4.
+        BASELINE5 (int): Identifier for baseline model 5.
+        BASELINE6 (int): Identifier for baseline model 6.
+        BASELINE7 (int): Identifier for baseline model 7.
+        BASELINE8 (int): Identifier for baseline model 8.
+    """
+
     BASELINE1 = 1
     BASELINE2 = 2
     BASELINE3 = 3
@@ -44,6 +73,7 @@ class ModelBaseline(Enum):
     BASELINE6 = 6
     BASELINE7 = 7
     BASELINE8 = 8
+
 
 def main():
     """Entry Point for the Program."""

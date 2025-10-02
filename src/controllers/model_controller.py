@@ -1,3 +1,7 @@
+"""
+Model controller module for managing model training, testing, inference, and configuration.
+"""
+
 import os
 from typing import Union, Type, Optional
 from types import SimpleNamespace
@@ -13,7 +17,33 @@ from stores.baselines.providers import B1CustomDataset, B1Model
 
 
 class ModelController(BaseController):
+    """Controller for managing model lifecycle (train, test, inference) and configuration.
+
+    Attributes:
+        verbose (bool): Whether to enable verbose logging.
+        logger (logging.Logger): Configured logger for the module.
+        baseline_number (int): Identifier for the chosen model baseline.
+        baseline_config (SimpleNamespace): Configuration parameters for the baseline.
+        model (torch.nn.Module): Loaded baseline model.
+        dataset_class (Type[Dataset]): Dataset class associated with the baseline.
+        scheduler (torch.optim.lr_scheduler): Learning rate scheduler.
+        optimizer (torch.optim.Optimizer): Optimizer used for training.
+        loss_fn (torch.nn.Module): Loss function used in training/testing.
+        volleyball_data (Any): Dataset annotations loaded for the task.
+    """
+
     def __init__(self, baseline_number: int, mode: str, verbose: bool = True) -> None:
+        """Initialize the ModelController.
+
+        Args:
+            baseline_number (int): The baseline number to load (e.g., 1 for Baseline-1).
+            mode (str): Mode of operation ("train", "test", or "inference").
+            verbose (bool, optional): Whether to enable verbose logging. Defaults to True.
+
+        Raises:
+            ValueError: If the model or dataset class for the baseline is not found.
+        """
+
         super().__init__()
         self.verbose = verbose
         self.logger = setup_logger(
@@ -54,7 +84,14 @@ class ModelController(BaseController):
 
         self.logger.info("\n".join(config_str))
 
-    def train(self, verbose: Optional[bool] = None):
+    def train(self, verbose: Optional[bool] = None) -> None:
+        """Train the model on training and validation datasets.
+
+        Args:
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                If None, falls back to the instance-level verbosity setting. Defaults to None.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info("Setup training")
@@ -105,7 +142,15 @@ class ModelController(BaseController):
             ),
         )
 
-    def test(self, verbose: Optional[bool] = None):
+    def test(self, verbose: Optional[bool] = None) -> None:
+        """Evaluate the model on the test dataset.
+
+        Args:
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                If None, falls back to the instance-level verbosity setting.
+                Defaults to None.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info("Setup Testing")
@@ -126,7 +171,21 @@ class ModelController(BaseController):
             verbose=verbose,
         )
 
-    def inference(self, x: torch.Tensor):
+    def inference(self, x: torch.Tensor) -> dict:
+        """Run inference on a given input tensor.
+
+        Args:
+            x (torch.Tensor): Input tensor or array-like object to infer on.
+
+        Returns:
+            dict: A dictionary containing:
+                - "preds" (list[int]): Predicted class indices.
+                - "probs" (list[list[float]]): Corresponding prediction probabilities.
+
+        Raises:
+            ValueError: If the input `x` is None.
+        """
+
         if x is None:
             raise ValueError("Input `x` for inference must not be None.")
 
@@ -176,6 +235,20 @@ class ModelController(BaseController):
     def load_model(
         self, baseline_number: int, verbose: Optional[bool] = None
     ) -> nn.Module:
+        """Load the model corresponding to the specified baseline.
+
+        Args:
+            baseline_number (int): Baseline number to load.
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                Defaults to None.
+
+        Returns:
+            nn.Module: The loaded baseline model.
+
+        Raises:
+            ValueError: If the baseline model is not found.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info("Loading model for baseline %s", str(baseline_number))
@@ -201,6 +274,20 @@ class ModelController(BaseController):
     def load_dataset_class(
         self, baseline_number: int, verbose: Optional[bool] = None
     ) -> Type[Dataset]:
+        """Load the dataset class corresponding to the specified baseline.
+
+        Args:
+            baseline_number (int): Baseline number to load.
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                Defaults to None.
+
+        Returns:
+            Type[Dataset]: The dataset class associated with the baseline.
+
+        Raises:
+            ValueError: If the dataset class for the baseline is not found.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info(
@@ -228,6 +315,16 @@ class ModelController(BaseController):
         return dataset_class
 
     def load_optimizer(self, verbose: Optional[bool] = None) -> torch.optim.Optimizer:
+        """Load the optimizer defined in the baseline configuration.
+
+        Args:
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                Defaults to None.
+
+        Returns:
+            torch.optim.Optimizer: Configured optimizer instance.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info(
@@ -248,6 +345,16 @@ class ModelController(BaseController):
         return optimizer
 
     def load_loss_fn(self, verbose: Optional[bool] = None) -> nn.Module:
+        """Load the loss function defined in the baseline configuration.
+
+        Args:
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                Defaults to None.
+
+        Returns:
+            nn.Module: Configured loss function instance.
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info(
@@ -267,9 +374,14 @@ class ModelController(BaseController):
     ):
         """Load a learning rate scheduler for the optimizer.
 
+        Args:
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                Defaults to None.
+
         Returns:
-            torch.optim.lr_scheduler: Scheduler object controlling LR updates.
+            torch.optim.lr_scheduler: Scheduler object controlling learning rate updates.
         """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info("Loading Scheduler: %s", "ReduceLROnPlateau")
@@ -285,16 +397,20 @@ class ModelController(BaseController):
     def load_config(
         self, baseline_number: int, verbose: Optional[bool] = None
     ) -> SimpleNamespace:
-        """
-        Load configuration for the given baseline into a dictionary with general keys.
+        """Load configuration for the given baseline.
 
         Args:
-            baseline_number (int): The baseline number (e.g., 1 for baseline-1).
+            baseline_number (int): Baseline number to load.
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                Defaults to None.
 
         Returns:
-            dict: A dictionary of baseline configuration values
-                with general keys (e.g., TRAIN_EPOCHS instead of B1_TRAIN_EPOCHS).
+            SimpleNamespace: Namespace containing baseline configuration values.
+
+        Warns:
+            UserWarning: If no configuration is found for the given baseline.
         """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info(
@@ -319,6 +435,15 @@ class ModelController(BaseController):
         return SimpleNamespace(**config)
 
     def get_experiment_path(self, verbose: Optional[bool] = None) -> str:
+        """Get the experiment path identifier for the current baseline.
+
+        Args:
+            verbose (Optional[bool], optional): Whether to enable verbose logging. Defaults to None.
+
+        Returns:
+            str: Experiment path string (e.g., "exp_1").
+        """
+
         verbose = self.verbose if verbose is None else verbose
         if verbose:
             self.logger.info(

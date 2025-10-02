@@ -35,7 +35,9 @@ class ClipAnnotation(TypedDict):
     tracking_annot_dct: TrackingData
 
 
-VolleyballData = Dict[int, Dict[int, ClipAnnotation]]
+VideoAnnotation = Dict[int, ClipAnnotation]
+
+VolleyballData = Dict[int, VideoAnnotation]
 
 
 def main():

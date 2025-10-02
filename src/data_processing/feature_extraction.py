@@ -27,10 +27,11 @@ class FeatureExtractor:
     A class to handle feature extraction from volleyball dataset videos.
 
     Attributes:
-        model (nn.Module): The feature extraction model (CNN backbone).
-        transform (transforms.Compose): Preprocessing pipeline for input images.
-        device (str): Device used for computation ('cuda' if available, else 'cpu').
-        verbose (bool): Controls logging verbosity.
+        verbose (bool): Whether to print progress information.
+        logger (logging.Logger): Logger instance for recording events and debugging information.
+        model (torch.nn.Module or None): The deep learning model used for feature extraction.
+        transform (callable or None): Data transformation pipeline applied to input frames.
+        device (str): The device used for computation ("cuda" if available, otherwise "cpu").
     """
 
     def __init__(self, verbose: bool = False) -> None:
@@ -40,6 +41,7 @@ class FeatureExtractor:
         Args:
             verbose (bool): Whether to print progress information. Defaults to False.
         """
+
         self.verbose = verbose
         self.logger = setup_logger(
             logger_name=__name__,
@@ -75,6 +77,7 @@ class FeatureExtractor:
         Returns:
             tuple[nn.Module, transforms.Compose]: The prepared model and preprocessing transform.
         """
+
         verbose = self.verbose if not verbose else verbose
         if verbose:
             self.logger.info("Preparing Model and Preprocessor...")
@@ -128,10 +131,8 @@ class FeatureExtractor:
             img_level (bool): If True, extract features at full-frame level.
                 If False, extract features from bounding boxes.
             verbose (Optional[bool]): Override for verbosity. Defaults to class-level setting.
-
-        Side Effects:
-            Saves extracted features to the specified `output_file`.
         """
+
         verbose = self.verbose if not verbose else verbose
         if verbose:
             self.logger.info("Extracting Features from Volleyball Dataset...")

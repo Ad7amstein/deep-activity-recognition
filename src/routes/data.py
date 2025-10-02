@@ -1,3 +1,8 @@
+"""
+This module defines routes for data management, including file upload
+functionalities within a given project.
+"""
+
 import os
 import aiofiles
 from fastapi import APIRouter, UploadFile, status, Request
@@ -16,6 +21,22 @@ async def upload_data(
     project_id: int,
     file: UploadFile,
 ):
+    """
+    Upload a file to the server for a given project.
+
+    Args:
+        request (Request): FastAPI request object containing application state.
+        project_id (int): Identifier of the project to which the file belongs.
+        file (UploadFile): The file uploaded by the client.
+
+    Returns:
+        JSONResponse: A JSON response containing:
+            - "signal" (str): Status of the upload (success or failure).
+            - "file_name" (str): Name of the uploaded file (if successful).
+            - "file_path" (str): Path where the file is saved (if successful).
+
+        On failure, returns an error signal with HTTP 400 status.
+    """
     app_settings = request.app.state.settings
     logger = setup_logger(
         logger_name=__name__,

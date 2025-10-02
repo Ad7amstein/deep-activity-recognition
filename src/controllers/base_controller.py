@@ -1,3 +1,7 @@
+"""
+Base controller module for managing application setup, logging, and reproducibility.
+"""
+
 import os
 from typing import Optional
 import random
@@ -9,9 +13,30 @@ from utils.logging_utils import setup_logger
 
 
 class BaseController:
+    """Base controller class for managing application setup and reproducibility.
+
+    Attributes:
+        verbose (bool): Whether to enable verbose logging output.
+        app_settings (Any): Application settings loaded from configuration.
+        logger (logging.Logger): Configured logger instance.
+        base_dir (str): Base directory of the project.
+        files_dir (str): Directory path for asset files.
+    """
+
     def __init__(
         self, seed_value: int = 42, set_seeds: bool = True, verbose: bool = True
     ) -> None:
+        """Initialize the BaseController.
+
+        Args:
+            seed_value (int, optional): The seed value for reproducibility.
+                Defaults to 42.
+            set_seeds (bool, optional): Whether to set all seeds during initialization.
+                Defaults to True.
+            verbose (bool, optional): Whether to enable verbose logging.
+                Defaults to True.
+        """
+
         self.verbose = verbose
         self.app_settings = get_settings()
         self.logger = setup_logger(
@@ -27,6 +52,14 @@ class BaseController:
             self.set_all_seeds(seed_value=seed_value)
 
     def set_all_seeds(self, seed_value: int, verbose: Optional[bool] = None) -> None:
+        """Set random seeds for reproducibility across Python, NumPy, and PyTorch.
+
+        Args:
+            seed_value (int): The seed value to set.
+            verbose (Optional[bool], optional): Whether to enable verbose logging.
+                If None, falls back to the instance-level verbosity setting. Defaults to None.
+        """
+
         self.logger.info("Setting all seeds...")
         verbose = verbose if verbose is not None else self.verbose
         torch.manual_seed(seed_value)
@@ -37,7 +70,16 @@ class BaseController:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    def generate_random_string(self, length: int = 12):
+    def generate_random_string(self, length: int = 12) -> str:
+        """Generate a random alphanumeric string.
+
+        Args:
+            length (int, optional): Length of the generated string. Defaults to 12.
+
+        Returns:
+            str: A random string containing lowercase letters and digits.
+        """
+
         return "".join(
             random.choices("".join([string.ascii_lowercase, string.digits]), k=length)
         )

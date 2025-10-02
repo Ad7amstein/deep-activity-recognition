@@ -19,7 +19,19 @@ app_settings = get_settings()
 
 
 class B1CustomDataset(Dataset):
-    """Custom dataset for volleyball activity recognition."""
+    """Custom dataset for volleyball activity recognition.
+
+    Attributes:
+        verbose (bool): Flag to enable logging output during initialization and usage.
+        logger (logging.Logger): Configured logger instance for this dataset.
+        mode (str): Operational mode, typically `train`, `val`, or `test`.
+        transform (transforms.Compose): Image transformation pipeline applied to input frames.
+        num_right_frames (int): Number of frames to include to the right of the reference frame.
+        num_left_frames (int): Number of frames to include to the left of the reference frame.
+        volleyball_data (VolleyballData): Object containing volleyball-specific data and metadata.
+        activity_category_label_dct (Dict[str, int]): Mapping from activity category names to integer labels.
+        dataset (List[Tuple[str, int]]): List of tuples containing image paths and their corresponding labels.
+    """
 
     def __init__(
         self,
@@ -33,6 +45,20 @@ class B1CustomDataset(Dataset):
         mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
+        """Initialize the B1CustomDataset.
+
+        Args:
+            volleyball_data (VolleyballData): Dataset object containing volleyball activity annotations and metadata.
+            img_shape (Tuple[int, int], optional): Target image shape (height, width) after preprocessing.
+                Defaults to values from application settings.
+            num_right_frames (int, optional): Number of frames to include to the right of the reference frame.
+                Defaults to `app_settings.B1_RIGHT_FRAMES`.
+            num_left_frames (int, optional): Number of frames to include to the left of the reference frame.
+                Defaults to `app_settings.B1_LEFT_FRAMES`.
+            mode (str, optional): Dataset mode (`train`, `val`, or `test`).
+                Determines which transformations are applied. Defaults to `app_settings.MODEL_MODE`.
+            verbose (bool, optional): If True, enable detailed logging during initialization. Defaults to False.
+        """
 
         super().__init__()
         self.verbose = verbose
@@ -218,7 +244,17 @@ class B1CustomDataset(Dataset):
 
 
 class B1Model(nn.Module):
-    """Baseline 1 model using ResNet-50 backbone."""
+    """Baseline 1 model using a ResNet-50 backbone.
+
+    Attributes:
+        verbose (bool): Flag to enable detailed logging during initialization.
+        logger (logging.Logger): Configured logger instance for model logging.
+        device (str): Device used for training/inference (`"cuda"` if available, else `"cpu"`).
+        in_features (Tuple[int, int]): Input feature shape (height, width).
+        num_classes (int): Number of output classes for classification.
+        model (nn.Module): The underlying ResNet-50 model (modified).
+        extract_features (bool): If True, the model outputs features instead of classification logits.
+    """
 
     def __init__(
         self,
@@ -230,16 +266,21 @@ class B1Model(nn.Module):
         ),
         num_classes: int = app_settings.NUM_ACTIVITY_LABELS,
     ) -> None:
-        """Initialize the baseline model.
+        """Initialize the Baseline-1 ResNet-50 model.
 
         Args:
-            extract_features (bool, optional): If True, use model as a feature
-                extractor instead of classifier. Defaults to False.
-            verbose (bool, optional): If True, print initialization messages.
+            extract_features (bool, optional):
+                If True, use the model as a feature extractor instead of a classifier.
                 Defaults to False.
-            in_features (tuple, optional): Input shape of features. Defaults to (224, 224).
-            out_shape (int, optional): Output shape (number of classes).
-                Defaults to 8.
+            verbose (bool, optional):
+                If True, enable detailed logging during initialization.
+                Defaults to False.
+            in_features (Tuple[int, int], optional):
+                Input feature shape (height, width).
+                Defaults to `(app_settings.B1_FEATURES_SHAPE_0, app_settings.B1_FEATURES_SHAPE_1)`.
+            num_classes (int, optional):
+                Number of output classes for classification.
+                Defaults to `app_settings.NUM_ACTIVITY_LABELS`.
         """
 
         super().__init__()
@@ -280,6 +321,9 @@ class B1Model(nn.Module):
 
         Args:
             device (torch.device): Device to load the model on.
+            verbose (Optional[bool], optional):
+                If True, enable detailed logging during preparation.
+                If None, defaults to the class-level `self.verbose`.
 
         Returns:
             nn.Module: The modified ResNet-50 model.
