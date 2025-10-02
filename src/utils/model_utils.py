@@ -391,6 +391,20 @@ def train(
 
 
 def plot_results(results: dict, save_path: str, verbose: bool = True):
+    """Plot and save training/evaluation results including confusion matrix,
+    metric curves, and comparison plots.
+
+    Args:
+        results (dict):
+            Dictionary mapping metric names (e.g., "train_loss", "test_accuracy",
+            "confusion_matrix") to their corresponding values (lists, arrays, or matrices).
+        save_path (str):
+            Directory path where all plots will be saved.
+            The function will create the directory if it does not exist.
+        verbose (bool, optional):
+            If True, logs the plotting process. Defaults to True.
+    """
+
     if verbose:
         logger.info("Plotting Results...")
     os.makedirs(save_path, exist_ok=True)
