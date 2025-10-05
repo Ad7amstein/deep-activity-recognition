@@ -122,7 +122,7 @@ class B1CustomDataset(Dataset):
         self.activity_category2label_dct = {
             member.category: member.label for member in ActivityEnum
         }
-        self.dataset = self.load_img_paths_lables(verbose=self.verbose)
+        self.dataset = self.load_dataset(verbose=self.verbose)
 
         if self.verbose:
             self.logger.info(
@@ -140,9 +140,7 @@ class B1CustomDataset(Dataset):
                 )
             )
 
-    def load_img_paths_lables(
-        self, verbose: Optional[bool] = None
-    ) -> List[Tuple[str, int]]:
+    def load_dataset(self, verbose: Optional[bool] = None) -> List[Tuple[str, int]]:
         """Load image paths and labels from volleyball annotations.
 
         Args:
