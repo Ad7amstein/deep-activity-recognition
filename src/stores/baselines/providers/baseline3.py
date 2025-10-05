@@ -19,11 +19,11 @@ class B3CustomDataset1(Dataset):
         self,
         volleyball_data: VolleyballData,
         img_shape: Tuple[int, int] = (
-            app_settings.B1_FEATURES_SHAPE_0,
-            app_settings.B1_FEATURES_SHAPE_1,
+            app_settings.B3_FEATURES_SHAPE_0,
+            app_settings.B3_FEATURES_SHAPE_1,
         ),
-        num_right_frames: int = app_settings.B1_RIGHT_FRAMES,
-        num_left_frames: int = app_settings.B1_LEFT_FRAMES,
+        num_right_frames: int = app_settings.B3_RIGHT_FRAMES,
+        num_left_frames: int = app_settings.B3_LEFT_FRAMES,
         mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
