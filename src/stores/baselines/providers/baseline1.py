@@ -10,7 +10,7 @@ from torch import nn
 from torchvision import transforms
 from torchvision.models import resnet50, ResNet50_Weights
 from models import VolleyballData
-from models.enums import activity_category2label_dct, ModelMode
+from models.enums import ActivityEnum, ModelMode
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
 from data_processing.annot_loading import AnnotationLoader
@@ -29,8 +29,10 @@ class B1CustomDataset(Dataset):
         num_right_frames (int): Number of frames to include to the right of the reference frame.
         num_left_frames (int): Number of frames to include to the left of the reference frame.
         volleyball_data (VolleyballData): Object containing volleyball-specific data and metadata.
-        activity_category_label_dct (Dict[str, int]): Mapping from activity category names to integer labels.
-        dataset (List[Tuple[str, int]]): List of tuples containing image paths and their corresponding labels.
+        activity_category2label_dct (Dict[str, int]):
+            Mapping from activity category names to integer labels.
+        dataset (List[Tuple[str, int]]):
+            List of tuples containing image paths and their corresponding labels.
     """
 
     def __init__(
@@ -48,16 +50,21 @@ class B1CustomDataset(Dataset):
         """Initialize the B1CustomDataset.
 
         Args:
-            volleyball_data (VolleyballData): Dataset object containing volleyball activity annotations and metadata.
-            img_shape (Tuple[int, int], optional): Target image shape (height, width) after preprocessing.
+            volleyball_data (VolleyballData):
+                Dataset object containing volleyball activity annotations and metadata.
+            img_shape (Tuple[int, int], optional):
+                Target image shape (height, width) after preprocessing.
                 Defaults to values from application settings.
-            num_right_frames (int, optional): Number of frames to include to the right of the reference frame.
+            num_right_frames (int, optional):
+                Number of frames to include to the right of the reference frame.
                 Defaults to `app_settings.B1_RIGHT_FRAMES`.
-            num_left_frames (int, optional): Number of frames to include to the left of the reference frame.
+            num_left_frames (int, optional):
+                Number of frames to include to the left of the reference frame.
                 Defaults to `app_settings.B1_LEFT_FRAMES`.
             mode (str, optional): Dataset mode (`train`, `val`, or `test`).
                 Determines which transformations are applied. Defaults to `app_settings.MODEL_MODE`.
-            verbose (bool, optional): If True, enable detailed logging during initialization. Defaults to False.
+            verbose (bool, optional): If True, enable detailed logging during initialization.
+                Defaults to False.
         """
 
         super().__init__()
@@ -112,7 +119,9 @@ class B1CustomDataset(Dataset):
         self.num_right_frames = num_right_frames
         self.num_left_frames = num_left_frames
         self.volleyball_data = volleyball_data
-        self.activity_category_label_dct = activity_category2label_dct
+        self.activity_category2label_dct = {
+            member.category: member.label for member in ActivityEnum
+        }
         self.dataset = self.load_img_paths_lables(verbose=self.verbose)
 
         if self.verbose:
@@ -194,7 +203,7 @@ class B1CustomDataset(Dataset):
                 for img_file in img_files:
                     img_path = os.path.join(clip_path, img_file)
                     dataset.append(
-                        (img_path, self.activity_category_label_dct[clip_category])
+                        (img_path, self.activity_category2label_dct[clip_category])
                     )
 
         return dataset
