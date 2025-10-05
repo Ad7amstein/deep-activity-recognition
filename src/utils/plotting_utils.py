@@ -8,7 +8,8 @@ import seaborn as sns
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
 from models.enums import ModelResults
-from models.enums import activity_category2label_dct
+from models.enums import ActivityEnum
+
 
 app_settings = get_settings()
 logger = setup_logger(
@@ -40,6 +41,7 @@ def plot_results(results: dict, save_path: str, verbose: bool = True):
         logger.info("Plotting Results...")
     os.makedirs(save_path, exist_ok=True)
 
+    activity_category2label_dct = {member.category: member.label for member in ActivityEnum}
     for name, vals in results.items():
         if name == ModelResults.CONFUSION_MATRIX.value:
             fig, ax = plt.subplots(figsize=(8, 6))
