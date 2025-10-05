@@ -9,7 +9,7 @@ from pydantic import Field, ValidationError, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 from utils.logging_utils import setup_logger
 
-logger = setup_logger(log_file=__file__, log_dir="logs/app")
+logger = setup_logger(log_file=__file__, log_dir="logs/baseline3/exp_1")
 
 
 class Settings(BaseSettings):
@@ -59,6 +59,22 @@ class Settings(BaseSettings):
     B1_WEIGHT_DECAY: float = Field(...)
     B1_LOSS_FN: str = Field(...)
     B1_EXPERIMENT_NUM: int = Field(...)
+
+    # Baseline 3
+    B3_FEATURES_SHAPE_0: int = Field(...)
+    B3_FEATURES_SHAPE_1: int = Field(...)
+    B3_RIGHT_FRAMES: int = Field(...)
+    B3_LEFT_FRAMES: int = Field(...)
+    B3_TRAIN_EPOCHS: int = Field(...)
+    B3_TRAIN_BATCH_SIZE: int = Field(...)
+    B3_EVAL_BATCH_SIZE: int = Field(...)
+    B3_LR: float = Field(...)
+    B3_FREEZE_BACKBONE: bool = Field(...)
+    B3_NUM_WORKERS: int = Field(...)
+    B3_OPTIMIZER: str = Field(...)
+    B3_WEIGHT_DECAY: float = Field(...)
+    B3_LOSS_FN: str = Field(...)
+    B3_EXPERIMENT_NUM: int = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
