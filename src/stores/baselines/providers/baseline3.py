@@ -156,17 +156,17 @@ class B3CustomDataset1(Dataset):
                 disable=not verbose,
             ):
                 clip_path = os.path.join(video_path, str(clip_id))
-                img_files = os.listdir(clip_path)
-                num_files = len(img_files)
+                all_frames = list(clip_annot["tracking_annot_dct"].frame_boxes.keys())
+                num_files = len(all_frames)
                 mid_idx = num_files // 2
-                img_files = img_files[
+                selected_frames = all_frames[
                     mid_idx - self.num_left_frames : mid_idx + self.num_right_frames + 1
                 ]
 
-                for img_file in img_files:
-                    img_path = os.path.join(clip_path, img_file)
+                for frame_id in selected_frames:
+                    img_path = os.path.join(clip_path, f"{frame_id}.jpg")
                     for box_info in clip_annot["tracking_annot_dct"].frame_boxes[
-                        int(os.path.splitext(img_file)[0])
+                        frame_id
                     ]:
                         dataset.append(
                             (
