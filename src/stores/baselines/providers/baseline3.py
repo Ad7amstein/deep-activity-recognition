@@ -1,3 +1,8 @@
+"""
+Defines the Baseline 3 Model-1 and its custom dataset for volleyball activity recognition,
+including data loading, preprocessing, and a ResNet-50–based classification model.
+"""
+
 import os
 from typing import Tuple, List, Optional
 import torch
@@ -17,6 +22,21 @@ app_settings = get_settings()
 
 
 class B3CustomDataset1(Dataset):
+    """
+    Custom PyTorch dataset for the Baseline 3 Model-1 volleyball activity recognition task.
+
+    Attributes:
+        verbose (bool): Whether to enable detailed logging.
+        logger (logging.Logger): Configured logger instance for dataset operations.
+        mode (str): Current dataset mode — one of `train`, `validation`, or `test`.
+        transform (torchvision.transforms.Compose): Image preprocessing and augmentation pipeline.
+        num_right_frames (int): Number of frames to include to the right of the middle frame.
+        num_left_frames (int): Number of frames to include to the left of the middle frame.
+        volleyball_data (VolleyballData): Parsed volleyball annotation data containing frame and box info.
+        action_category2label_dct (dict): Mapping from action category names to numeric labels.
+        dataset (list): List of tuples containing image paths, bounding boxes, and labels.
+    """
+
     def __init__(
         self,
         volleyball_data: VolleyballData,
@@ -29,6 +49,34 @@ class B3CustomDataset1(Dataset):
         mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
+        """
+        Initialize the Baseline 3 Custom Dataset for volleyball activity recognition.
+
+        Args:
+            volleyball_data (VolleyballData):
+                Parsed volleyball annotation data containing frame paths, bounding boxes,
+                and action labels.
+            img_shape (Tuple[int, int], optional):
+                Target image dimensions `(height, width)` for resizing input frames.
+                Defaults to values from `app_settings`.
+            num_right_frames (int, optional):
+                Number of frames to include to the right of the middle frame when selecting a clip.
+                Defaults to `app_settings.B3_RIGHT_FRAMES`.
+            num_left_frames (int, optional):
+                Number of frames to include to the left of the middle frame when selecting a clip.
+                Defaults to `app_settings.B3_LEFT_FRAMES`.
+            mode (str, optional):
+                Dataset mode — one of `train`, `validation`, or `test`.
+                Determines which video IDs and transformations are used.
+                Defaults to `app_settings.MODEL_MODE`.
+            verbose (bool, optional):
+                Whether to enable detailed logging during initialization.
+                Defaults to `False`.
+
+        Raises:
+            RuntimeError: If dataset initialization or annotation loading fails.
+        """
+
         super().__init__()
         self.verbose = verbose
         self.logger = setup_logger(
