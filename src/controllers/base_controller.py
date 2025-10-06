@@ -24,7 +24,7 @@ class BaseController:
     """
 
     def __init__(
-        self, seed_value: int = 42, set_seeds: bool = True, verbose: bool = True
+        self, seed_value: int = 31, set_seeds: bool = True, verbose: bool = True
     ) -> None:
         """Initialize the BaseController.
 
