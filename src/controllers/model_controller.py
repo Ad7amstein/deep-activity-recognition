@@ -15,6 +15,7 @@ from utils.plotting_utils import plot_results
 from utils.logging_utils import setup_logger
 from models.enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
 from stores.baselines.providers import B1CustomDataset, B1Model
+from stores.baselines.providers import B3CustomDataset1, B3Model1
 
 
 class ModelController(BaseController):
@@ -72,8 +73,8 @@ class ModelController(BaseController):
             except ValueError as exc:
                 self.logger.exception(str(exc))
                 raise exc
-            self.scheduler = self.load_scheduler()
             self.optimizer = self.load_optimizer()
+            self.scheduler = self.load_scheduler()
             self.loss_fn = self.load_loss_fn()
 
         config_str = [f"Baseline-{self.baseline_number} Configuration:"]
@@ -129,7 +130,7 @@ class ModelController(BaseController):
                 str(self.model.__class__.__name__),
                 str(self.baseline_config.EXPERIMENT_NUM),
             ),
-            num_classes=self.app_settings.NUM_ACTIVITY_LABELS,
+            num_classes=self.baseline_config.NUM_CLASSES,
             verbose=verbose,
         )
 
@@ -256,7 +257,7 @@ class ModelController(BaseController):
         baseline_model = {
             ModelBaseline.BASELINE1.value: B1Model(),
             ModelBaseline.BASELINE2.value: None,
-            ModelBaseline.BASELINE3.value: None,
+            ModelBaseline.BASELINE3.value: B3Model1(),
             ModelBaseline.BASELINE4.value: None,
             ModelBaseline.BASELINE5.value: None,
             ModelBaseline.BASELINE6.value: None,
@@ -297,7 +298,7 @@ class ModelController(BaseController):
         baseline_dataset = {
             ModelBaseline.BASELINE1.value: B1CustomDataset,
             ModelBaseline.BASELINE2.value: None,
-            ModelBaseline.BASELINE3.value: None,
+            ModelBaseline.BASELINE3.value: B3CustomDataset1,
             ModelBaseline.BASELINE4.value: None,
             ModelBaseline.BASELINE5.value: None,
             ModelBaseline.BASELINE6.value: None,
@@ -390,7 +391,7 @@ class ModelController(BaseController):
             self.optimizer,
             mode="min",
             factor=0.1,
-            patience=3,
+            patience=5,
         )
 
         return scheduler
