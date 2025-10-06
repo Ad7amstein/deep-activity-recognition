@@ -1,0 +1,25 @@
+[2025-10-06 07:15:32] - [model_controller.py:57] - [INFO]: Initializing ModelController Module...
+[2025-10-06 07:15:32] - [model_controller.py:418] - [INFO]: Loading Model Config for baseline 3
+[2025-10-06 07:15:32] - [model_controller.py:256] - [INFO]: Loading model for baseline 3
+[2025-10-06 07:15:42] - [model_controller.py:295] - [INFO]: Loading dataset_class for baseline 3
+[2025-10-06 07:15:42] - [model_controller.py:332] - [INFO]: Loading optimizer: AdamW
+[2025-10-06 07:15:42] - [model_controller.py:389] - [INFO]: Loading Scheduler: ReduceLROnPlateau
+[2025-10-06 07:15:42] - [model_controller.py:362] - [INFO]: Loading Loss Function: cross_entropy_loss
+[2025-10-06 07:15:42] - [model_controller.py:87] - [INFO]: Baseline-3 Configuration:
+  - FEATURES_SHAPE_0: 256
+  - FEATURES_SHAPE_1: 256
+  - RIGHT_FRAMES: 5
+  - LEFT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 64
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 1
+  - NUM_CLASSES: 9
+  - Scheduler: ReduceLROnPlateau
+[2025-10-06 07:15:42] - [model_controller.py:99] - [INFO]: Setup training

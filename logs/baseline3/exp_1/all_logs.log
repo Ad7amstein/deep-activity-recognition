@@ -1,0 +1,342 @@
+[2025-10-06 07:15:28] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:28] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:31] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:32] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:32] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:32] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:32] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-06 07:15:32] - [base_controller.py:48] - [INFO]: Initializing BaseController Module...
+[2025-10-06 07:15:32] - [base_controller.py:63] - [INFO]: Setting all seeds...
+[2025-10-06 07:15:32] - [model_controller.py:57] - [INFO]: Initializing ModelController Module...
+[2025-10-06 07:15:32] - [model_controller.py:418] - [INFO]: Loading Model Config for baseline 3
+[2025-10-06 07:15:32] - [model_controller.py:256] - [INFO]: Loading model for baseline 3
+[2025-10-06 07:15:34] - [annot_loading.py:46] - [INFO]: Initializing Annotation Loader Object...
+[2025-10-06 07:15:34] - [annot_loading.py:313] - [INFO]: Loading Data from pickle file: data/volleyball/volleyball_dataset.pkl
+[2025-10-06 07:15:42] - [model_controller.py:295] - [INFO]: Loading dataset_class for baseline 3
+[2025-10-06 07:15:42] - [model_controller.py:332] - [INFO]: Loading optimizer: AdamW
+[2025-10-06 07:15:42] - [model_controller.py:389] - [INFO]: Loading Scheduler: ReduceLROnPlateau
+[2025-10-06 07:15:42] - [model_controller.py:362] - [INFO]: Loading Loss Function: cross_entropy_loss
+[2025-10-06 07:15:42] - [model_controller.py:87] - [INFO]: Baseline-3 Configuration:
+  - FEATURES_SHAPE_0: 256
+  - FEATURES_SHAPE_1: 256
+  - RIGHT_FRAMES: 5
+  - LEFT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 64
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 1
+  - NUM_CLASSES: 9
+  - Scheduler: ReduceLROnPlateau
+[2025-10-06 07:15:42] - [model_controller.py:99] - [INFO]: Setup training
+[2025-10-06 07:15:42] - [baseline3.py:93] - [INFO]: Initializing Baseline 2 Custom Dataset (mode=ModelMode.TRAIN)...
+[2025-10-06 07:15:42] - [baseline3.py:173] - [INFO]: Loading Image Paths and Labels...
+[2025-10-06 07:15:42] - [baseline3.py:139] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.TRAIN
+  - Image shape: (256, 256)
+  - Num right frames: 5
+  - Num left frames: 4
+  - Dataset size (after init): 257030
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(256, 256), interpolation=bilinear, max_size=None, antialias=True)
+    * RandomChoice(
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=(-0.05, 0.05))
+    RandomGrayscale(p=1.0)
+    GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 2.0))
+    RandomHorizontalFlip(p=0.3)
+)(p=None)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-06 07:15:42] - [baseline3.py:93] - [INFO]: Initializing Baseline 2 Custom Dataset (mode=ModelMode.VALIDATION)...
+[2025-10-06 07:15:42] - [baseline3.py:173] - [INFO]: Loading Image Paths and Labels...
+[2025-10-06 07:15:42] - [baseline3.py:139] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.VALIDATION
+  - Image shape: (256, 256)
+  - Num right frames: 5
+  - Num left frames: 4
+  - Dataset size (after init): 159810
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(256, 256), interpolation=bilinear, max_size=None, antialias=True)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-06 07:15:42] - [model_utils.py:230] - [INFO]: Training Started and in Progress...
+[2025-10-06 07:15:42] - [model_utils.py:260] - [INFO]: Epoch 1/10
+[2025-10-06 07:15:46] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 2.2224 | Acc: 2.37%
+[2025-10-06 07:16:28] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.6558 | Acc: 29.64%
+[2025-10-06 07:17:10] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.9605 | Acc: 26.78%
+[2025-10-06 07:17:52] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.7187 | Acc: 51.76%
+[2025-10-06 07:18:34] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.6612 | Acc: 47.67%
+[2025-10-06 07:19:16] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.6877 | Acc: 42.58%
+[2025-10-06 07:19:57] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.3562 | Acc: 58.44%
+[2025-10-06 07:20:39] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.4648 | Acc: 67.66%
+[2025-10-06 07:21:21] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.5477 | Acc: 54.39%
+[2025-10-06 07:22:03] - [model_utils.py:103] - [INFO]: 	[BATCH 900/4017] Loss: 0.5284 | Acc: 66.67%
+[2025-10-06 07:22:45] - [model_utils.py:103] - [INFO]: 	[BATCH 1000/4017] Loss: 0.5211 | Acc: 58.36%
+[2025-10-06 07:23:27] - [model_utils.py:103] - [INFO]: 	[BATCH 1100/4017] Loss: 0.4006 | Acc: 60.89%
+[2025-10-06 07:24:09] - [model_utils.py:103] - [INFO]: 	[BATCH 1200/4017] Loss: 0.7016 | Acc: 57.14%
+[2025-10-06 07:24:51] - [model_utils.py:103] - [INFO]: 	[BATCH 1300/4017] Loss: 0.4220 | Acc: 64.58%
+[2025-10-06 07:25:33] - [model_utils.py:103] - [INFO]: 	[BATCH 1400/4017] Loss: 0.7293 | Acc: 40.95%
+[2025-10-06 07:26:15] - [model_utils.py:103] - [INFO]: 	[BATCH 1500/4017] Loss: 0.4757 | Acc: 59.44%
+[2025-10-06 07:26:57] - [model_utils.py:103] - [INFO]: 	[BATCH 1600/4017] Loss: 0.5425 | Acc: 60.10%
+[2025-10-06 07:27:39] - [model_utils.py:103] - [INFO]: 	[BATCH 1700/4017] Loss: 0.6048 | Acc: 66.36%
+[2025-10-06 07:28:21] - [model_utils.py:103] - [INFO]: 	[BATCH 1800/4017] Loss: 0.4313 | Acc: 64.58%
+[2025-10-06 07:29:03] - [model_utils.py:103] - [INFO]: 	[BATCH 1900/4017] Loss: 0.4807 | Acc: 62.42%
+[2025-10-06 07:29:44] - [model_utils.py:103] - [INFO]: 	[BATCH 2000/4017] Loss: 0.3969 | Acc: 78.71%
+[2025-10-06 07:30:26] - [model_utils.py:103] - [INFO]: 	[BATCH 2100/4017] Loss: 0.5780 | Acc: 64.05%
+[2025-10-06 07:31:08] - [model_utils.py:103] - [INFO]: 	[BATCH 2200/4017] Loss: 0.5950 | Acc: 67.27%
+[2025-10-06 07:31:50] - [model_utils.py:103] - [INFO]: 	[BATCH 2300/4017] Loss: 0.4943 | Acc: 59.82%
+[2025-10-06 07:32:32] - [model_utils.py:103] - [INFO]: 	[BATCH 2400/4017] Loss: 0.3781 | Acc: 54.94%
+[2025-10-06 07:33:14] - [model_utils.py:103] - [INFO]: 	[BATCH 2500/4017] Loss: 0.5204 | Acc: 55.56%
+[2025-10-06 07:33:56] - [model_utils.py:103] - [INFO]: 	[BATCH 2600/4017] Loss: 0.4067 | Acc: 61.27%
+[2025-10-06 07:34:38] - [model_utils.py:103] - [INFO]: 	[BATCH 2700/4017] Loss: 0.3191 | Acc: 60.71%
+[2025-10-06 07:35:20] - [model_utils.py:103] - [INFO]: 	[BATCH 2800/4017] Loss: 0.3619 | Acc: 84.17%
+[2025-10-06 07:36:02] - [model_utils.py:103] - [INFO]: 	[BATCH 2900/4017] Loss: 0.5257 | Acc: 54.66%
+[2025-10-06 07:36:43] - [model_utils.py:103] - [INFO]: 	[BATCH 3000/4017] Loss: 0.4208 | Acc: 57.23%
+[2025-10-06 07:37:25] - [model_utils.py:103] - [INFO]: 	[BATCH 3100/4017] Loss: 0.4663 | Acc: 68.41%
+[2025-10-06 07:38:07] - [model_utils.py:103] - [INFO]: 	[BATCH 3200/4017] Loss: 0.5028 | Acc: 57.32%
+[2025-10-06 07:38:49] - [model_utils.py:103] - [INFO]: 	[BATCH 3300/4017] Loss: 0.5465 | Acc: 56.03%
+[2025-10-06 07:39:31] - [model_utils.py:103] - [INFO]: 	[BATCH 3400/4017] Loss: 0.3671 | Acc: 62.29%
+[2025-10-06 07:40:13] - [model_utils.py:103] - [INFO]: 	[BATCH 3500/4017] Loss: 0.5745 | Acc: 53.96%
+[2025-10-06 07:40:55] - [model_utils.py:103] - [INFO]: 	[BATCH 3600/4017] Loss: 0.4971 | Acc: 59.46%
+[2025-10-06 07:41:37] - [model_utils.py:103] - [INFO]: 	[BATCH 3700/4017] Loss: 0.5503 | Acc: 66.37%
+[2025-10-06 07:42:19] - [model_utils.py:103] - [INFO]: 	[BATCH 3800/4017] Loss: 0.5188 | Acc: 63.36%
+[2025-10-06 07:43:01] - [model_utils.py:103] - [INFO]: 	[BATCH 3900/4017] Loss: 0.4404 | Acc: 72.61%
+[2025-10-06 07:43:43] - [model_utils.py:103] - [INFO]: 	[BATCH 4000/4017] Loss: 0.4359 | Acc: 43.98%
+[2025-10-06 07:52:13] - [model_utils.py:294] - [INFO]: Epoch: 1 | Train loss: 0.5436 | Train acc: 57.10% | Eval loss: 0.6863 | Eval acc: 54.46%
+[2025-10-06 07:52:14] - [model_utils.py:409] - [INFO]: Checkpoint B3Model1_epoch_1 saved in models/B3Model1/1/checkpoints/epochs
+[2025-10-06 07:52:14] - [model_utils.py:409] - [INFO]: Checkpoint B3Model1_best_loss saved in models/B3Model1/1/checkpoints/best
+[2025-10-06 07:52:15] - [model_utils.py:409] - [INFO]: Checkpoint B3Model1_best_acc saved in models/B3Model1/1/checkpoints/best
+[2025-10-06 07:52:15] - [model_utils.py:260] - [INFO]: Epoch 2/10
+[2025-10-06 07:52:17] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 0.3496 | Acc: 59.90%
+[2025-10-06 07:52:59] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.6584 | Acc: 49.30%
+[2025-10-06 07:53:41] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.2240 | Acc: 73.10%
+[2025-10-06 07:54:23] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.5788 | Acc: 61.32%
+[2025-10-06 07:55:05] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.2639 | Acc: 94.47%
+[2025-10-06 07:55:47] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.2982 | Acc: 89.15%
+[2025-10-06 07:56:29] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.4798 | Acc: 77.64%
+[2025-10-06 07:57:11] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.4406 | Acc: 77.82%
+[2025-10-06 07:57:53] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.2484 | Acc: 82.29%
+[2025-10-06 07:58:35] - [model_utils.py:103] - [INFO]: 	[BATCH 900/4017] Loss: 0.3237 | Acc: 94.63%
+[2025-10-06 07:59:17] - [model_utils.py:103] - [INFO]: 	[BATCH 1000/4017] Loss: 0.4192 | Acc: 64.98%
+[2025-10-06 07:59:59] - [model_utils.py:103] - [INFO]: 	[BATCH 1100/4017] Loss: 0.3818 | Acc: 71.48%
+[2025-10-06 08:00:41] - [model_utils.py:103] - [INFO]: 	[BATCH 1200/4017] Loss: 0.3019 | Acc: 76.88%
+[2025-10-06 08:01:23] - [model_utils.py:103] - [INFO]: 	[BATCH 1300/4017] Loss: 0.3266 | Acc: 80.36%
+[2025-10-06 08:02:05] - [model_utils.py:103] - [INFO]: 	[BATCH 1400/4017] Loss: 0.4452 | Acc: 67.56%
+[2025-10-06 08:02:47] - [model_utils.py:103] - [INFO]: 	[BATCH 1500/4017] Loss: 0.3046 | Acc: 81.46%
+[2025-10-06 08:03:29] - [model_utils.py:103] - [INFO]: 	[BATCH 1600/4017] Loss: 0.3374 | Acc: 68.72%
+[2025-10-06 08:04:11] - [model_utils.py:103] - [INFO]: 	[BATCH 1700/4017] Loss: 0.2006 | Acc: 91.61%
+[2025-10-06 08:04:53] - [model_utils.py:103] - [INFO]: 	[BATCH 1800/4017] Loss: 0.2290 | Acc: 85.42%
+[2025-10-06 08:05:35] - [model_utils.py:103] - [INFO]: 	[BATCH 1900/4017] Loss: 0.3182 | Acc: 72.77%
+[2025-10-06 08:06:16] - [model_utils.py:103] - [INFO]: 	[BATCH 2000/4017] Loss: 0.4205 | Acc: 72.94%
+[2025-10-06 08:06:58] - [model_utils.py:103] - [INFO]: 	[BATCH 2100/4017] Loss: 0.4370 | Acc: 53.36%
+[2025-10-06 08:07:40] - [model_utils.py:103] - [INFO]: 	[BATCH 2200/4017] Loss: 0.3412 | Acc: 69.72%
+[2025-10-06 08:08:22] - [model_utils.py:103] - [INFO]: 	[BATCH 2300/4017] Loss: 0.4359 | Acc: 70.43%
+[2025-10-06 08:09:05] - [model_utils.py:103] - [INFO]: 	[BATCH 2400/4017] Loss: 0.3655 | Acc: 87.80%
+[2025-10-06 08:09:46] - [model_utils.py:103] - [INFO]: 	[BATCH 2500/4017] Loss: 0.3714 | Acc: 86.09%
+[2025-10-06 08:10:28] - [model_utils.py:103] - [INFO]: 	[BATCH 2600/4017] Loss: 0.3822 | Acc: 90.58%
+[2025-10-06 08:11:10] - [model_utils.py:103] - [INFO]: 	[BATCH 2700/4017] Loss: 0.2041 | Acc: 91.55%
+[2025-10-06 08:11:52] - [model_utils.py:103] - [INFO]: 	[BATCH 2800/4017] Loss: 0.3987 | Acc: 79.67%
+[2025-10-06 08:12:34] - [model_utils.py:103] - [INFO]: 	[BATCH 2900/4017] Loss: 0.1693 | Acc: 88.25%
+[2025-10-06 08:13:16] - [model_utils.py:103] - [INFO]: 	[BATCH 3000/4017] Loss: 0.1864 | Acc: 91.72%
+[2025-10-06 08:13:58] - [model_utils.py:103] - [INFO]: 	[BATCH 3100/4017] Loss: 0.2383 | Acc: 86.01%
+[2025-10-06 08:14:40] - [model_utils.py:103] - [INFO]: 	[BATCH 3200/4017] Loss: 0.2497 | Acc: 81.91%
+[2025-10-06 08:15:22] - [model_utils.py:103] - [INFO]: 	[BATCH 3300/4017] Loss: 0.3338 | Acc: 77.92%
+[2025-10-06 08:16:04] - [model_utils.py:103] - [INFO]: 	[BATCH 3400/4017] Loss: 0.2406 | Acc: 84.68%
+[2025-10-06 08:16:46] - [model_utils.py:103] - [INFO]: 	[BATCH 3500/4017] Loss: 0.1530 | Acc: 84.92%
+[2025-10-06 08:17:28] - [model_utils.py:103] - [INFO]: 	[BATCH 3600/4017] Loss: 0.0590 | Acc: 100.00%
+[2025-10-06 08:18:10] - [model_utils.py:103] - [INFO]: 	[BATCH 3700/4017] Loss: 0.1414 | Acc: 89.58%
+[2025-10-06 08:18:52] - [model_utils.py:103] - [INFO]: 	[BATCH 3800/4017] Loss: 0.1541 | Acc: 94.86%
+[2025-10-06 08:19:34] - [model_utils.py:103] - [INFO]: 	[BATCH 3900/4017] Loss: 0.1837 | Acc: 74.05%
+[2025-10-06 08:20:16] - [model_utils.py:103] - [INFO]: 	[BATCH 4000/4017] Loss: 0.2828 | Acc: 80.59%
+[2025-10-06 08:29:04] - [model_utils.py:294] - [INFO]: Epoch: 2 | Train loss: 0.2997 | Train acc: 75.73% | Eval loss: 0.8466 | Eval acc: 53.72%
+[2025-10-06 08:29:04] - [model_utils.py:260] - [INFO]: Epoch 3/10
+[2025-10-06 08:29:07] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 0.1115 | Acc: 97.86%
+[2025-10-06 08:29:49] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.2783 | Acc: 76.45%
+[2025-10-06 08:30:31] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.1704 | Acc: 81.92%
+[2025-10-06 08:31:13] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.3926 | Acc: 71.97%
+[2025-10-06 08:31:55] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.2786 | Acc: 82.28%
+[2025-10-06 08:32:37] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.1278 | Acc: 93.95%
+[2025-10-06 08:33:19] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.1131 | Acc: 86.67%
+[2025-10-06 08:34:01] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.1750 | Acc: 66.10%
+[2025-10-06 08:34:43] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.2789 | Acc: 77.16%
+[2025-10-06 08:35:25] - [model_utils.py:103] - [INFO]: 	[BATCH 900/4017] Loss: 0.2381 | Acc: 85.17%
+[2025-10-06 08:36:07] - [model_utils.py:103] - [INFO]: 	[BATCH 1000/4017] Loss: 0.2551 | Acc: 87.30%
+[2025-10-06 08:36:49] - [model_utils.py:103] - [INFO]: 	[BATCH 1100/4017] Loss: 0.2061 | Acc: 94.64%
+[2025-10-06 08:37:31] - [model_utils.py:103] - [INFO]: 	[BATCH 1200/4017] Loss: 0.2088 | Acc: 90.37%
+[2025-10-06 08:38:13] - [model_utils.py:103] - [INFO]: 	[BATCH 1300/4017] Loss: 0.0937 | Acc: 100.00%
+[2025-10-06 08:38:55] - [model_utils.py:103] - [INFO]: 	[BATCH 1400/4017] Loss: 0.2439 | Acc: 92.59%
+[2025-10-06 08:39:37] - [model_utils.py:103] - [INFO]: 	[BATCH 1500/4017] Loss: 0.0768 | Acc: 99.68%
+[2025-10-06 08:40:19] - [model_utils.py:103] - [INFO]: 	[BATCH 1600/4017] Loss: 0.2444 | Acc: 88.45%
+[2025-10-06 08:41:01] - [model_utils.py:103] - [INFO]: 	[BATCH 1700/4017] Loss: 0.2989 | Acc: 70.42%
+[2025-10-06 08:41:43] - [model_utils.py:103] - [INFO]: 	[BATCH 1800/4017] Loss: 0.1042 | Acc: 78.79%
+[2025-10-06 08:42:25] - [model_utils.py:103] - [INFO]: 	[BATCH 1900/4017] Loss: 0.1611 | Acc: 75.00%
+[2025-10-06 08:43:06] - [model_utils.py:103] - [INFO]: 	[BATCH 2000/4017] Loss: 0.2805 | Acc: 82.34%
+[2025-10-06 08:43:48] - [model_utils.py:103] - [INFO]: 	[BATCH 2100/4017] Loss: 0.2919 | Acc: 80.18%
+[2025-10-06 08:44:30] - [model_utils.py:103] - [INFO]: 	[BATCH 2200/4017] Loss: 0.1321 | Acc: 83.38%
+[2025-10-06 08:45:12] - [model_utils.py:103] - [INFO]: 	[BATCH 2300/4017] Loss: 0.1420 | Acc: 79.63%
+[2025-10-06 08:45:54] - [model_utils.py:103] - [INFO]: 	[BATCH 2400/4017] Loss: 0.1168 | Acc: 96.04%
+[2025-10-06 08:46:36] - [model_utils.py:103] - [INFO]: 	[BATCH 2500/4017] Loss: 0.1511 | Acc: 65.34%
+[2025-10-06 08:47:18] - [model_utils.py:103] - [INFO]: 	[BATCH 2600/4017] Loss: 0.1537 | Acc: 91.88%
+[2025-10-06 08:48:00] - [model_utils.py:103] - [INFO]: 	[BATCH 2700/4017] Loss: 0.1422 | Acc: 88.62%
+[2025-10-06 08:48:42] - [model_utils.py:103] - [INFO]: 	[BATCH 2800/4017] Loss: 0.1768 | Acc: 85.97%
+[2025-10-06 08:49:24] - [model_utils.py:103] - [INFO]: 	[BATCH 2900/4017] Loss: 0.2064 | Acc: 79.37%
+[2025-10-06 08:50:06] - [model_utils.py:103] - [INFO]: 	[BATCH 3000/4017] Loss: 0.1316 | Acc: 84.48%
+[2025-10-06 08:50:48] - [model_utils.py:103] - [INFO]: 	[BATCH 3100/4017] Loss: 0.1582 | Acc: 92.19%
+[2025-10-06 08:51:29] - [model_utils.py:103] - [INFO]: 	[BATCH 3200/4017] Loss: 0.0872 | Acc: 100.00%
+[2025-10-06 08:52:11] - [model_utils.py:103] - [INFO]: 	[BATCH 3300/4017] Loss: 0.2297 | Acc: 88.62%
+[2025-10-06 08:52:53] - [model_utils.py:103] - [INFO]: 	[BATCH 3400/4017] Loss: 0.0872 | Acc: 99.48%
+[2025-10-06 08:53:35] - [model_utils.py:103] - [INFO]: 	[BATCH 3500/4017] Loss: 0.1549 | Acc: 86.13%
+[2025-10-06 08:54:18] - [model_utils.py:103] - [INFO]: 	[BATCH 3600/4017] Loss: 0.2203 | Acc: 85.62%
+[2025-10-06 08:54:59] - [model_utils.py:103] - [INFO]: 	[BATCH 3700/4017] Loss: 0.1664 | Acc: 91.38%
+[2025-10-06 08:55:41] - [model_utils.py:103] - [INFO]: 	[BATCH 3800/4017] Loss: 0.1568 | Acc: 73.96%
+[2025-10-06 08:56:23] - [model_utils.py:103] - [INFO]: 	[BATCH 3900/4017] Loss: 0.2126 | Acc: 98.84%
+[2025-10-06 08:57:05] - [model_utils.py:103] - [INFO]: 	[BATCH 4000/4017] Loss: 0.1962 | Acc: 97.44%
+[2025-10-06 09:05:26] - [model_utils.py:294] - [INFO]: Epoch: 3 | Train loss: 0.1730 | Train acc: 86.86% | Eval loss: 0.9673 | Eval acc: 52.42%
+[2025-10-06 09:05:26] - [model_utils.py:409] - [INFO]: Checkpoint B3Model1_epoch_3 saved in models/B3Model1/1/checkpoints/epochs
+[2025-10-06 09:05:26] - [model_utils.py:260] - [INFO]: Epoch 4/10
+[2025-10-06 09:05:29] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 0.1202 | Acc: 97.64%
+[2025-10-06 09:06:11] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.0245 | Acc: 100.00%
+[2025-10-06 09:06:53] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.0492 | Acc: 98.15%
+[2025-10-06 09:07:35] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.1080 | Acc: 94.91%
+[2025-10-06 09:08:17] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.1341 | Acc: 91.38%
+[2025-10-06 09:08:59] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.0717 | Acc: 99.38%
+[2025-10-06 09:09:41] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.0999 | Acc: 98.13%
+[2025-10-06 09:10:23] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.1200 | Acc: 97.21%
+[2025-10-06 09:11:05] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.1814 | Acc: 91.53%
+[2025-10-06 09:11:47] - [model_utils.py:103] - [INFO]: 	[BATCH 900/4017] Loss: 0.1324 | Acc: 94.39%
+[2025-10-06 09:12:29] - [model_utils.py:103] - [INFO]: 	[BATCH 1000/4017] Loss: 0.0760 | Acc: 94.79%
+[2025-10-06 09:13:11] - [model_utils.py:103] - [INFO]: 	[BATCH 1100/4017] Loss: 0.1535 | Acc: 93.23%
+[2025-10-06 09:13:53] - [model_utils.py:103] - [INFO]: 	[BATCH 1200/4017] Loss: 0.1235 | Acc: 92.86%
+[2025-10-06 09:14:35] - [model_utils.py:103] - [INFO]: 	[BATCH 1300/4017] Loss: 0.1572 | Acc: 93.78%
+[2025-10-06 09:15:17] - [model_utils.py:103] - [INFO]: 	[BATCH 1400/4017] Loss: 0.0823 | Acc: 96.43%
+[2025-10-06 09:15:59] - [model_utils.py:103] - [INFO]: 	[BATCH 1500/4017] Loss: 0.1378 | Acc: 84.57%
+[2025-10-06 09:16:41] - [model_utils.py:103] - [INFO]: 	[BATCH 1600/4017] Loss: 0.1707 | Acc: 80.19%
+[2025-10-06 09:17:23] - [model_utils.py:103] - [INFO]: 	[BATCH 1700/4017] Loss: 0.1507 | Acc: 88.44%
+[2025-10-06 09:18:05] - [model_utils.py:103] - [INFO]: 	[BATCH 1800/4017] Loss: 0.1029 | Acc: 91.85%
+[2025-10-06 09:18:47] - [model_utils.py:103] - [INFO]: 	[BATCH 1900/4017] Loss: 0.1552 | Acc: 92.45%
+[2025-10-06 09:19:29] - [model_utils.py:103] - [INFO]: 	[BATCH 2000/4017] Loss: 0.0603 | Acc: 99.73%
+[2025-10-06 09:20:11] - [model_utils.py:103] - [INFO]: 	[BATCH 2100/4017] Loss: 0.1028 | Acc: 96.58%
+[2025-10-06 09:20:53] - [model_utils.py:103] - [INFO]: 	[BATCH 2200/4017] Loss: 0.0954 | Acc: 94.58%
+[2025-10-06 09:21:35] - [model_utils.py:103] - [INFO]: 	[BATCH 2300/4017] Loss: 0.0706 | Acc: 99.67%
+[2025-10-06 09:22:17] - [model_utils.py:103] - [INFO]: 	[BATCH 2400/4017] Loss: 0.1822 | Acc: 91.25%
+[2025-10-06 09:22:59] - [model_utils.py:103] - [INFO]: 	[BATCH 2500/4017] Loss: 0.1226 | Acc: 85.71%
+[2025-10-06 09:23:41] - [model_utils.py:103] - [INFO]: 	[BATCH 2600/4017] Loss: 0.1828 | Acc: 97.60%
+[2025-10-06 09:24:23] - [model_utils.py:103] - [INFO]: 	[BATCH 2700/4017] Loss: 0.1238 | Acc: 92.71%
+[2025-10-06 09:25:05] - [model_utils.py:103] - [INFO]: 	[BATCH 2800/4017] Loss: 0.1206 | Acc: 92.38%
+[2025-10-06 09:25:47] - [model_utils.py:103] - [INFO]: 	[BATCH 2900/4017] Loss: 0.1476 | Acc: 99.52%
+[2025-10-06 09:26:28] - [model_utils.py:103] - [INFO]: 	[BATCH 3000/4017] Loss: 0.0824 | Acc: 85.19%
+[2025-10-06 09:27:10] - [model_utils.py:103] - [INFO]: 	[BATCH 3100/4017] Loss: 0.0756 | Acc: 95.54%
+[2025-10-06 09:27:52] - [model_utils.py:103] - [INFO]: 	[BATCH 3200/4017] Loss: 0.0685 | Acc: 96.31%
+[2025-10-06 09:28:34] - [model_utils.py:103] - [INFO]: 	[BATCH 3300/4017] Loss: 0.1404 | Acc: 92.22%
+[2025-10-06 09:29:16] - [model_utils.py:103] - [INFO]: 	[BATCH 3400/4017] Loss: 0.1551 | Acc: 90.67%
+[2025-10-06 09:29:58] - [model_utils.py:103] - [INFO]: 	[BATCH 3500/4017] Loss: 0.0577 | Acc: 87.50%
+[2025-10-06 09:30:40] - [model_utils.py:103] - [INFO]: 	[BATCH 3600/4017] Loss: 0.0968 | Acc: 90.48%
+[2025-10-06 09:31:22] - [model_utils.py:103] - [INFO]: 	[BATCH 3700/4017] Loss: 0.0856 | Acc: 98.21%
+[2025-10-06 09:32:04] - [model_utils.py:103] - [INFO]: 	[BATCH 3800/4017] Loss: 0.1555 | Acc: 91.23%
+[2025-10-06 09:32:46] - [model_utils.py:103] - [INFO]: 	[BATCH 3900/4017] Loss: 0.1049 | Acc: 82.68%
+[2025-10-06 09:33:28] - [model_utils.py:103] - [INFO]: 	[BATCH 4000/4017] Loss: 0.1884 | Acc: 89.84%
+[2025-10-06 09:41:57] - [model_utils.py:294] - [INFO]: Epoch: 4 | Train loss: 0.1193 | Train acc: 91.57% | Eval loss: 1.0373 | Eval acc: 52.39%
+[2025-10-06 09:41:57] - [model_utils.py:260] - [INFO]: Epoch 5/10
+[2025-10-06 09:42:00] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 0.0537 | Acc: 97.62%
+[2025-10-06 09:42:42] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.2071 | Acc: 92.38%
+[2025-10-06 09:43:24] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.2552 | Acc: 88.04%
+[2025-10-06 09:44:06] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.1208 | Acc: 95.12%
+[2025-10-06 09:44:48] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.0552 | Acc: 94.91%
+[2025-10-06 09:45:30] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.0140 | Acc: 100.00%
+[2025-10-06 09:46:12] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.0496 | Acc: 97.92%
+[2025-10-06 09:46:54] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.0974 | Acc: 95.24%
+[2025-10-06 09:47:36] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.1046 | Acc: 98.29%
+[2025-10-06 09:48:18] - [model_utils.py:103] - [INFO]: 	[BATCH 900/4017] Loss: 0.0386 | Acc: 100.00%
+[2025-10-06 09:48:59] - [model_utils.py:103] - [INFO]: 	[BATCH 1000/4017] Loss: 0.0526 | Acc: 97.65%
+[2025-10-06 09:49:41] - [model_utils.py:103] - [INFO]: 	[BATCH 1100/4017] Loss: 0.1012 | Acc: 99.72%
+[2025-10-06 09:50:23] - [model_utils.py:103] - [INFO]: 	[BATCH 1200/4017] Loss: 0.0965 | Acc: 98.21%
+[2025-10-06 09:51:05] - [model_utils.py:103] - [INFO]: 	[BATCH 1300/4017] Loss: 0.0325 | Acc: 100.00%
+[2025-10-06 09:51:47] - [model_utils.py:103] - [INFO]: 	[BATCH 1400/4017] Loss: 0.0237 | Acc: 100.00%
+[2025-10-06 09:52:29] - [model_utils.py:103] - [INFO]: 	[BATCH 1500/4017] Loss: 0.0836 | Acc: 95.24%
+[2025-10-06 09:53:11] - [model_utils.py:103] - [INFO]: 	[BATCH 1600/4017] Loss: 0.0234 | Acc: 100.00%
+[2025-10-06 09:53:53] - [model_utils.py:103] - [INFO]: 	[BATCH 1700/4017] Loss: 0.0885 | Acc: 83.33%
+[2025-10-06 09:54:35] - [model_utils.py:103] - [INFO]: 	[BATCH 1800/4017] Loss: 0.0745 | Acc: 83.63%
+[2025-10-06 09:55:17] - [model_utils.py:103] - [INFO]: 	[BATCH 1900/4017] Loss: 0.0443 | Acc: 100.00%
+[2025-10-06 09:55:59] - [model_utils.py:103] - [INFO]: 	[BATCH 2000/4017] Loss: 0.1654 | Acc: 83.61%
+[2025-10-06 09:56:41] - [model_utils.py:103] - [INFO]: 	[BATCH 2100/4017] Loss: 0.1029 | Acc: 93.73%
+[2025-10-06 09:57:23] - [model_utils.py:103] - [INFO]: 	[BATCH 2200/4017] Loss: 0.1606 | Acc: 92.80%
+[2025-10-06 09:58:05] - [model_utils.py:103] - [INFO]: 	[BATCH 2300/4017] Loss: 0.0606 | Acc: 93.75%
+[2025-10-06 09:58:47] - [model_utils.py:103] - [INFO]: 	[BATCH 2400/4017] Loss: 0.0602 | Acc: 97.62%
+[2025-10-06 09:59:29] - [model_utils.py:103] - [INFO]: 	[BATCH 2500/4017] Loss: 0.0841 | Acc: 96.43%
+[2025-10-06 10:00:10] - [model_utils.py:103] - [INFO]: 	[BATCH 2600/4017] Loss: 0.1116 | Acc: 84.86%
+[2025-10-06 10:00:52] - [model_utils.py:103] - [INFO]: 	[BATCH 2700/4017] Loss: 0.1472 | Acc: 86.97%
+[2025-10-06 10:01:34] - [model_utils.py:103] - [INFO]: 	[BATCH 2800/4017] Loss: 0.0533 | Acc: 96.43%
+[2025-10-06 10:02:16] - [model_utils.py:103] - [INFO]: 	[BATCH 2900/4017] Loss: 0.0480 | Acc: 99.66%
+[2025-10-06 10:02:58] - [model_utils.py:103] - [INFO]: 	[BATCH 3000/4017] Loss: 0.0339 | Acc: 97.62%
+[2025-10-06 10:03:40] - [model_utils.py:103] - [INFO]: 	[BATCH 3100/4017] Loss: 0.0907 | Acc: 91.67%
+[2025-10-06 10:04:22] - [model_utils.py:103] - [INFO]: 	[BATCH 3200/4017] Loss: 0.3259 | Acc: 85.99%
+[2025-10-06 10:05:04] - [model_utils.py:103] - [INFO]: 	[BATCH 3300/4017] Loss: 0.2515 | Acc: 96.56%
+[2025-10-06 10:05:46] - [model_utils.py:103] - [INFO]: 	[BATCH 3400/4017] Loss: 0.0505 | Acc: 89.59%
+[2025-10-06 10:06:28] - [model_utils.py:103] - [INFO]: 	[BATCH 3500/4017] Loss: 0.0723 | Acc: 97.96%
+[2025-10-06 10:07:10] - [model_utils.py:103] - [INFO]: 	[BATCH 3600/4017] Loss: 0.0551 | Acc: 98.31%
+[2025-10-06 10:07:51] - [model_utils.py:103] - [INFO]: 	[BATCH 3700/4017] Loss: 0.1044 | Acc: 96.38%
+[2025-10-06 10:08:33] - [model_utils.py:103] - [INFO]: 	[BATCH 3800/4017] Loss: 0.1048 | Acc: 96.52%
+[2025-10-06 10:09:16] - [model_utils.py:103] - [INFO]: 	[BATCH 3900/4017] Loss: 0.1013 | Acc: 84.74%
+[2025-10-06 10:09:57] - [model_utils.py:103] - [INFO]: 	[BATCH 4000/4017] Loss: 0.0255 | Acc: 100.00%
+[2025-10-06 10:18:19] - [model_utils.py:294] - [INFO]: Epoch: 5 | Train loss: 0.0904 | Train acc: 93.77% | Eval loss: 1.0895 | Eval acc: 52.39%
+[2025-10-06 10:18:19] - [model_utils.py:409] - [INFO]: Checkpoint B3Model1_epoch_5 saved in models/B3Model1/1/checkpoints/epochs
+[2025-10-06 10:18:19] - [model_utils.py:260] - [INFO]: Epoch 6/10
+[2025-10-06 10:18:22] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 0.0560 | Acc: 94.09%
+[2025-10-06 10:19:04] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.0139 | Acc: 100.00%
+[2025-10-06 10:19:46] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.0178 | Acc: 100.00%
+[2025-10-06 10:20:28] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.0478 | Acc: 98.41%
+[2025-10-06 10:21:10] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.0848 | Acc: 96.82%
+[2025-10-06 10:21:52] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.1140 | Acc: 96.30%
+[2025-10-06 10:22:34] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.0140 | Acc: 100.00%
+[2025-10-06 10:23:16] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.0528 | Acc: 96.67%
+[2025-10-06 10:23:58] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.0736 | Acc: 95.83%
+[2025-10-06 10:24:40] - [model_utils.py:103] - [INFO]: 	[BATCH 900/4017] Loss: 0.1842 | Acc: 94.76%
+[2025-10-06 10:25:22] - [model_utils.py:103] - [INFO]: 	[BATCH 1000/4017] Loss: 0.0470 | Acc: 87.20%
+[2025-10-06 10:26:04] - [model_utils.py:103] - [INFO]: 	[BATCH 1100/4017] Loss: 0.0934 | Acc: 85.15%
+[2025-10-06 10:26:46] - [model_utils.py:103] - [INFO]: 	[BATCH 1200/4017] Loss: 0.0156 | Acc: 100.00%
+[2025-10-06 10:27:28] - [model_utils.py:103] - [INFO]: 	[BATCH 1300/4017] Loss: 0.0230 | Acc: 93.75%
+[2025-10-06 10:28:10] - [model_utils.py:103] - [INFO]: 	[BATCH 1400/4017] Loss: 0.0366 | Acc: 100.00%
+[2025-10-06 10:28:52] - [model_utils.py:103] - [INFO]: 	[BATCH 1500/4017] Loss: 0.0108 | Acc: 100.00%
+[2025-10-06 10:29:34] - [model_utils.py:103] - [INFO]: 	[BATCH 1600/4017] Loss: 0.0137 | Acc: 100.00%
+[2025-10-06 10:30:16] - [model_utils.py:103] - [INFO]: 	[BATCH 1700/4017] Loss: 0.0265 | Acc: 99.64%
+[2025-10-06 10:30:58] - [model_utils.py:103] - [INFO]: 	[BATCH 1800/4017] Loss: 0.0713 | Acc: 97.94%
+[2025-10-06 10:31:40] - [model_utils.py:103] - [INFO]: 	[BATCH 1900/4017] Loss: 0.0217 | Acc: 95.83%
+[2025-10-06 10:32:22] - [model_utils.py:103] - [INFO]: 	[BATCH 2000/4017] Loss: 0.0214 | Acc: 99.73%
+[2025-10-06 10:33:04] - [model_utils.py:103] - [INFO]: 	[BATCH 2100/4017] Loss: 0.0119 | Acc: 100.00%
+[2025-10-06 10:33:46] - [model_utils.py:103] - [INFO]: 	[BATCH 2200/4017] Loss: 0.0223 | Acc: 99.67%
+[2025-10-06 10:34:28] - [model_utils.py:103] - [INFO]: 	[BATCH 2300/4017] Loss: 0.0323 | Acc: 99.75%
+[2025-10-06 10:35:10] - [model_utils.py:103] - [INFO]: 	[BATCH 2400/4017] Loss: 0.0285 | Acc: 99.61%
+[2025-10-06 10:35:52] - [model_utils.py:103] - [INFO]: 	[BATCH 2500/4017] Loss: 0.0043 | Acc: 100.00%
+[2025-10-06 10:36:34] - [model_utils.py:103] - [INFO]: 	[BATCH 2600/4017] Loss: 0.0229 | Acc: 99.72%
+[2025-10-06 10:37:16] - [model_utils.py:103] - [INFO]: 	[BATCH 2700/4017] Loss: 0.0099 | Acc: 100.00%
+[2025-10-06 10:37:57] - [model_utils.py:103] - [INFO]: 	[BATCH 2800/4017] Loss: 0.0372 | Acc: 98.57%
+[2025-10-06 10:38:40] - [model_utils.py:103] - [INFO]: 	[BATCH 2900/4017] Loss: 0.0433 | Acc: 95.83%
+[2025-10-06 10:39:22] - [model_utils.py:103] - [INFO]: 	[BATCH 3000/4017] Loss: 0.0260 | Acc: 99.70%
+[2025-10-06 10:40:04] - [model_utils.py:103] - [INFO]: 	[BATCH 3100/4017] Loss: 0.0161 | Acc: 100.00%
+[2025-10-06 10:40:46] - [model_utils.py:103] - [INFO]: 	[BATCH 3200/4017] Loss: 0.0126 | Acc: 100.00%
+[2025-10-06 10:41:28] - [model_utils.py:103] - [INFO]: 	[BATCH 3300/4017] Loss: 0.0154 | Acc: 100.00%
+[2025-10-06 10:42:10] - [model_utils.py:103] - [INFO]: 	[BATCH 3400/4017] Loss: 0.0077 | Acc: 100.00%
+[2025-10-06 10:42:52] - [model_utils.py:103] - [INFO]: 	[BATCH 3500/4017] Loss: 0.0549 | Acc: 97.86%
+[2025-10-06 10:43:34] - [model_utils.py:103] - [INFO]: 	[BATCH 3600/4017] Loss: 0.0098 | Acc: 100.00%
+[2025-10-06 10:44:16] - [model_utils.py:103] - [INFO]: 	[BATCH 3700/4017] Loss: 0.0114 | Acc: 100.00%
+[2025-10-06 10:44:58] - [model_utils.py:103] - [INFO]: 	[BATCH 3800/4017] Loss: 0.0294 | Acc: 99.66%
+[2025-10-06 10:45:40] - [model_utils.py:103] - [INFO]: 	[BATCH 3900/4017] Loss: 0.0295 | Acc: 99.65%
+[2025-10-06 10:46:22] - [model_utils.py:103] - [INFO]: 	[BATCH 4000/4017] Loss: 0.2262 | Acc: 95.83%
+[2025-10-06 10:54:45] - [model_utils.py:294] - [INFO]: Epoch: 6 | Train loss: 0.0375 | Train acc: 97.70% | Eval loss: 1.1728 | Eval acc: 54.31%
+[2025-10-06 10:54:45] - [model_utils.py:260] - [INFO]: Epoch 7/10
+[2025-10-06 10:54:47] - [model_utils.py:103] - [INFO]: 	[BATCH 0/4017] Loss: 0.0462 | Acc: 99.66%
+[2025-10-06 10:55:29] - [model_utils.py:103] - [INFO]: 	[BATCH 100/4017] Loss: 0.0301 | Acc: 99.77%
+[2025-10-06 10:56:11] - [model_utils.py:103] - [INFO]: 	[BATCH 200/4017] Loss: 0.0038 | Acc: 100.00%
+[2025-10-06 10:56:53] - [model_utils.py:103] - [INFO]: 	[BATCH 300/4017] Loss: 0.0102 | Acc: 100.00%
+[2025-10-06 10:57:35] - [model_utils.py:103] - [INFO]: 	[BATCH 400/4017] Loss: 0.0087 | Acc: 100.00%
+[2025-10-06 10:58:17] - [model_utils.py:103] - [INFO]: 	[BATCH 500/4017] Loss: 0.0069 | Acc: 100.00%
+[2025-10-06 10:58:59] - [model_utils.py:103] - [INFO]: 	[BATCH 600/4017] Loss: 0.0128 | Acc: 100.00%
+[2025-10-06 10:59:41] - [model_utils.py:103] - [INFO]: 	[BATCH 700/4017] Loss: 0.0086 | Acc: 100.00%
+[2025-10-06 11:00:23] - [model_utils.py:103] - [INFO]: 	[BATCH 800/4017] Loss: 0.0043 | Acc: 100.00%
