@@ -260,7 +260,8 @@ class B1Model(nn.Module):
         in_features (Tuple[int, int]): Input feature shape (height, width).
         num_classes (int): Number of output classes for classification.
         model (nn.Module): The underlying ResNet-50 model (modified).
-        extract_features (bool): If True, the model outputs features instead of classification logits.
+        extract_features (bool):
+            If True, the model outputs features instead of classification logits.
     """
 
     def __init__(
