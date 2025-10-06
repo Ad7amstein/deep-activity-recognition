@@ -32,7 +32,8 @@ class B3CustomDataset1(Dataset):
         transform (torchvision.transforms.Compose): Image preprocessing and augmentation pipeline.
         num_right_frames (int): Number of frames to include to the right of the middle frame.
         num_left_frames (int): Number of frames to include to the left of the middle frame.
-        volleyball_data (VolleyballData): Parsed volleyball annotation data containing frame and box info.
+        volleyball_data (VolleyballData):
+            Parsed volleyball annotation data containing frame and box info.
         action_category2label_dct (dict): Mapping from action category names to numeric labels.
         dataset (list): List of tuples containing image paths, bounding boxes, and labels.
     """
