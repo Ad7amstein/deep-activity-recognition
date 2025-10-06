@@ -16,7 +16,7 @@ PATH_MODELS_CHECKPOINTS: "checkpoints"
 PATH_ASSETS: "assets"
 PATH_METRICS: "metrics_plots"
 # Hard write PATH_LOGS in [config_utils.py]
-PATH_LOGS: "logs/baseline3/exp_2"
+PATH_LOGS: "logs/baseline3/exp_4"
 PATH_DATA_PROCESSING_MODULE: "data_processing"
 PATH_UTILS_MODULE: "utils"
 
@@ -50,8 +50,8 @@ B1_NUM_CLASSES: 8
 
 # --------------- B3 Config ---------------
 # dataset
-B3_FEATURES_SHAPE_0: 256
-B3_FEATURES_SHAPE_1: 256
+B3_FEATURES_SHAPE_0: 224
+B3_FEATURES_SHAPE_1: 224
 B3_RIGHT_FRAMES: 5
 B3_LEFT_FRAMES: 4
 # training
@@ -64,5 +64,5 @@ B3_NUM_WORKERS: 6
 B3_OPTIMIZER: "AdamW"
 B3_WEIGHT_DECAY: 0.001
 B3_LOSS_FN: "cross_entropy_loss"
-B3_EXPERIMENT_NUM: 2
+B3_EXPERIMENT_NUM: 4
 B3_NUM_CLASSES: 9

@@ -91,7 +91,7 @@ class B3CustomDataset1(Dataset):
         self.mode = mode
         if self.verbose:
             self.logger.info(
-                "Initializing Baseline 2 Custom Dataset (mode=%s)...", self.mode
+                "Initializing Baseline 3 Custom Dataset (mode=%s)...", self.mode
             )
 
         self.transform = transforms.Compose(

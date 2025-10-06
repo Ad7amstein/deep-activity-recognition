@@ -9,7 +9,7 @@ from pydantic import Field, ValidationError, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict, YamlConfigSettingsSource
 from utils.logging_utils import setup_logger
 
-logger = setup_logger(log_file=__file__, log_dir="logs/baseline3/exp_2")
+logger = setup_logger(log_file=__file__, log_dir="logs/baseline3/exp_4")
 
 
 class Settings(BaseSettings):
