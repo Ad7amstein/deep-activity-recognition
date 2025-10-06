@@ -367,8 +367,9 @@ class B3Model1(nn.Module):
             self.logger.info("Preparing Baseline-3 Model-1...")
         resnet_model = resnet50(weights=ResNet50_Weights.DEFAULT, progress=verbose)
         num_features = resnet_model.fc.in_features
-        resnet_model.fc = torch.nn.Linear(
-            in_features=num_features, out_features=self.num_classes
+        resnet_model.fc = nn.Sequential(
+            nn.Dropout(p=0.5),
+            nn.Linear(in_features=num_features, out_features=self.num_classes),
         )
         if app_settings.B1_FREEZE_BACKBONE:
             for param in resnet_model.parameters():
