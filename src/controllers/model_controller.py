@@ -466,7 +466,7 @@ class ModelController(BaseController):
 def main():
     """Entry Point for the Program."""
     print(f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module.")
-    train_controller = ModelController(baseline_number=3, mode=ModelMode.TRAIN.value)
+    train_controller = ModelController(baseline_number=1, mode=ModelMode.TRAIN.value)
     train_controller.train()
 
 
