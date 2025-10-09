@@ -4,7 +4,7 @@ import os
 import time
 from datetime import timedelta
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import json
 from tqdm import tqdm
 import torch
@@ -200,7 +200,7 @@ def train(
     loss_fn: nn.Module,
     optimizer: torch.optim.Optimizer,
     num_classes: int,
-    scheduler,
+    scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None,
     epochs: int = app_settings.EPOCHS,
     device: torch.device = (
         torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -288,7 +288,8 @@ def train(
             verbose=True,
         )
 
-        scheduler.step(test_loss)
+        if scheduler:
+            scheduler.step(test_loss)
 
         if verbose:
             logger.info(
