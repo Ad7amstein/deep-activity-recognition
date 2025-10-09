@@ -56,7 +56,6 @@ class ModelBaseline(Enum):
 
     Attributes:
         BASELINE1 (int): Identifier for baseline model 1.
-        BASELINE2 (int): Identifier for baseline model 2.
         BASELINE3 (int): Identifier for baseline model 3.
         BASELINE4 (int): Identifier for baseline model 4.
         BASELINE5 (int): Identifier for baseline model 5.
@@ -66,13 +65,16 @@ class ModelBaseline(Enum):
     """
 
     BASELINE1 = 1
-    BASELINE2 = 2
     BASELINE3 = 3
     BASELINE4 = 4
     BASELINE5 = 5
     BASELINE6 = 6
     BASELINE7 = 7
     BASELINE8 = 8
+
+class ModelStage(Enum):
+    STAGE1 = 1
+    STAGE2 = 2
 
 
 def main():

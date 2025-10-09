@@ -13,7 +13,7 @@ from data_processing.annot_loading import AnnotationLoader
 from utils.model_utils import train, test
 from utils.plotting_utils import plot_results
 from utils.logging_utils import setup_logger
-from models.enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline
+from models.enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline, ModelStage
 from stores.baselines.providers import B1CustomDataset, B1Model
 from stores.baselines.providers import B3CustomDataset1, B3Model1
 
@@ -48,7 +48,11 @@ class ModelController(BaseController):
 
         super().__init__()
         self.verbose = verbose
-        self.baseline_root = BaseController.get_baseline_root(baseline_num=baseline_number, stage_num=self.app_settings.STAGE_NUM, exp_num=self.app_settings.EXPERIMENT_NUM)
+        self.baseline_root = BaseController.get_baseline_root(
+            baseline_num=baseline_number,
+            stage_num=self.app_settings.STAGE_NUM,
+            exp_num=self.app_settings.EXPERIMENT_NUM,
+        )
         self.logger = setup_logger(
             log_file=__file__,
             log_dir=os.path.join(self.app_settings.PATH_LOGS, self.baseline_root),
@@ -60,7 +64,9 @@ class ModelController(BaseController):
         self.baseline_config = self.load_config(self.baseline_number)
 
         try:
-            self.model = self.load_model(self.baseline_number)
+            self.model = self.load_model(
+                self.baseline_number, self.app_settings.STAGE_NUM
+            )
         except ValueError as exc:
             self.logger.exception(str(exc))
             raise exc
@@ -234,7 +240,10 @@ class ModelController(BaseController):
         return {"preds": preds.cpu().tolist(), "probs": probs.cpu().tolist()}
 
     def load_model(
-        self, baseline_number: int, verbose: Optional[bool] = None
+        self,
+        baseline_number: int,
+        stage_num: Optional[int] = None,
+        verbose: Optional[bool] = None,
     ) -> nn.Module:
         """Load the model corresponding to the specified baseline.
 
@@ -251,12 +260,20 @@ class ModelController(BaseController):
         """
 
         verbose = self.verbose if verbose is None else verbose
+        if stage_num is None:
+            stage_num = 1
         if verbose:
-            self.logger.info("Loading model for baseline %s", str(baseline_number))
+            self.logger.info(
+                "Loading model for baseline %s and stage %s",
+                str(baseline_number),
+                str(stage_num),
+            )
         baseline_model = {
-            ModelBaseline.BASELINE1.value: B1Model(),
-            ModelBaseline.BASELINE2.value: None,
-            ModelBaseline.BASELINE3.value: B3Model1(),
+            ModelBaseline.BASELINE1.value: {ModelStage.STAGE1.value: B1Model()},
+            ModelBaseline.BASELINE3.value: {
+                ModelStage.STAGE1.value: B3Model1(),
+                ModelStage.STAGE2.value: None,
+            },
             ModelBaseline.BASELINE4.value: None,
             ModelBaseline.BASELINE5.value: None,
             ModelBaseline.BASELINE6.value: None,
@@ -264,16 +281,21 @@ class ModelController(BaseController):
             ModelBaseline.BASELINE8.value: None,
         }
 
-        model: Union[nn.Module, None] = baseline_model.get(baseline_number, None)
+        model: Union[nn.Module, None] = baseline_model.get(baseline_number, None).get(
+            stage_num, None
+        )
         if model is None:
             raise ValueError(
-                f"The Model for the given baseline number ({baseline_number}) not found."
+                f"The Model for the given baseline number ({baseline_number}) and stage ({stage_num}) not found."
             )
 
         return model
 
     def load_dataset_class(
-        self, baseline_number: int, verbose: Optional[bool] = None
+        self,
+        baseline_number: int,
+        stage_num: Optional[int] = None,
+        verbose: Optional[bool] = None,
     ) -> Type[Dataset]:
         """Load the dataset class corresponding to the specified baseline.
 
@@ -290,14 +312,20 @@ class ModelController(BaseController):
         """
 
         verbose = self.verbose if verbose is None else verbose
+        if stage_num is None:
+            stage_num = 1
         if verbose:
             self.logger.info(
-                "Loading dataset_class for baseline %s", str(baseline_number)
+                "Loading dataset_class for baseline %s and stage %s",
+                str(baseline_number),
+                str(stage_num),
             )
         baseline_dataset = {
-            ModelBaseline.BASELINE1.value: B1CustomDataset,
-            ModelBaseline.BASELINE2.value: None,
-            ModelBaseline.BASELINE3.value: B3CustomDataset1,
+            ModelBaseline.BASELINE1.value: {ModelStage.STAGE1.value: B1CustomDataset},
+            ModelBaseline.BASELINE3.value: {
+                ModelStage.STAGE1.value: B3CustomDataset1,
+                ModelStage.STAGE2.value: None,
+            },
             ModelBaseline.BASELINE4.value: None,
             ModelBaseline.BASELINE5.value: None,
             ModelBaseline.BASELINE6.value: None,
@@ -307,10 +335,10 @@ class ModelController(BaseController):
 
         dataset_class: Union[Type[Dataset], None] = baseline_dataset.get(
             baseline_number, None
-        )
+        ).get(stage_num, None)
         if dataset_class is None:
             raise ValueError(
-                f"The Dataset Class for the given baseline number ({baseline_number}) not found."
+                f"The Dataset Class for the given baseline number ({baseline_number}) and stage ({stage_num}) not found."
             )
 
         return dataset_class
@@ -393,7 +421,7 @@ class ModelController(BaseController):
         return scheduler
 
     def load_config(
-        self, baseline_number: int, verbose: Optional[bool] = None
+        self, baseline_number: int, stage_num: Optional[int] = None, verbose: Optional[bool] = None
     ) -> SimpleNamespace:
         """Load configuration for the given baseline.
 
@@ -417,6 +445,8 @@ class ModelController(BaseController):
         settings = self.app_settings
 
         prefix = f"B{baseline_number}_"
+        if stage_num is not None:
+            prefix += f"S{stage_num}_"
         config = {}
 
         for field_name, value in settings.__dict__.items():
