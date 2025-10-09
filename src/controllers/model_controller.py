@@ -134,12 +134,14 @@ class ModelController(BaseController):
             verbose=verbose,
         )
 
+        self.logger.info("Done Training.")
+
         plot_results(
             results=train_results,
             save_path=os.path.join(
                 self.app_settings.PATH_ASSETS,
                 self.model.__class__.__name__,
-                self.get_experiment_path(),
+                self.get_experiment_path(verbose=False),
                 self.app_settings.PATH_METRICS,
             ),
         )
@@ -370,10 +372,7 @@ class ModelController(BaseController):
 
     def load_scheduler(
         self, verbose: Optional[bool] = None
-    ) -> (
-        torch.optim.lr_scheduler._LRScheduler
-        | torch.optim.lr_scheduler.ReduceLROnPlateau
-    ):
+    ) -> torch.optim.lr_scheduler._LRScheduler:
         """Load a learning rate scheduler for the optimizer.
 
         Args:
