@@ -16,7 +16,7 @@ PATH_MODELS_CHECKPOINTS: "checkpoints"
 PATH_ASSETS: "assets"
 PATH_METRICS: "metrics_plots"
 # Hard write PATH_LOGS in [config_utils.py]
-PATH_LOGS: "logs/baseline3/exp_7"
+PATH_LOGS: "logs/train"
 PATH_DATA_PROCESSING_MODULE: "data_processing"
 PATH_UTILS_MODULE: "utils"
 
@@ -24,10 +24,15 @@ PATH_UTILS_MODULE: "utils"
 NUM_ACTIVITY_LABELS: 8
 NUM_ACTION_LABELS: 9
 EPOCHS: 10
-MODEL_MODE: train
+MODEL_MODE: "train"
 TRAIN_IDS: [1, 3, 6, 7, 10, 13, 15, 16, 18, 22, 23, 31, 32, 36, 38, 39, 40, 41, 42, 48, 50, 52, 53, 54]
 VALIDATION_IDS: [0, 2, 8, 12, 17, 19, 24, 26, 27, 28, 30, 33, 46, 49, 51]
 TEST_IDS: [4, 5, 9, 11, 14, 20, 21, 25, 29, 34, 35, 37, 43, 44, 45, 47]
+
+# --------------- General Config ---------------
+BASELINE_NUM: 3
+EXPERIMENT_NUM: 7
+STAGE_NUM: 1
 
 # --------------- B1 Config ---------------
 # dataset
@@ -45,7 +50,6 @@ B1_NUM_WORKERS: 6
 B1_OPTIMIZER: "AdamW"
 B1_WEIGHT_DECAY: 0.001
 B1_LOSS_FN: "cross_entropy_loss"
-B1_EXPERIMENT_NUM: 1
 B1_NUM_CLASSES: 8
 
 # --------------- B3 Config ---------------
@@ -64,5 +68,4 @@ B3_NUM_WORKERS: 6
 B3_OPTIMIZER: "AdamW"
 B3_WEIGHT_DECAY: 0.001
 B3_LOSS_FN: "cross_entropy_loss"
-B3_EXPERIMENT_NUM: 7
 B3_NUM_CLASSES: 9

@@ -14,6 +14,7 @@ from models.enums import ActivityEnum, ModelMode
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
 from data_processing.annot_loading import AnnotationLoader
+from controllers.base_controller import BaseController
 
 app_settings = get_settings()
 
@@ -72,7 +73,7 @@ class B1CustomDataset(Dataset):
         self.logger = setup_logger(
             logger_name=__name__,
             log_file=__file__,
-            log_dir=app_settings.PATH_LOGS,
+            log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
             log_to_console=self.verbose,
             use_tqdm=True,
         )
@@ -296,7 +297,7 @@ class B1Model(nn.Module):
         self.logger = setup_logger(
             logger_name=__name__,
             log_file=__file__,
-            log_dir=app_settings.PATH_LOGS,
+            log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
             log_to_console=self.verbose,
             use_tqdm=True,
         )

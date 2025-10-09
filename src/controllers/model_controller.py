@@ -48,9 +48,10 @@ class ModelController(BaseController):
 
         super().__init__()
         self.verbose = verbose
+        self.baseline_root = BaseController.get_baseline_root(baseline_num=baseline_number, stage_num=self.app_settings.STAGE_NUM, exp_num=self.app_settings.EXPERIMENT_NUM)
         self.logger = setup_logger(
             log_file=__file__,
-            log_dir=self.app_settings.PATH_LOGS,
+            log_dir=os.path.join(self.app_settings.PATH_LOGS, self.baseline_root),
             log_to_console=self.verbose,
             use_tqdm=True,
         )
@@ -126,10 +127,7 @@ class ModelController(BaseController):
             optimizer=self.optimizer,
             scheduler=self.scheduler,
             epochs=self.baseline_config.TRAIN_EPOCHS,
-            baseline_path=os.path.join(
-                str(self.model.__class__.__name__),
-                str(self.baseline_config.EXPERIMENT_NUM),
-            ),
+            baseline_path=self.baseline_root,
             num_classes=self.baseline_config.NUM_CLASSES,
             verbose=verbose,
         )
@@ -140,8 +138,7 @@ class ModelController(BaseController):
             results=train_results,
             save_path=os.path.join(
                 self.app_settings.PATH_ASSETS,
-                self.model.__class__.__name__,
-                self.get_experiment_path(verbose=False),
+                self.baseline_root,
                 self.app_settings.PATH_METRICS,
             ),
         )
@@ -434,23 +431,6 @@ class ModelController(BaseController):
             )
 
         return SimpleNamespace(**config)
-
-    def get_experiment_path(self, verbose: Optional[bool] = None) -> str:
-        """Get the experiment path identifier for the current baseline.
-
-        Args:
-            verbose (Optional[bool], optional): Whether to enable verbose logging. Defaults to None.
-
-        Returns:
-            str: Experiment path string (e.g., "exp_1").
-        """
-
-        verbose = self.verbose if verbose is None else verbose
-        if verbose:
-            self.logger.info(
-                "Getting Experiment Path for baseline %s", self.baseline_number
-            )
-        return f"exp_{str(self.baseline_config.EXPERIMENT_NUM)}"
 
 
 def main():

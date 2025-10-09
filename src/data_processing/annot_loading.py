@@ -13,6 +13,7 @@ from utils.config_utils import get_settings
 from utils.path_utils import check_path
 from utils.logging_utils import setup_logger
 from models import TrackingData, VideoAnnotation, ClipAnnotation, VolleyballData
+from controllers.base_controller import BaseController
 
 app_settings = get_settings()
 
@@ -38,7 +39,7 @@ class AnnotationLoader:
         self.verbose = verbose
         self.logger = setup_logger(
             log_file=__file__,
-            log_dir=app_settings.PATH_LOGS,
+            log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
             log_to_console=self.verbose,
             use_tqdm=True,
         )
