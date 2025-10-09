@@ -46,7 +46,7 @@ class Settings(BaseSettings):
 
     BASELINE_NUM: int = Field(...)
     EXPERIMENT_NUM: int = Field(...)
-    STAGE_NUM: int = Field(...)
+    STAGE_NUM: Optional[int] = Field(default=None)
 
     # Baseline 1
     B1_FEATURES_SHAPE_0: int = Field(...)
@@ -62,25 +62,23 @@ class Settings(BaseSettings):
     B1_OPTIMIZER: str = Field(...)
     B1_WEIGHT_DECAY: float = Field(...)
     B1_LOSS_FN: str = Field(...)
-    B1_EXPERIMENT_NUM: int = Field(...)
     B1_NUM_CLASSES: int = Field(...)
 
     # Baseline 3
-    B3_FEATURES_SHAPE_0: int = Field(...)
-    B3_FEATURES_SHAPE_1: int = Field(...)
-    B3_RIGHT_FRAMES: int = Field(...)
-    B3_LEFT_FRAMES: int = Field(...)
-    B3_TRAIN_EPOCHS: int = Field(...)
-    B3_TRAIN_BATCH_SIZE: int = Field(...)
-    B3_EVAL_BATCH_SIZE: int = Field(...)
-    B3_LR: float = Field(...)
-    B3_FREEZE_BACKBONE: bool = Field(...)
-    B3_NUM_WORKERS: int = Field(...)
-    B3_OPTIMIZER: str = Field(...)
-    B3_WEIGHT_DECAY: float = Field(...)
-    B3_LOSS_FN: str = Field(...)
-    B3_EXPERIMENT_NUM: int = Field(...)
-    B3_NUM_CLASSES: int = Field(...)
+    B3_S1_FEATURES_SHAPE_0: int = Field(...)
+    B3_S1_FEATURES_SHAPE_1: int = Field(...)
+    B3_S1_RIGHT_FRAMES: int = Field(...)
+    B3_S1_LEFT_FRAMES: int = Field(...)
+    B3_S1_TRAIN_EPOCHS: int = Field(...)
+    B3_S1_TRAIN_BATCH_SIZE: int = Field(...)
+    B3_S1_EVAL_BATCH_SIZE: int = Field(...)
+    B3_S1_LR: float = Field(...)
+    B3_S1_FREEZE_BACKBONE: bool = Field(...)
+    B3_S1_NUM_WORKERS: int = Field(...)
+    B3_S1_OPTIMIZER: str = Field(...)
+    B3_S1_WEIGHT_DECAY: float = Field(...)
+    B3_S1_LOSS_FN: str = Field(...)
+    B3_S1_NUM_CLASSES: int = Field(...)
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
