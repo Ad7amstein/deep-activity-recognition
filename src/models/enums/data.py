@@ -21,12 +21,12 @@ class ActivityEnum(Enum):
 
     RIGHT_SET = ("r_set", 0)
     RIGHT_SPIKE = ("r_spike", 1)
-    RIGHT_PASS = ("r_pass", 2)
+    RIGHT_PASS = ("r-pass", 2)
     RIGHT_WINPOINT = ("r_winpoint", 3)
 
     LEFT_SET = ("l_set", 4)
-    LEFT_SPIKE = ("l_spike", 5)
-    LEFT_PASS = ("l_pass", 6)
+    LEFT_SPIKE = ("l-spike", 5)
+    LEFT_PASS = ("l-pass", 6)
     LEFT_WINPOINT = ("l_winpoint", 7)
 
     def __init__(self, category: str, label: int) -> None:
