@@ -1,0 +1,32 @@
+[2025-10-08 23:19:10] - [baseline3.py:93] - [INFO]: Initializing Baseline 3 Custom Dataset (mode=ModelMode.TRAIN)...
+[2025-10-08 23:19:10] - [baseline3.py:173] - [INFO]: Loading Image Paths and Labels...
+[2025-10-08 23:19:10] - [baseline3.py:139] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.TRAIN
+  - Image shape: (224, 224)
+  - Num right frames: 5
+  - Num left frames: 4
+  - Dataset size (after init): 257030
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=True)
+    * RandomChoice(
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=(-0.05, 0.05))
+    RandomGrayscale(p=1.0)
+    GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 2.0))
+    RandomHorizontalFlip(p=0.3)
+)(p=None)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-08 23:19:10] - [baseline3.py:93] - [INFO]: Initializing Baseline 3 Custom Dataset (mode=ModelMode.VALIDATION)...
+[2025-10-08 23:19:10] - [baseline3.py:173] - [INFO]: Loading Image Paths and Labels...
+[2025-10-08 23:19:11] - [baseline3.py:139] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.VALIDATION
+  - Image shape: (224, 224)
+  - Num right frames: 5
+  - Num left frames: 4
+  - Dataset size (after init): 159810
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=True)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])

@@ -1,0 +1,41 @@
+[2025-10-08 21:25:42] - [model_utils.py:230] - [INFO]: Training Started and in Progress...
+[2025-10-08 21:25:42] - [model_utils.py:260] - [INFO]: Epoch 1/3
+[2025-10-08 21:25:46] - [model_utils.py:103] - [INFO]: 	[BATCH 0/804] Loss: 2.2081 | Acc: 1.93%
+[2025-10-08 21:26:02] - [model_utils.py:103] - [INFO]: 	[BATCH 100/804] Loss: 1.0339 | Acc: 16.67%
+[2025-10-08 21:26:20] - [model_utils.py:103] - [INFO]: 	[BATCH 200/804] Loss: 1.0412 | Acc: 16.67%
+[2025-10-08 21:26:38] - [model_utils.py:103] - [INFO]: 	[BATCH 300/804] Loss: 1.0043 | Acc: 26.67%
+[2025-10-08 21:26:56] - [model_utils.py:103] - [INFO]: 	[BATCH 400/804] Loss: 0.6460 | Acc: 38.22%
+[2025-10-08 21:27:16] - [model_utils.py:103] - [INFO]: 	[BATCH 500/804] Loss: 0.6652 | Acc: 68.01%
+[2025-10-08 21:27:35] - [model_utils.py:103] - [INFO]: 	[BATCH 600/804] Loss: 0.5474 | Acc: 51.76%
+[2025-10-08 21:27:55] - [model_utils.py:103] - [INFO]: 	[BATCH 700/804] Loss: 0.7746 | Acc: 27.51%
+[2025-10-08 21:28:15] - [model_utils.py:103] - [INFO]: 	[BATCH 800/804] Loss: 0.9985 | Acc: 45.63%
+[2025-10-08 21:29:23] - [model_utils.py:295] - [INFO]: Epoch: 1 | Train loss: 0.8536 | Train acc: 32.40% | Eval loss: 0.7272 | Eval acc: 50.09%
+[2025-10-08 21:29:23] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_epoch_1 saved in models/B3Model1/5/checkpoints/epochs
+[2025-10-08 21:29:24] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_loss saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:29:24] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_acc saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:29:24] - [model_utils.py:260] - [INFO]: Epoch 2/3
+[2025-10-08 21:29:26] - [model_utils.py:103] - [INFO]: 	[BATCH 0/804] Loss: 0.4537 | Acc: 63.18%
+[2025-10-08 21:29:42] - [model_utils.py:103] - [INFO]: 	[BATCH 100/804] Loss: 0.5381 | Acc: 56.90%
+[2025-10-08 21:30:00] - [model_utils.py:103] - [INFO]: 	[BATCH 200/804] Loss: 0.4430 | Acc: 79.83%
+[2025-10-08 21:30:17] - [model_utils.py:103] - [INFO]: 	[BATCH 300/804] Loss: 0.4405 | Acc: 40.38%
+[2025-10-08 21:30:35] - [model_utils.py:103] - [INFO]: 	[BATCH 400/804] Loss: 0.6893 | Acc: 30.13%
+[2025-10-08 21:30:53] - [model_utils.py:103] - [INFO]: 	[BATCH 500/804] Loss: 0.4585 | Acc: 61.90%
+[2025-10-08 21:31:11] - [model_utils.py:103] - [INFO]: 	[BATCH 600/804] Loss: 0.6902 | Acc: 64.99%
+[2025-10-08 21:31:28] - [model_utils.py:103] - [INFO]: 	[BATCH 700/804] Loss: 0.7556 | Acc: 64.58%
+[2025-10-08 21:31:45] - [model_utils.py:103] - [INFO]: 	[BATCH 800/804] Loss: 0.9840 | Acc: 36.73%
+[2025-10-08 21:32:40] - [model_utils.py:295] - [INFO]: Epoch: 2 | Train loss: 0.5753 | Train acc: 54.36% | Eval loss: 0.6400 | Eval acc: 54.18%
+[2025-10-08 21:32:41] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_loss saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:32:42] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_acc saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:32:42] - [model_utils.py:260] - [INFO]: Epoch 3/3
+[2025-10-08 21:32:43] - [model_utils.py:103] - [INFO]: 	[BATCH 0/804] Loss: 0.4453 | Acc: 69.05%
+[2025-10-08 21:33:01] - [model_utils.py:103] - [INFO]: 	[BATCH 100/804] Loss: 0.5654 | Acc: 64.76%
+[2025-10-08 21:33:18] - [model_utils.py:103] - [INFO]: 	[BATCH 200/804] Loss: 0.4489 | Acc: 57.14%
+[2025-10-08 21:33:36] - [model_utils.py:103] - [INFO]: 	[BATCH 300/804] Loss: 0.2389 | Acc: 88.18%
+[2025-10-08 21:33:53] - [model_utils.py:103] - [INFO]: 	[BATCH 400/804] Loss: 0.4803 | Acc: 75.00%
+[2025-10-08 21:34:11] - [model_utils.py:103] - [INFO]: 	[BATCH 500/804] Loss: 0.4993 | Acc: 45.48%
+[2025-10-08 21:34:29] - [model_utils.py:103] - [INFO]: 	[BATCH 600/804] Loss: 0.4605 | Acc: 54.76%
+[2025-10-08 21:34:47] - [model_utils.py:103] - [INFO]: 	[BATCH 700/804] Loss: 0.1875 | Acc: 79.23%
+[2025-10-08 21:35:05] - [model_utils.py:103] - [INFO]: 	[BATCH 800/804] Loss: 0.3725 | Acc: 82.61%
+[2025-10-08 21:36:00] - [model_utils.py:295] - [INFO]: Epoch: 3 | Train loss: 0.4420 | Train acc: 64.02% | Eval loss: 0.6577 | Eval acc: 52.48%
+[2025-10-08 21:36:00] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_epoch_3 saved in models/B3Model1/5/checkpoints/epochs
+[2025-10-08 21:36:01] - [model_utils.py:381] - [INFO]: Total Train time on cuda: 0:10:18

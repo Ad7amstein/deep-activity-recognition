@@ -1,0 +1,43 @@
+[2025-10-08 21:41:54] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:41:54] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:41:54] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:45:59] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:45:59] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:45:59] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:48:45] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:48:45] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:48:45] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:56:51] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:56:51] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:56:51] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 22:05:51] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 22:05:51] - [config_utils.py:131] - [ERROR]: Failed to initialize settings: [Errno 5] Input/output error
+Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/deep-activity-recognition/src/utils/config_utils.py", line 129, in get_settings
+    settings = Settings()  # type: ignore
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/pydantic_settings/main.py", line 189, in __init__
+    **__pydantic_self__._settings_build_values(
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/pydantic_settings/main.py", line 385, in _settings_build_values
+    sources = self.settings_customise_sources(
+  File "/teamspace/studios/this_studio/deep-activity-recognition/src/utils/config_utils.py", line 108, in settings_customise_sources
+    YamlConfigSettingsSource(
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/pydantic_settings/sources/providers/yaml.py", line 55, in __init__
+    self.yaml_data = self._read_files(self.yaml_file_path)
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/pydantic_settings/sources/base.py", line 203, in _read_files
+    vars.update(self._read_file(file_path))
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/pydantic_settings/sources/providers/yaml.py", line 69, in _read_file
+    return yaml.safe_load(yaml_file) or {}
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/yaml/__init__.py", line 125, in safe_load
+    return load(stream, SafeLoader)
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/yaml/__init__.py", line 79, in load
+    loader = Loader(stream)
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/yaml/loader.py", line 34, in __init__
+    Reader.__init__(self, stream)
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/yaml/reader.py", line 85, in __init__
+    self.determine_encoding()
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/yaml/reader.py", line 124, in determine_encoding
+    self.update_raw()
+  File "/home/zeus/miniconda3/envs/cloudspace/lib/python3.10/site-packages/yaml/reader.py", line 178, in update_raw
+    data = self.stream.read(size)
+OSError: [Errno 5] Input/output error
+[2025-10-08 22:07:00] - [config_utils.py:126] - [INFO]: Loading App Settings
