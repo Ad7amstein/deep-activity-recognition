@@ -158,6 +158,8 @@ def plot_results(results: dict, save_path: str, verbose: bool = True):
     for config in plot_configs:
         plot_xy_comparison(results=results, plot_config=config, save_path=save_path)
 
+    logger.info("Plots Saved in: %s", save_path)
+
 
 def plot_xy_comparison(results: dict, plot_config: dict, save_path: str) -> None:
     """
