@@ -6,7 +6,6 @@ and storing bounding box information from a formatted string.
 import os
 from utils.logging_utils import setup_logger
 from utils.config_utils import get_settings
-from controllers.base_controller import BaseController
 
 app_settings = get_settings()
 
@@ -39,7 +38,7 @@ class BoxInfo:
         self.logger = setup_logger(
             logger_name=__name__,
             log_file=__file__,
-            log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
+            log_dir=os.path.join(app_settings.PATH_LOGS, "app"),
             log_to_console=verbose,
         )
         if self.verbose:
