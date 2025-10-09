@@ -43,11 +43,11 @@ class B3CustomDataset1(Dataset):
         self,
         volleyball_data: VolleyballData,
         img_shape: Tuple[int, int] = (
-            app_settings.B3_FEATURES_SHAPE_0,
-            app_settings.B3_FEATURES_SHAPE_1,
+            app_settings.B3_S1_FEATURES_SHAPE_0,
+            app_settings.B3_S1_FEATURES_SHAPE_1,
         ),
-        num_right_frames: int = app_settings.B3_RIGHT_FRAMES,
-        num_left_frames: int = app_settings.B3_LEFT_FRAMES,
+        num_right_frames: int = app_settings.B3_S1_RIGHT_FRAMES,
+        num_left_frames: int = app_settings.B3_S1_LEFT_FRAMES,
         mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
@@ -63,10 +63,10 @@ class B3CustomDataset1(Dataset):
                 Defaults to values from `app_settings`.
             num_right_frames (int, optional):
                 Number of frames to include to the right of the middle frame when selecting a clip.
-                Defaults to `app_settings.B3_RIGHT_FRAMES`.
+                Defaults to `app_settings.B3_S1_RIGHT_FRAMES`.
             num_left_frames (int, optional):
                 Number of frames to include to the left of the middle frame when selecting a clip.
-                Defaults to `app_settings.B3_LEFT_FRAMES`.
+                Defaults to `app_settings.B3_S1_LEFT_FRAMES`.
             mode (str, optional):
                 Dataset mode — one of `train`, `validation`, or `test`.
                 Determines which video IDs and transformations are used.
@@ -295,8 +295,8 @@ class B3Model1(nn.Module):
         extract_features: bool = False,
         verbose: bool = False,
         in_features: Tuple[int, int] = (
-            app_settings.B3_FEATURES_SHAPE_0,
-            app_settings.B3_FEATURES_SHAPE_1,
+            app_settings.B3_S1_FEATURES_SHAPE_0,
+            app_settings.B3_S1_FEATURES_SHAPE_1,
         ),
         num_classes: int = app_settings.NUM_ACTION_LABELS,
     ) -> None:
