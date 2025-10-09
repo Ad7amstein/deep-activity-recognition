@@ -10,8 +10,9 @@ import numpy as np
 import torch
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
+from models.enums import PathPrefixEnum
 
-
+app_settings = get_settings()
 class BaseController:
     """Base controller class for managing application setup and reproducibility.
 
@@ -38,11 +39,12 @@ class BaseController:
         """
 
         self.verbose = verbose
-        self.app_settings = get_settings()
+        self.app_settings = app_settings
+        self.baseline_root = BaseController.get_baseline_root()
         self.logger = setup_logger(
             logger_name=__name__,
             log_file=__file__,
-            log_dir=self.app_settings.PATH_LOGS,
+            log_dir=os.path.join(self.app_settings.PATH_LOGS, self.baseline_root),
             log_to_console=self.verbose,
         )
         self.logger.info("Initializing BaseController Module...")
@@ -60,7 +62,7 @@ class BaseController:
                 If None, falls back to the instance-level verbosity setting. Defaults to None.
         """
 
-        self.logger.info("Setting all seeds...")
+        self.logger.info("Setting all seeds (seed_value=%s)...", seed_value)
         verbose = verbose if verbose is not None else self.verbose
         torch.manual_seed(seed_value)
         torch.cuda.manual_seed_all(seed_value)
@@ -83,6 +85,33 @@ class BaseController:
         return "".join(
             random.choices("".join([string.ascii_lowercase, string.digits]), k=length)
         )
+
+    @staticmethod
+    def get_baseline_root(baseline_num: int = app_settings.BASELINE_NUM, stage_num: Optional[int] = app_settings.STAGE_NUM, exp_num: int = app_settings.EXPERIMENT_NUM) -> str:
+        """Generate the baseline directory path based on provided identifiers.
+
+        Args:
+            baseline_num (int): The baseline number used to form the root directory name.
+            stage_num (Optional[int]): The stage number to include in the path. Defaults to None.
+            exp_num (int): The experiment number to include in the path if greater than 0. Defaults to 0.
+
+        Returns:
+            str: The constructed baseline path string combining baseline, stage, and experiment prefixes.
+        """
+
+        baseline_root = f"{PathPrefixEnum.baseline_prefix.value}{baseline_num}"
+
+        if stage_num is not None:
+            baseline_root = os.path.join(
+                baseline_root, f"{PathPrefixEnum.stage_prefix.value}{stage_num}"
+            )
+
+        if exp_num > 0:
+            baseline_root = os.path.join(
+                baseline_root, f"{PathPrefixEnum.experiment_prefix.value}{exp_num}"
+            )
+
+        return baseline_root
 
 
 def main():

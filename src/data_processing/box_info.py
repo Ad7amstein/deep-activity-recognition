@@ -38,7 +38,7 @@ class BoxInfo:
         self.logger = setup_logger(
             logger_name=__name__,
             log_file=__file__,
-            log_dir=app_settings.PATH_LOGS,
+            log_dir=os.path.join(app_settings.PATH_LOGS, "app"),
             log_to_console=verbose,
         )
         if self.verbose:

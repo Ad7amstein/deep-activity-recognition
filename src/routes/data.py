@@ -8,6 +8,7 @@ import aiofiles
 from fastapi import APIRouter, UploadFile, status, Request
 from fastapi.responses import JSONResponse
 from controllers import DataController
+from controllers.base_controller import BaseController
 from utils.logging_utils import setup_logger
 from models.enums import ResponseSignalEnum
 
@@ -41,7 +42,7 @@ async def upload_data(
     logger = setup_logger(
         logger_name=__name__,
         log_file=__file__,
-        log_dir=app_settings.PATH_LOGS,
+        log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
         log_to_console=True,
         use_tqdm=True,
         file_mode="a",

@@ -1,0 +1,110 @@
+[2025-10-08 21:25:26] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:26] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:30] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:31] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:31] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:31] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:31] - [config_utils.py:126] - [INFO]: Loading App Settings
+[2025-10-08 21:25:31] - [base_controller.py:48] - [INFO]: Initializing BaseController Module...
+[2025-10-08 21:25:31] - [base_controller.py:63] - [INFO]: Setting all seeds (seed_value=31)...
+[2025-10-08 21:25:31] - [model_controller.py:57] - [INFO]: Initializing ModelController Module...
+[2025-10-08 21:25:31] - [model_controller.py:416] - [INFO]: Loading Model Config for baseline 3
+[2025-10-08 21:25:31] - [model_controller.py:257] - [INFO]: Loading model for baseline 3
+[2025-10-08 21:25:32] - [annot_loading.py:46] - [INFO]: Initializing Annotation Loader Object...
+[2025-10-08 21:25:32] - [annot_loading.py:313] - [INFO]: Loading Data from pickle file: data/volleyball/volleyball_dataset.pkl
+[2025-10-08 21:25:42] - [model_controller.py:296] - [INFO]: Loading dataset_class for baseline 3
+[2025-10-08 21:25:42] - [model_controller.py:333] - [INFO]: Loading optimizer: AdamW
+[2025-10-08 21:25:42] - [model_controller.py:363] - [INFO]: Loading Loss Function: cross_entropy_loss
+[2025-10-08 21:25:42] - [model_controller.py:88] - [INFO]: Baseline-3 Configuration:
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - RIGHT_FRAMES: 0
+  - LEFT_FRAMES: 0
+  - TRAIN_EPOCHS: 3
+  - TRAIN_BATCH_SIZE: 32
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 5
+  - NUM_CLASSES: 9
+  - Scheduler: NoneType
+[2025-10-08 21:25:42] - [model_controller.py:100] - [INFO]: Setup training
+[2025-10-08 21:25:42] - [baseline3.py:93] - [INFO]: Initializing Baseline 3 Custom Dataset (mode=ModelMode.TRAIN)...
+[2025-10-08 21:25:42] - [baseline3.py:173] - [INFO]: Loading Image Paths and Labels...
+[2025-10-08 21:25:42] - [baseline3.py:139] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.TRAIN
+  - Image shape: (224, 224)
+  - Num right frames: 0
+  - Num left frames: 0
+  - Dataset size (after init): 25703
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=True)
+    * RandomChoice(
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=(-0.05, 0.05))
+    RandomGrayscale(p=1.0)
+    GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 2.0))
+    RandomHorizontalFlip(p=0.3)
+)(p=None)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-08 21:25:42] - [baseline3.py:93] - [INFO]: Initializing Baseline 3 Custom Dataset (mode=ModelMode.VALIDATION)...
+[2025-10-08 21:25:42] - [baseline3.py:173] - [INFO]: Loading Image Paths and Labels...
+[2025-10-08 21:25:42] - [baseline3.py:139] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.VALIDATION
+  - Image shape: (224, 224)
+  - Num right frames: 0
+  - Num left frames: 0
+  - Dataset size (after init): 15981
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=True)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-08 21:25:42] - [model_utils.py:230] - [INFO]: Training Started and in Progress...
+[2025-10-08 21:25:42] - [model_utils.py:260] - [INFO]: Epoch 1/3
+[2025-10-08 21:25:46] - [model_utils.py:103] - [INFO]: 	[BATCH 0/804] Loss: 2.2081 | Acc: 1.93%
+[2025-10-08 21:26:02] - [model_utils.py:103] - [INFO]: 	[BATCH 100/804] Loss: 1.0339 | Acc: 16.67%
+[2025-10-08 21:26:20] - [model_utils.py:103] - [INFO]: 	[BATCH 200/804] Loss: 1.0412 | Acc: 16.67%
+[2025-10-08 21:26:38] - [model_utils.py:103] - [INFO]: 	[BATCH 300/804] Loss: 1.0043 | Acc: 26.67%
+[2025-10-08 21:26:56] - [model_utils.py:103] - [INFO]: 	[BATCH 400/804] Loss: 0.6460 | Acc: 38.22%
+[2025-10-08 21:27:16] - [model_utils.py:103] - [INFO]: 	[BATCH 500/804] Loss: 0.6652 | Acc: 68.01%
+[2025-10-08 21:27:35] - [model_utils.py:103] - [INFO]: 	[BATCH 600/804] Loss: 0.5474 | Acc: 51.76%
+[2025-10-08 21:27:55] - [model_utils.py:103] - [INFO]: 	[BATCH 700/804] Loss: 0.7746 | Acc: 27.51%
+[2025-10-08 21:28:15] - [model_utils.py:103] - [INFO]: 	[BATCH 800/804] Loss: 0.9985 | Acc: 45.63%
+[2025-10-08 21:29:23] - [model_utils.py:295] - [INFO]: Epoch: 1 | Train loss: 0.8536 | Train acc: 32.40% | Eval loss: 0.7272 | Eval acc: 50.09%
+[2025-10-08 21:29:23] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_epoch_1 saved in models/B3Model1/5/checkpoints/epochs
+[2025-10-08 21:29:24] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_loss saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:29:24] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_acc saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:29:24] - [model_utils.py:260] - [INFO]: Epoch 2/3
+[2025-10-08 21:29:26] - [model_utils.py:103] - [INFO]: 	[BATCH 0/804] Loss: 0.4537 | Acc: 63.18%
+[2025-10-08 21:29:42] - [model_utils.py:103] - [INFO]: 	[BATCH 100/804] Loss: 0.5381 | Acc: 56.90%
+[2025-10-08 21:30:00] - [model_utils.py:103] - [INFO]: 	[BATCH 200/804] Loss: 0.4430 | Acc: 79.83%
+[2025-10-08 21:30:17] - [model_utils.py:103] - [INFO]: 	[BATCH 300/804] Loss: 0.4405 | Acc: 40.38%
+[2025-10-08 21:30:35] - [model_utils.py:103] - [INFO]: 	[BATCH 400/804] Loss: 0.6893 | Acc: 30.13%
+[2025-10-08 21:30:53] - [model_utils.py:103] - [INFO]: 	[BATCH 500/804] Loss: 0.4585 | Acc: 61.90%
+[2025-10-08 21:31:11] - [model_utils.py:103] - [INFO]: 	[BATCH 600/804] Loss: 0.6902 | Acc: 64.99%
+[2025-10-08 21:31:28] - [model_utils.py:103] - [INFO]: 	[BATCH 700/804] Loss: 0.7556 | Acc: 64.58%
+[2025-10-08 21:31:45] - [model_utils.py:103] - [INFO]: 	[BATCH 800/804] Loss: 0.9840 | Acc: 36.73%
+[2025-10-08 21:32:40] - [model_utils.py:295] - [INFO]: Epoch: 2 | Train loss: 0.5753 | Train acc: 54.36% | Eval loss: 0.6400 | Eval acc: 54.18%
+[2025-10-08 21:32:41] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_loss saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:32:42] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_best_acc saved in models/B3Model1/5/checkpoints/best
+[2025-10-08 21:32:42] - [model_utils.py:260] - [INFO]: Epoch 3/3
+[2025-10-08 21:32:43] - [model_utils.py:103] - [INFO]: 	[BATCH 0/804] Loss: 0.4453 | Acc: 69.05%
+[2025-10-08 21:33:01] - [model_utils.py:103] - [INFO]: 	[BATCH 100/804] Loss: 0.5654 | Acc: 64.76%
+[2025-10-08 21:33:18] - [model_utils.py:103] - [INFO]: 	[BATCH 200/804] Loss: 0.4489 | Acc: 57.14%
+[2025-10-08 21:33:36] - [model_utils.py:103] - [INFO]: 	[BATCH 300/804] Loss: 0.2389 | Acc: 88.18%
+[2025-10-08 21:33:53] - [model_utils.py:103] - [INFO]: 	[BATCH 400/804] Loss: 0.4803 | Acc: 75.00%
+[2025-10-08 21:34:11] - [model_utils.py:103] - [INFO]: 	[BATCH 500/804] Loss: 0.4993 | Acc: 45.48%
+[2025-10-08 21:34:29] - [model_utils.py:103] - [INFO]: 	[BATCH 600/804] Loss: 0.4605 | Acc: 54.76%
+[2025-10-08 21:34:47] - [model_utils.py:103] - [INFO]: 	[BATCH 700/804] Loss: 0.1875 | Acc: 79.23%
+[2025-10-08 21:35:05] - [model_utils.py:103] - [INFO]: 	[BATCH 800/804] Loss: 0.3725 | Acc: 82.61%
+[2025-10-08 21:36:00] - [model_utils.py:295] - [INFO]: Epoch: 3 | Train loss: 0.4420 | Train acc: 64.02% | Eval loss: 0.6577 | Eval acc: 52.48%
+[2025-10-08 21:36:00] - [model_utils.py:410] - [INFO]: Checkpoint B3Model1_epoch_3 saved in models/B3Model1/5/checkpoints/epochs
+[2025-10-08 21:36:01] - [model_utils.py:381] - [INFO]: Total Train time on cuda: 0:10:18
+[2025-10-08 21:36:01] - [model_controller.py:449] - [INFO]: Getting Experiment Path for baseline 3
+[2025-10-08 21:36:01] - [plotting_utils.py:41] - [INFO]: Plotting Results...

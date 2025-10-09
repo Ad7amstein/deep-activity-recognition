@@ -4,7 +4,7 @@ import os
 import time
 from datetime import timedelta
 from datetime import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import json
 from tqdm import tqdm
 import torch
@@ -20,12 +20,13 @@ from torchmetrics.classification import (
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
 from models.enums import ModelResults
+from controllers.base_controller import BaseController
 
 app_settings = get_settings()
 logger = setup_logger(
     logger_name=__name__,
     log_file=__file__,
-    log_dir=app_settings.PATH_LOGS,
+    log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
     log_to_console=True,
     use_tqdm=True,
     file_mode="a",
@@ -199,12 +200,12 @@ def train(
     valid_dataloader: torch.utils.data.DataLoader,
     loss_fn: nn.Module,
     optimizer: torch.optim.Optimizer,
-    scheduler,
+    num_classes: int,
+    scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None,
     epochs: int = app_settings.EPOCHS,
     device: torch.device = (
         torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     ),
-    num_classes=app_settings.NUM_ACTIVITY_LABELS,
     baseline_path: str = "baseline",
     verbose: bool = False,
 ) -> dict[str, Any]:
@@ -231,10 +232,10 @@ def train(
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
     precision_fn = MulticlassPrecision(num_classes=num_classes)
-    recall_fn = MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS)
-    f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+    recall_fn = MulticlassRecall(num_classes=num_classes)
+    f1_score_fn = MulticlassF1Score(num_classes=num_classes)
     confusion_matrix_fn = ConfusionMatrix(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS, task="multiclass"
+        num_classes=num_classes, task="multiclass"
     )
     best_val_loss = float("inf")
     best_val_acc = float("-inf")
@@ -288,7 +289,8 @@ def train(
             verbose=True,
         )
 
-        scheduler.step(test_loss)
+        if scheduler:
+            scheduler.step(test_loss)
 
         if verbose:
             logger.info(
@@ -440,10 +442,10 @@ def test(
 
     acc_fn = MulticlassAccuracy(num_classes=num_classes)
     precision_fn = MulticlassPrecision(num_classes=num_classes)
-    recall_fn = MulticlassRecall(num_classes=app_settings.NUM_ACTIVITY_LABELS)
-    f1_score_fn = MulticlassF1Score(num_classes=app_settings.NUM_ACTIVITY_LABELS)
+    recall_fn = MulticlassRecall(num_classes=num_classes)
+    f1_score_fn = MulticlassF1Score(num_classes=num_classes)
     confusion_matrix_fn = ConfusionMatrix(
-        num_classes=app_settings.NUM_ACTIVITY_LABELS, task="multiclass"
+        num_classes=num_classes, task="multiclass"
     )
 
     test_loss, test_acc, test_precision, test_recall, test_f1_score, test_confmat = (

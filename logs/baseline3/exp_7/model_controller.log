@@ -1,0 +1,24 @@
+[2025-10-08 23:18:58] - [model_controller.py:57] - [INFO]: Initializing ModelController Module...
+[2025-10-08 23:18:58] - [model_controller.py:418] - [INFO]: Loading Model Config for baseline 3
+[2025-10-08 23:18:58] - [model_controller.py:259] - [INFO]: Loading model for baseline 3
+[2025-10-08 23:19:10] - [model_controller.py:298] - [INFO]: Loading dataset_class for baseline 3
+[2025-10-08 23:19:10] - [model_controller.py:335] - [INFO]: Loading optimizer: AdamW
+[2025-10-08 23:19:10] - [model_controller.py:365] - [INFO]: Loading Loss Function: cross_entropy_loss
+[2025-10-08 23:19:10] - [model_controller.py:88] - [INFO]: Baseline-3 Configuration:
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - RIGHT_FRAMES: 5
+  - LEFT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 128
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 6
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - EXPERIMENT_NUM: 7
+  - NUM_CLASSES: 9
+  - Scheduler: NoneType
+[2025-10-08 23:19:10] - [model_controller.py:100] - [INFO]: Setup training

@@ -1,8 +1,15 @@
+"""
+Defines the Baseline 3 Model-1 and its custom dataset for volleyball activity recognition,
+including data loading, preprocessing, and a ResNet-50–based classification model.
+"""
+
 import os
 from typing import Tuple, List, Optional
 import torch
+from torch import nn
 from torch.utils.data import Dataset
 from torchvision import transforms
+from torchvision.models import resnet50, ResNet50_Weights
 import cv2 as cv
 from tqdm import tqdm
 from models.pydantic_models.data_repr import VolleyballData
@@ -10,29 +17,74 @@ from models.enums import ModelMode, ActionEnum
 from utils.config_utils import get_settings
 from utils.logging_utils import setup_logger
 from data_processing.annot_loading import AnnotationLoader
+from controllers.base_controller import BaseController
 
 app_settings = get_settings()
 
 
 class B3CustomDataset1(Dataset):
+    """
+    Custom PyTorch dataset for the Baseline 3 Model-1 volleyball activity recognition task.
+
+    Attributes:
+        verbose (bool): Whether to enable detailed logging.
+        logger (logging.Logger): Configured logger instance for dataset operations.
+        mode (str): Current dataset mode — one of `train`, `validation`, or `test`.
+        transform (torchvision.transforms.Compose): Image preprocessing and augmentation pipeline.
+        num_right_frames (int): Number of frames to include to the right of the middle frame.
+        num_left_frames (int): Number of frames to include to the left of the middle frame.
+        volleyball_data (VolleyballData):
+            Parsed volleyball annotation data containing frame and box info.
+        action_category2label_dct (dict): Mapping from action category names to numeric labels.
+        dataset (list): List of tuples containing image paths, bounding boxes, and labels.
+    """
+
     def __init__(
         self,
         volleyball_data: VolleyballData,
         img_shape: Tuple[int, int] = (
-            app_settings.B3_FEATURES_SHAPE_0,
-            app_settings.B3_FEATURES_SHAPE_1,
+            app_settings.B3_S1_FEATURES_SHAPE_0,
+            app_settings.B3_S1_FEATURES_SHAPE_1,
         ),
-        num_right_frames: int = app_settings.B3_RIGHT_FRAMES,
-        num_left_frames: int = app_settings.B3_LEFT_FRAMES,
+        num_right_frames: int = app_settings.B3_S1_RIGHT_FRAMES,
+        num_left_frames: int = app_settings.B3_S1_LEFT_FRAMES,
         mode: str = app_settings.MODEL_MODE,
         verbose: bool = False,
     ) -> None:
+        """
+        Initialize the Baseline 3 Custom Dataset for volleyball activity recognition.
+
+        Args:
+            volleyball_data (VolleyballData):
+                Parsed volleyball annotation data containing frame paths, bounding boxes,
+                and action labels.
+            img_shape (Tuple[int, int], optional):
+                Target image dimensions `(height, width)` for resizing input frames.
+                Defaults to values from `app_settings`.
+            num_right_frames (int, optional):
+                Number of frames to include to the right of the middle frame when selecting a clip.
+                Defaults to `app_settings.B3_S1_RIGHT_FRAMES`.
+            num_left_frames (int, optional):
+                Number of frames to include to the left of the middle frame when selecting a clip.
+                Defaults to `app_settings.B3_S1_LEFT_FRAMES`.
+            mode (str, optional):
+                Dataset mode — one of `train`, `validation`, or `test`.
+                Determines which video IDs and transformations are used.
+                Defaults to `app_settings.MODEL_MODE`.
+            verbose (bool, optional):
+                Whether to enable detailed logging during initialization.
+                Defaults to `False`.
+
+        Raises:
+            RuntimeError: If dataset initialization or annotation loading fails.
+        """
+
         super().__init__()
         self.verbose = verbose
         self.logger = setup_logger(
             logger_name=__name__,
             log_file=__file__,
-            log_dir=app_settings.PATH_LOGS,
+            log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
             log_to_console=self.verbose,
             use_tqdm=True,
         )
@@ -40,7 +92,7 @@ class B3CustomDataset1(Dataset):
         self.mode = mode
         if self.verbose:
             self.logger.info(
-                "Initializing Baseline 2 Custom Dataset (mode=%s)...", self.mode
+                "Initializing Baseline 3 Custom Dataset (mode=%s)...", self.mode
             )
 
         self.transform = transforms.Compose(
@@ -222,6 +274,129 @@ class B3CustomDataset1(Dataset):
         """
 
         return len(self.dataset)
+
+
+class B3Model1(nn.Module):
+    """Baseline 3 model-1 using a ResNet-50 backbone.
+
+    Attributes:
+        verbose (bool): Flag to enable detailed logging during initialization.
+        logger (logging.Logger): Configured logger instance for model logging.
+        device (str): Device used for training/inference (`"cuda"` if available, else `"cpu"`).
+        in_features (Tuple[int, int]): Input feature shape (height, width).
+        num_classes (int): Number of output classes for classification.
+        model (nn.Module): The underlying ResNet-50 model (modified).
+        extract_features (bool):
+            If True, the model outputs features instead of classification logits.
+    """
+
+    def __init__(
+        self,
+        extract_features: bool = False,
+        verbose: bool = False,
+        in_features: Tuple[int, int] = (
+            app_settings.B3_S1_FEATURES_SHAPE_0,
+            app_settings.B3_S1_FEATURES_SHAPE_1,
+        ),
+        num_classes: int = app_settings.NUM_ACTION_LABELS,
+    ) -> None:
+        """Initialize the Baseline-3.1 ResNet-50 model.
+
+        Args:
+            extract_features (bool, optional):
+                If True, use the model as a feature extractor instead of a classifier.
+                Defaults to False.
+            verbose (bool, optional):
+                If True, enable detailed logging during initialization.
+                Defaults to False.
+            in_features (Tuple[int, int], optional):
+                Input feature shape (height, width).
+                Defaults to `(app_settings.B1_FEATURES_SHAPE_0, app_settings.B1_FEATURES_SHAPE_1)`.
+            num_classes (int, optional):
+                Number of output classes for classification.
+                Defaults to `app_settings.NUM_ACTIVITY_LABELS`.
+        """
+
+        super().__init__()
+        self.verbose = verbose
+        self.logger = setup_logger(
+            logger_name=__name__,
+            log_file=__file__,
+            log_dir=os.path.join(app_settings.PATH_LOGS, BaseController.get_baseline_root()),
+            log_to_console=self.verbose,
+            use_tqdm=True,
+        )
+        if self.verbose:
+            self.logger.info("[INFO] Initializing Baseline-3 Model-1...")
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.in_features = in_features
+        self.num_classes = num_classes
+        self.model = self.prepare_model(torch.device(self.device))
+        self.extract_features = extract_features
+
+        if self.verbose:
+            self.logger.info(
+                "\n".join(
+                    [
+                        "Model Configuration:",
+                        f"  - Device: {self.device}",
+                        f"  - Input features shape: {self.in_features}",
+                        f"  - Number of classes: {self.num_classes}",
+                        f"  - Extract features mode: {self.extract_features}",
+                        "  - Backbone: ResNet-50 (pretrained)",
+                    ]
+                )
+            )
+
+    def prepare_model(
+        self, device: torch.device, verbose: Optional[bool] = None
+    ) -> nn.Module:
+        """Prepare a ResNet-50 model for classification.
+
+        Args:
+            device (torch.device): Device to load the model on.
+            verbose (Optional[bool], optional):
+                If True, enable detailed logging during preparation.
+                If None, defaults to the class-level `self.verbose`.
+
+        Returns:
+            nn.Module: The modified ResNet-50 model.
+        """
+
+        verbose = self.verbose if verbose is None else verbose
+        if verbose:
+            self.logger.info("Preparing Baseline-3 Model-1...")
+        resnet_model = resnet50(weights=ResNet50_Weights.DEFAULT, progress=verbose)
+        num_features = resnet_model.fc.in_features
+        resnet_model.fc = nn.Sequential(
+            nn.Dropout(p=0.5),
+            nn.Linear(in_features=num_features, out_features=self.num_classes),
+        )
+        if app_settings.B1_FREEZE_BACKBONE:
+            for param in resnet_model.parameters():
+                param.requires_grad = False
+
+        for param in resnet_model.fc.parameters():
+            param.requires_grad = True
+
+        return resnet_model.to(device)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the model.
+
+        Args:
+            x (torch.Tensor): Input tensor.
+
+        Returns:
+            torch.Tensor: Model output. If `extract_features=True`,
+            returns extracted features, otherwise classification logits.
+        """
+        if self.extract_features:
+            model_feature_extractor = nn.Sequential(*(list(self.model.children())[:-1]))
+            model_feature_extractor.to(self.device)
+            model_feature_extractor.eval()
+            return model_feature_extractor(x)
+        return self.model(x)
 
 
 def main():
