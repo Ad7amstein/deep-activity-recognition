@@ -10,6 +10,7 @@ from utils.logging_utils import setup_logger
 from models.enums import ModelResults
 from models.enums import ActivityEnum
 from controllers.base_controller import BaseController
+import torch
 
 
 app_settings = get_settings()
@@ -42,7 +43,9 @@ def plot_results(results: dict, save_path: str, verbose: bool = True):
         logger.info("Plotting Results...")
     os.makedirs(save_path, exist_ok=True)
 
-    activity_category2label_dct = {member.category: member.label for member in ActivityEnum}
+    activity_category2label_dct = {
+        member.category: member.label for member in ActivityEnum
+    }
     for name, vals in results.items():
         if name == ModelResults.CONFUSION_MATRIX.value:
             fig, ax = plt.subplots(figsize=(8, 6))
@@ -190,10 +193,11 @@ def plot_xy_comparison(results: dict, plot_config: dict, save_path: str) -> None
         None: The function saves the plot as a PNG file and closes the figure.
     """
 
+    lns1, lns2, lns3 = None, None, None
     fig, ax1 = plt.subplots(figsize=(8, 6))
     ax1.set_xlabel("Epoch")
     ax1.set_ylabel(plot_config["metric1_ylabel"], color=plot_config["metric1_color"])
-    ax1.plot(
+    lns1 = ax1.plot(
         range(1, len(results[plot_config["metric1_key"]]) + 1),
         [v * plot_config["metric1_scale"] for v in results[plot_config["metric1_key"]]],
         marker="o",
@@ -208,7 +212,7 @@ def plot_xy_comparison(results: dict, plot_config: dict, save_path: str) -> None
         ax2.set_ylabel(
             plot_config["metric2_ylabel"], color=plot_config["metric2_color"]
         )
-        ax2.plot(
+        lns2 = ax2.plot(
             range(1, len(results[plot_config["metric2_key"]]) + 1),
             [
                 v * plot_config["metric2_scale"]
@@ -220,7 +224,7 @@ def plot_xy_comparison(results: dict, plot_config: dict, save_path: str) -> None
         )
         ax2.tick_params(axis="y", labelcolor=plot_config["metric2_color"])
     else:
-        ax1.plot(
+        lns3 = ax1.plot(
             range(1, len(results[plot_config["metric2_key"]]) + 1),
             [
                 v * plot_config["metric2_scale"]
@@ -231,8 +235,14 @@ def plot_xy_comparison(results: dict, plot_config: dict, save_path: str) -> None
             label=plot_config["metric2_label"],
         )
 
+    lns = lns1
+    if lns2:
+        lns += lns2
+    if lns3:
+        lns += lns3
+    labs = [l.get_label() for l in lns]
+    ax1.legend(lns, labs, loc="upper left", frameon=True)
     fig.suptitle(plot_config["title"])
-    fig.legend(loc="upper center", bbox_to_anchor=(0.5, -0.05), ncol=2)
     plt.tight_layout()
     fig.savefig(os.path.join(save_path, plot_config["filename"]), dpi=300)
     plt.close(fig)
@@ -243,6 +253,11 @@ def main():
     print(
         f"Welcome from `{os.path.basename(__file__).split('.')[0]}` Module. Nothing to do ^_____^!"
     )
+    model_dict = torch.load(
+        "models/B1Model.pth", weights_only=False, map_location=torch.device("cpu")
+    )
+    results = model_dict["results"]
+    plot_results(results, save_path="assets/baseline_1/metrics_plots")
 
 
 if __name__ == "__main__":
