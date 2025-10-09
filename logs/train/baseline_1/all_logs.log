@@ -1,0 +1,169 @@
+[2025-10-09 19:57:19] - [base_controller.py:50] - [INFO]: Initializing BaseController Module...
+[2025-10-09 19:57:19] - [base_controller.py:65] - [INFO]: Setting all seeds (seed_value=42)...
+[2025-10-09 19:57:19] - [model_controller.py:62] - [INFO]: Initializing ModelController Module...
+[2025-10-09 19:57:19] - [model_controller.py:442] - [INFO]: Loading Model Config for baseline 1
+[2025-10-09 19:57:19] - [model_controller.py:266] - [INFO]: Loading model for baseline 1 and stage 1
+[2025-10-09 19:57:20] - [annot_loading.py:47] - [INFO]: Initializing Annotation Loader Object...
+[2025-10-09 19:57:20] - [annot_loading.py:314] - [INFO]: Loading Data from pickle file: data/volleyball/volleyball_dataset.pkl
+[2025-10-09 19:57:26] - [model_controller.py:318] - [INFO]: Loading dataset_class for baseline 1 and stage 1
+[2025-10-09 19:57:26] - [model_controller.py:359] - [INFO]: Loading optimizer: AdamW
+[2025-10-09 19:57:26] - [model_controller.py:413] - [INFO]: Loading Scheduler: ReduceLROnPlateau
+[2025-10-09 19:57:26] - [model_controller.py:389] - [INFO]: Loading Loss Function: cross_entropy_loss
+[2025-10-09 19:57:26] - [model_controller.py:94] - [INFO]: Baseline-1 Configuration:
+  - FEATURES_SHAPE_0: 224
+  - FEATURES_SHAPE_1: 224
+  - LEFT_FRAMES: 5
+  - RIGHT_FRAMES: 4
+  - TRAIN_EPOCHS: 10
+  - TRAIN_BATCH_SIZE: 32
+  - EVAL_BATCH_SIZE: 256
+  - LR: 0.0001
+  - FREEZE_BACKBONE: False
+  - NUM_WORKERS: 20
+  - OPTIMIZER: AdamW
+  - WEIGHT_DECAY: 0.001
+  - LOSS_FN: cross_entropy_loss
+  - NUM_CLASSES: 8
+  - Scheduler: ReduceLROnPlateau
+[2025-10-09 19:57:26] - [model_controller.py:106] - [INFO]: Setup training
+[2025-10-09 19:57:26] - [baseline1.py:82] - [INFO]: Initializing Baseline 1 Custom Dataset (mode=ModelMode.TRAIN)...
+[2025-10-09 19:57:26] - [baseline1.py:157] - [INFO]: Loading Image Paths and Labels...
+[2025-10-09 19:57:26] - [baseline1.py:129] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.TRAIN
+  - Image shape: (224, 224)
+  - Num right frames: 4
+  - Num left frames: 5
+  - Dataset size (after init): 21520
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(256, 256), interpolation=bilinear, max_size=None, antialias=True)
+    * CenterCrop(size=(224, 224))
+    * RandomChoice(
+    ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=(-0.05, 0.05))
+    RandomGrayscale(p=1.0)
+    GaussianBlur(kernel_size=(3, 3), sigma=(0.1, 2.0))
+)(p=None)
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-09 19:57:26] - [baseline1.py:82] - [INFO]: Initializing Baseline 1 Custom Dataset (mode=ModelMode.VALIDATION)...
+[2025-10-09 19:57:26] - [baseline1.py:157] - [INFO]: Loading Image Paths and Labels...
+[2025-10-09 19:57:27] - [baseline1.py:129] - [INFO]: Dataset Configuration:
+  - Mode: ModelMode.VALIDATION
+  - Image shape: (224, 224)
+  - Num right frames: 4
+  - Num left frames: 5
+  - Dataset size (after init): 13410
+  - Transforms:
+    * ToPILImage()
+    * Resize(size=(256, 256), interpolation=bilinear, max_size=None, antialias=True)
+    * CenterCrop(size=(224, 224))
+    * ToTensor()
+    * Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+[2025-10-09 19:57:27] - [model_utils.py:231] - [INFO]: Training Started and in Progress...
+[2025-10-09 19:57:27] - [model_utils.py:261] - [INFO]: Epoch 1/10
+[2025-10-09 19:57:33] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 2.0787 | Acc: 26.92%
+[2025-10-09 19:57:54] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 1.5577 | Acc: 47.19%
+[2025-10-09 19:58:15] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.6043 | Acc: 88.27%
+[2025-10-09 19:58:35] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.9746 | Acc: 79.03%
+[2025-10-09 19:58:56] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.3119 | Acc: 93.01%
+[2025-10-09 19:59:16] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.3457 | Acc: 88.13%
+[2025-10-09 19:59:37] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.1803 | Acc: 96.88%
+[2025-10-09 20:01:19] - [model_utils.py:296] - [INFO]: Epoch: 1 | Train loss: 0.7521 | Train acc: 72.31% | Eval loss: 0.9543 | Eval acc: 71.70%
+[2025-10-09 20:01:19] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_epoch_1 saved in models/baseline_1/checkpoints/epochs
+[2025-10-09 20:01:20] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_loss saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:01:20] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_acc saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:01:20] - [model_utils.py:261] - [INFO]: Epoch 2/10
+[2025-10-09 20:01:23] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.1404 | Acc: 97.50%
+[2025-10-09 20:01:39] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0797 | Acc: 98.21%
+[2025-10-09 20:01:55] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.1555 | Acc: 85.00%
+[2025-10-09 20:02:10] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.1805 | Acc: 90.92%
+[2025-10-09 20:02:25] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.1173 | Acc: 97.50%
+[2025-10-09 20:02:39] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0649 | Acc: 100.00%
+[2025-10-09 20:02:52] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0481 | Acc: 98.21%
+[2025-10-09 20:04:05] - [model_utils.py:296] - [INFO]: Epoch: 2 | Train loss: 0.1253 | Train acc: 96.36% | Eval loss: 1.1324 | Eval acc: 72.09%
+[2025-10-09 20:04:05] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_acc saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:04:05] - [model_utils.py:261] - [INFO]: Epoch 3/10
+[2025-10-09 20:04:08] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0503 | Acc: 100.00%
+[2025-10-09 20:04:15] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0164 | Acc: 100.00%
+[2025-10-09 20:04:23] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0054 | Acc: 100.00%
+[2025-10-09 20:04:30] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.0581 | Acc: 100.00%
+[2025-10-09 20:04:38] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0158 | Acc: 100.00%
+[2025-10-09 20:04:45] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0506 | Acc: 100.00%
+[2025-10-09 20:04:52] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0499 | Acc: 97.96%
+[2025-10-09 20:05:39] - [model_utils.py:296] - [INFO]: Epoch: 3 | Train loss: 0.0624 | Train acc: 98.28% | Eval loss: 1.2309 | Eval acc: 73.37%
+[2025-10-09 20:05:39] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_epoch_3 saved in models/baseline_1/checkpoints/epochs
+[2025-10-09 20:05:40] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_acc saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:05:40] - [model_utils.py:261] - [INFO]: Epoch 4/10
+[2025-10-09 20:05:41] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0511 | Acc: 100.00%
+[2025-10-09 20:05:48] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0169 | Acc: 100.00%
+[2025-10-09 20:05:55] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0401 | Acc: 95.83%
+[2025-10-09 20:06:01] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.4094 | Acc: 95.00%
+[2025-10-09 20:06:08] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0493 | Acc: 97.96%
+[2025-10-09 20:06:15] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.1789 | Acc: 98.41%
+[2025-10-09 20:06:22] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0582 | Acc: 98.61%
+[2025-10-09 20:07:07] - [model_utils.py:296] - [INFO]: Epoch: 4 | Train loss: 0.0491 | Train acc: 98.64% | Eval loss: 1.3221 | Eval acc: 71.85%
+[2025-10-09 20:07:07] - [model_utils.py:261] - [INFO]: Epoch 5/10
+[2025-10-09 20:07:09] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0403 | Acc: 100.00%
+[2025-10-09 20:07:15] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0067 | Acc: 100.00%
+[2025-10-09 20:07:21] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0347 | Acc: 98.86%
+[2025-10-09 20:07:26] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.1971 | Acc: 95.94%
+[2025-10-09 20:07:32] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0313 | Acc: 100.00%
+[2025-10-09 20:07:37] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.4477 | Acc: 91.67%
+[2025-10-09 20:07:43] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0785 | Acc: 97.96%
+[2025-10-09 20:08:22] - [model_utils.py:296] - [INFO]: Epoch: 5 | Train loss: 0.0459 | Train acc: 98.70% | Eval loss: 1.2402 | Eval acc: 73.25%
+[2025-10-09 20:08:22] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_epoch_5 saved in models/baseline_1/checkpoints/epochs
+[2025-10-09 20:08:22] - [model_utils.py:261] - [INFO]: Epoch 6/10
+[2025-10-09 20:08:24] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0855 | Acc: 93.75%
+[2025-10-09 20:08:29] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0041 | Acc: 100.00%
+[2025-10-09 20:08:33] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0056 | Acc: 100.00%
+[2025-10-09 20:08:38] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.0115 | Acc: 100.00%
+[2025-10-09 20:08:43] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0287 | Acc: 100.00%
+[2025-10-09 20:08:48] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0039 | Acc: 100.00%
+[2025-10-09 20:08:52] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0286 | Acc: 100.00%
+[2025-10-09 20:09:23] - [model_utils.py:296] - [INFO]: Epoch: 6 | Train loss: 0.0326 | Train acc: 99.09% | Eval loss: 1.4588 | Eval acc: 72.66%
+[2025-10-09 20:09:23] - [model_utils.py:261] - [INFO]: Epoch 7/10
+[2025-10-09 20:09:24] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0865 | Acc: 97.50%
+[2025-10-09 20:09:28] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0053 | Acc: 100.00%
+[2025-10-09 20:09:32] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0067 | Acc: 100.00%
+[2025-10-09 20:09:37] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.0060 | Acc: 100.00%
+[2025-10-09 20:09:40] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0010 | Acc: 100.00%
+[2025-10-09 20:09:45] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0031 | Acc: 100.00%
+[2025-10-09 20:09:49] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0058 | Acc: 100.00%
+[2025-10-09 20:10:14] - [model_utils.py:296] - [INFO]: Epoch: 7 | Train loss: 0.0303 | Train acc: 99.27% | Eval loss: 1.5014 | Eval acc: 71.93%
+[2025-10-09 20:10:14] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_epoch_7 saved in models/baseline_1/checkpoints/epochs
+[2025-10-09 20:10:14] - [model_utils.py:261] - [INFO]: Epoch 8/10
+[2025-10-09 20:10:15] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0300 | Acc: 100.00%
+[2025-10-09 20:10:19] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0198 | Acc: 100.00%
+[2025-10-09 20:10:23] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0046 | Acc: 100.00%
+[2025-10-09 20:10:26] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.0014 | Acc: 100.00%
+[2025-10-09 20:10:30] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0073 | Acc: 100.00%
+[2025-10-09 20:10:33] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0085 | Acc: 100.00%
+[2025-10-09 20:10:37] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0009 | Acc: 100.00%
+[2025-10-09 20:10:59] - [model_utils.py:296] - [INFO]: Epoch: 8 | Train loss: 0.0144 | Train acc: 99.65% | Eval loss: 1.3871 | Eval acc: 74.64%
+[2025-10-09 20:11:00] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_acc saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:11:00] - [model_utils.py:261] - [INFO]: Epoch 9/10
+[2025-10-09 20:11:01] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0098 | Acc: 100.00%
+[2025-10-09 20:11:05] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0022 | Acc: 100.00%
+[2025-10-09 20:11:09] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0016 | Acc: 100.00%
+[2025-10-09 20:11:13] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.0009 | Acc: 100.00%
+[2025-10-09 20:11:16] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0007 | Acc: 100.00%
+[2025-10-09 20:11:19] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0145 | Acc: 100.00%
+[2025-10-09 20:11:23] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0009 | Acc: 100.00%
+[2025-10-09 20:11:40] - [model_utils.py:296] - [INFO]: Epoch: 9 | Train loss: 0.0052 | Train acc: 99.85% | Eval loss: 1.3998 | Eval acc: 75.06%
+[2025-10-09 20:11:40] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_epoch_9 saved in models/baseline_1/checkpoints/epochs
+[2025-10-09 20:11:41] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_acc saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:11:41] - [model_utils.py:261] - [INFO]: Epoch 10/10
+[2025-10-09 20:11:42] - [model_utils.py:104] - [INFO]: 	[BATCH 0/673] Loss: 0.0128 | Acc: 100.00%
+[2025-10-09 20:11:45] - [model_utils.py:104] - [INFO]: 	[BATCH 100/673] Loss: 0.0005 | Acc: 100.00%
+[2025-10-09 20:11:48] - [model_utils.py:104] - [INFO]: 	[BATCH 200/673] Loss: 0.0003 | Acc: 100.00%
+[2025-10-09 20:11:52] - [model_utils.py:104] - [INFO]: 	[BATCH 300/673] Loss: 0.0047 | Acc: 100.00%
+[2025-10-09 20:11:55] - [model_utils.py:104] - [INFO]: 	[BATCH 400/673] Loss: 0.0003 | Acc: 100.00%
+[2025-10-09 20:11:58] - [model_utils.py:104] - [INFO]: 	[BATCH 500/673] Loss: 0.0005 | Acc: 100.00%
+[2025-10-09 20:12:02] - [model_utils.py:104] - [INFO]: 	[BATCH 600/673] Loss: 0.0006 | Acc: 100.00%
+[2025-10-09 20:12:18] - [model_utils.py:296] - [INFO]: Epoch: 10 | Train loss: 0.0046 | Train acc: 99.84% | Eval loss: 1.4579 | Eval acc: 75.14%
+[2025-10-09 20:12:19] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_epoch_10 saved in models/baseline_1/checkpoints/epochs
+[2025-10-09 20:12:20] - [model_utils.py:411] - [INFO]: Checkpoint B1Model_best_acc saved in models/baseline_1/checkpoints/best
+[2025-10-09 20:12:20] - [model_utils.py:382] - [INFO]: Total Train time on cuda: 0:14:52
+[2025-10-09 20:12:20] - [model_controller.py:141] - [INFO]: Done Training.
+[2025-10-09 20:12:20] - [plotting_utils.py:42] - [INFO]: Plotting Results...
+[2025-10-09 20:12:22] - [plotting_utils.py:162] - [INFO]: Plots Saved in: assets/baseline_1/metrics_plots
