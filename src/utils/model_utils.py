@@ -6,6 +6,8 @@ from datetime import timedelta
 from datetime import datetime
 from typing import Dict, Any, Optional
 import json
+import random
+import numpy as np
 from tqdm import tqdm
 import torch
 from torch import nn
@@ -31,6 +33,20 @@ logger = setup_logger(
     use_tqdm=True,
     file_mode="a",
 )
+
+
+def seed_worker(worker_id: int) -> None:
+    """Seed worker processes for reproducible data loading.
+
+    This function ensures that each DataLoader worker process has a deterministic
+    random state, which is critical for reproducibility when using num_workers > 0.
+
+    Args:
+        worker_id (int): The ID of the worker process (automatically passed by DataLoader).
+    """
+    worker_seed = torch.initial_seed() % 2**32
+    np.random.seed(worker_seed)
+    random.seed(worker_seed)
 
 
 # time out the experience

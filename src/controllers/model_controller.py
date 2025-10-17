@@ -10,7 +10,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from controllers.base_controller import BaseController
 from data_processing.annot_loading import AnnotationLoader
-from utils.model_utils import train, test
+from utils.model_utils import train, test, seed_worker
 from utils.plotting_utils import plot_results
 from utils.logging_utils import setup_logger
 from models.enums import ModelMode, OptimizerEnum, LossFNEnum, ModelBaseline, ModelStage
@@ -117,12 +117,14 @@ class ModelController(BaseController):
             batch_size=self.baseline_config.TRAIN_BATCH_SIZE,
             shuffle=True,
             num_workers=self.baseline_config.NUM_WORKERS,
+            worker_init_fn=seed_worker,
         )
         valid_loader = DataLoader(
             valid_dataset,
             batch_size=self.baseline_config.EVAL_BATCH_SIZE,
             shuffle=False,
             num_workers=self.baseline_config.NUM_WORKERS,
+            worker_init_fn=seed_worker,
         )
 
         train_results = train(
@@ -169,6 +171,7 @@ class ModelController(BaseController):
             batch_size=self.baseline_config.EVAL_BATCH_SIZE,
             shuffle=False,
             num_workers=self.baseline_config.NUM_WORKERS,
+            worker_init_fn=seed_worker,
         )
         test(
             model=self.model,
